@@ -1,11 +1,25 @@
 import type { CompilerOptions, TypeAcquisition } from 'typescript'
 
+type StripEnums<T extends Record<string, any>> = {
+    [K in keyof T]: T[K] extends boolean
+    ? T[K]
+    : T[K] extends string
+    ? T[K]
+    : T[K] extends object
+    ? T[K]
+    : T[K] extends Array<any>
+    ? T[K]
+    : T[K] extends undefined
+    ? undefined
+    : string
+}
+
 export interface TSConfig {
-    compilerOptions: CompilerOptions;
-    exclude: string[];
-    compileOnSave: boolean;
-    extends: string;
-    files: string[];
-    include: string[];
-    typeAcquisition: TypeAcquisition
+    compilerOptions?: StripEnums<CompilerOptions>
+    exclude?: string[]
+    compileOnSave?: boolean
+    extends?: string
+    files?: string[]
+    include?: string[]
+    typeAcquisition?: TypeAcquisition
 }
