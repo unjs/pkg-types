@@ -11,7 +11,7 @@ type StripEnums<T extends Record<string, any>> = {
     ? T[K]
     : T[K] extends undefined
     ? undefined
-    : string
+    : any
 }
 
 export interface TSConfig {
