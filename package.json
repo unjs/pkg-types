@@ -1,6 +1,6 @@
 {
   "name": "pkg-types",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "TypeScript definitions for tsconfig.json and package.json",
   "license": "MIT",
   "main": "",
