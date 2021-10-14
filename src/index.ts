@@ -1,4 +1,4 @@
-import JSON5 from 'json5'
+import * as JSON5 from 'json5'
 import { promises as fsp } from 'fs'
 import type { PackageJson, TSConfig } from './types'
 
