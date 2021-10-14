@@ -74,6 +74,9 @@ import type { defineTSConfig } from 'pkg-types'
 const pkg = defineTSConfig({})
 ```
 
+## Alternatives
+
+- [dominikg/tsconfck](https://github.com/dominikg/tsconfck)
 
 ## License
 
