@@ -1,6 +1,6 @@
 {
   "name": "pkg-types",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Node.js utilities and TypeScript definitions for `package.json` and `tsconfig.json`",
   "license": "MIT",
   "main": "./dist2/index.cjs",
