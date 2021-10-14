@@ -1,20 +1,37 @@
 {
   "name": "pkg-types",
   "version": "0.1.3",
-  "description": "TypeScript definitions for tsconfig.json and package.json",
+  "description": "Node.js utilities and TypeScript definitions for `package.json` and `tsconfig.json`",
   "license": "MIT",
-  "main": "",
-  "types": "./lib/index.d.ts",
+  "main": "./dist2/index.cjs",
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs"
+  },
+  "types": "./dist/index.d.ts",
   "repository": "unjs/pkg-types",
   "files": [
     "lib"
   ],
   "scripts": {
-    "release": "standard-version && npm publish && git push --follow-tags"
+    "build": "unbuild",
+    "release": "standard-version && npm publish && git push --follow-tags",
+    "test": "mocha -r jiti/register ./test/**/*.test.*",
+    "test:types": "tsc --noEmit --module esnext --moduleResolution node ./test/*.test.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "json5": "^2.2.0"
+  },
   "devDependencies": {
+    "@types/chai": "^4.2.22",
+    "@types/mocha": "^9.0.0",
+    "chai": "^4.3.4",
+    "expect-type": "^0.12.0",
+    "jiti": "^1.12.7",
+    "mocha": "^9.1.2",
+    "nyc": "^15.1.0",
     "standard-version": "^9.3.1",
-    "typescript": "^4.4.4"
+    "typescript": "^4.4.4",
+    "unbuild": "^0.5.7"
   }
 }

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "strict": true,
+    "declaration": true,
+    "noEmit": true,
+    "types": [
+      "node",
+      "mocha"
+    ]
+  },
+  "include": [
+    "src",
+    "test"
+  ]
+}

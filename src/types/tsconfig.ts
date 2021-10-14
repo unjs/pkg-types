@@ -1,6 +1,6 @@
 import type { CompilerOptions, TypeAcquisition } from 'typescript'
 
-type StripEnums<T extends Record<string, any>> = {
+export type StripEnums<T extends Record<string, any>> = {
     [K in keyof T]: T[K] extends boolean
     ? T[K]
     : T[K] extends string

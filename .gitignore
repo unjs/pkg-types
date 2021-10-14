@@ -1,2 +1,5 @@
+dist
 *.log*
 node_modules
+*.tmp
+.nyc*
