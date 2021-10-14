@@ -20,7 +20,7 @@
     "test:types": "tsc --noEmit --module esnext --moduleResolution node ./test/*.test.ts"
   },
   "dependencies": {
-    "json5": "^2.2.0"
+    "jsonc-parser": "^3.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.22",
