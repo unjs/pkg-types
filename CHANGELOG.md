@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/unjs/pkg-types/compare/v0.2.0...v0.2.1) (2021-10-18)
+
+
+### Bug Fixes
+
+* **pkg:** update package.json ([cd12484](https://github.com/unjs/pkg-types/commit/cd124848a2c41950aeec3db0bca772b43e51e629))
+
 ## [0.2.0](https://github.com/unjs/pkg-types/compare/v0.1.5...v0.2.0) (2021-10-14)
 
 
