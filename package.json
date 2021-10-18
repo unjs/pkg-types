@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "Node.js utilities and TypeScript definitions for `package.json` and `tsconfig.json`",
   "license": "MIT",
-  "main": "./dist2/index.cjs",
+  "main": "./dist/index.cjs",
   "exports": {
     "import": "./dist/index.mjs",
     "require": "./dist/index.cjs"
@@ -11,7 +11,7 @@
   "types": "./dist/index.d.ts",
   "repository": "unjs/pkg-types",
   "files": [
-    "lib"
+    "dist"
   ],
   "scripts": {
     "build": "unbuild",
