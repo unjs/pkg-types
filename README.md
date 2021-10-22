@@ -34,6 +34,24 @@ import { writePackageJSON } from 'pkg-types'
 await writePackageJSON('path/to/package.json', pkg)
 ```
 
+### `findNearestPackageJSON`
+
+```js
+import { findNearestPackageJSON } from 'pkg-types'
+const filename = findNearestPackageJSON()
+// or
+const packageJson = findNearestPackageJSON('/fully/resolved/path/to/folder')
+```
+
+### `readNearestPackageJSON`
+
+```js
+import { readNearestPackageJSON } from 'pkg-types'
+const filename = await readNearestPackageJSON()
+// or
+const packageJson = await readNearestPackageJSON('/fully/resolved/path/to/folder')
+```
+
 ### `readTSConfig`
 
 ```js
@@ -48,6 +66,24 @@ const pkg = await readTSConfig('path/to/tsconfig.json')
 import { writeTSConfig } from 'pkg-types'
 
 await writeTSConfig('path/to/tsconfig.json', tsconfig)
+```
+
+### `findNearestTSConfig`
+
+```js
+import { findNearestTSConfig } from 'pkg-types'
+const filename = findNearestTSConfig()
+// or
+const tsconfig = findNearestTSConfig('/fully/resolved/path/to/folder')
+```
+
+### `readNearestTSConfig`
+
+```js
+import { readNearestTSConfig } from 'pkg-types'
+const filename = await readNearestTSConfig()
+// or
+const tsconfig = await readNearestTSConfig('/fully/resolved/path/to/folder')
 ```
 
 ## Types
