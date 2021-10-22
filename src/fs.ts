@@ -21,11 +21,11 @@ const defaultFindOptions = {
   }
 }
 
-export function findNearestFile (_id: string, filename: string, _options: FindNearestFileOptions = {}) {
+export function findNearestFile (id: string, filename: string, _options: FindNearestFileOptions = {}) {
   const options = { ...defaultFindOptions, ..._options }
-  const id = resolve(_id)
-  const leadingSlash = id[0] === '/'
-  const segments = id.split('/').filter(Boolean)
+  const basePath = resolve(id)
+  const leadingSlash = basePath[0] === '/'
+  const segments = basePath.split('/').filter(Boolean)
 
   // Restore leading slash
   if (leadingSlash) {
