@@ -2,7 +2,27 @@ import { statSync } from 'fs'
 import { join, resolve } from 'pathe'
 import { PackageJson, readPackageJSON, readTSConfig, TSConfig } from '.'
 
-export function findNearestFile (_id: string, filename: string) {
+export interface FindNearestFileOptions {
+  /** A pattern to match a path segment above which you don't want to ascend */
+  rootPattern?: RegExp
+  /**
+   * A matcher that can evaluate whether the given path is a valid file (for example,
+   * by testing whether the file path exists.
+   */
+  matcher?: (filePath: string) => boolean | null
+}
+
+const defaultFindOptions = {
+  rootPattern: /^node_modules$/,
+  matcher: (filePath: string) => {
+    try {
+      if (statSync(filePath).isFile()) { return true }
+    } catch { }
+  }
+}
+
+export function findNearestFile (_id: string, filename: string, _options: FindNearestFileOptions = {}) {
+  const options = { ...defaultFindOptions, ..._options }
   const id = resolve(_id)
   const leadingSlash = id[0] === '/'
   const segments = id.split('/').filter(Boolean)
@@ -13,14 +33,12 @@ export function findNearestFile (_id: string, filename: string) {
   }
 
   // Limit to node_modules scope if it exists
-  let root = segments.indexOf('node_modules')
+  let root = segments.findIndex(r => r.match(options.rootPattern))
   if (root === -1) root = 0
 
   for (let i = segments.length; i > root; i--) {
     const filePath = join(...segments.slice(0, i), filename)
-    try {
-      if (statSync(filePath).isFile()) { return filePath }
-    } catch { }
+    if (options.matcher(filePath)) { return filePath }
   }
 
   return null

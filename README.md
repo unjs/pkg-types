@@ -86,6 +86,16 @@ const filename = await readNearestTSConfig()
 const tsconfig = await readNearestTSConfig('/fully/resolved/path/to/folder')
 ```
 
+### `findNearestFile`
+
+```js
+import { findNearestFile } from 'pkg-types'
+const filename = findNearestFile(id, 'README.md', {
+  rootPattern: /^node_modules$/,
+  matcher: filename => filename.endsWith('.md'),
+})
+```
+
 ## Types
 
 **Note:** In order to make types working, you need to install `typescript` as a devDependency.
