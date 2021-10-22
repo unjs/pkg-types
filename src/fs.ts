@@ -3,7 +3,15 @@ import { join, resolve } from 'pathe'
 import { PackageJson, readPackageJSON, readTSConfig, TSConfig } from '.'
 
 export interface FindNearestFileOptions {
-  /** A pattern to match a path segment above which you don't want to ascend */
+  /**
+   * The starting directory for the search.
+   * @default . (same as `process.cwd()`)
+   */
+  startingFrom?: string
+  /**
+   * A pattern to match a path segment above which you don't want to ascend
+   * @default /^node_modules$/
+   */
   rootPattern?: RegExp
   /**
    * A matcher that can evaluate whether the given path is a valid file (for example,
@@ -12,18 +20,20 @@ export interface FindNearestFileOptions {
   matcher?: (filePath: string) => boolean | null
 }
 
-const defaultFindOptions = {
+const defaultFindOptions: Required<FindNearestFileOptions> = {
+  startingFrom: '.',
   rootPattern: /^node_modules$/,
   matcher: (filePath: string) => {
     try {
       if (statSync(filePath).isFile()) { return true }
     } catch { }
+    return null
   }
 }
 
-export function findNearestFile (id: string, filename: string, _options: FindNearestFileOptions = {}) {
+export function findNearestFile (filename: string, _options: FindNearestFileOptions = {}) {
   const options = { ...defaultFindOptions, ..._options }
-  const basePath = resolve(id)
+  const basePath = resolve(options.startingFrom)
   const leadingSlash = basePath[0] === '/'
   const segments = basePath.split('/').filter(Boolean)
 
@@ -45,11 +55,11 @@ export function findNearestFile (id: string, filename: string, _options: FindNea
 }
 
 export function findNearestPackageJSON (id: string = process.cwd()): string | null {
-  return findNearestFile(id, 'package.json')
+  return findNearestFile('package.json', { startingFrom: id })
 }
 
 export function findNearestTSConfig (id: string = process.cwd()): string | null {
-  return findNearestFile(id, 'tsconfig.json')
+  return findNearestFile('tsconfig.json', { startingFrom: id })
 }
 
 export async function readNearestPackageJSON (id?: string): Promise<PackageJson | null> {

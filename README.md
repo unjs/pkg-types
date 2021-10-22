@@ -90,7 +90,8 @@ const tsconfig = await readNearestTSConfig('/fully/resolved/path/to/folder')
 
 ```js
 import { findNearestFile } from 'pkg-types'
-const filename = findNearestFile(id, 'README.md', {
+const filename = findNearestFile('README.md', {
+  startingFrom: id,
   rootPattern: /^node_modules$/,
   matcher: filename => filename.endsWith('.md'),
 })
