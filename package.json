@@ -17,7 +17,7 @@
     "build": "unbuild",
     "release": "standard-version && npm publish && git push --follow-tags",
     "test": "mocha -r jiti/register ./test/**/*.test.*",
-    "test:types": "tsc --noEmit --module esnext --moduleResolution node ./test/*.test.ts"
+    "test:types": "tsc --noEmit --module esnext --skipLibCheck --moduleResolution node ./test/*.test.ts"
   },
   "dependencies": {
     "jsonc-parser": "^3.0.0",
