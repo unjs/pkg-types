@@ -1,8 +1,9 @@
 import { statSync } from 'fs'
-import { join } from 'path'
+import { join, resolve } from 'pathe'
 import { PackageJson, readPackageJSON, readTSConfig, TSConfig } from '.'
 
-export function findNearestFile (id: string, filename: string) {
+export function findNearestFile (_id: string, filename: string) {
+  const id = resolve(_id)
   const leadingSlash = id[0] === '/'
   const segments = id.split('/').filter(Boolean)
 
