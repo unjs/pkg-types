@@ -38,9 +38,9 @@ await writePackageJSON('path/to/package.json', pkg)
 
 ```js
 import { findNearestPackageJSON } from 'pkg-types'
-const filename = findNearestPackageJSON()
+const filename = await findNearestPackageJSON()
 // or
-const packageJson = findNearestPackageJSON('/fully/resolved/path/to/folder')
+const packageJson = await findNearestPackageJSON('/fully/resolved/path/to/folder')
 ```
 
 ### `readNearestPackageJSON`
@@ -72,9 +72,9 @@ await writeTSConfig('path/to/tsconfig.json', tsconfig)
 
 ```js
 import { findNearestTSConfig } from 'pkg-types'
-const filename = findNearestTSConfig()
+const filename = await findNearestTSConfig()
 // or
-const tsconfig = findNearestTSConfig('/fully/resolved/path/to/folder')
+const tsconfig = await findNearestTSConfig('/fully/resolved/path/to/folder')
 ```
 
 ### `readNearestTSConfig`
@@ -90,7 +90,7 @@ const tsconfig = await readNearestTSConfig('/fully/resolved/path/to/folder')
 
 ```js
 import { findNearestFile } from 'pkg-types'
-const filename = findNearestFile('README.md', {
+const filename = await findNearestFile('README.md', {
   startingFrom: id,
   rootPattern: /^node_modules$/,
   matcher: filename => filename.endsWith('.md'),
