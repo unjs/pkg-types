@@ -3,6 +3,7 @@ import { promises as fsp } from 'fs'
 import type { PackageJson, TSConfig } from './types'
 
 export * from './types'
+export * from './fs'
 
 export function definePackageJSON(pkg: PackageJson): PackageJson {
   return pkg
