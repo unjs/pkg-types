@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.2](https://github.com/unjs/pkg-types/compare/v0.2.1...v0.2.2) (2021-10-26)
+
+
+### Features
+
+* add `readNearest*` and `findNearest*` utilities ([#3](https://github.com/unjs/pkg-types/issues/3)) ([fe5997e](https://github.com/unjs/pkg-types/commit/fe5997eac05c4d02697b99fa86fd60a0ff8e6040))
+
 ### [0.2.1](https://github.com/unjs/pkg-types/compare/v0.2.0...v0.2.1) (2021-10-18)
 
 
