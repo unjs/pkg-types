@@ -16,14 +16,16 @@ export interface FindNearestFileOptions {
   /**
    * A matcher that can evaluate whether the given path is a valid file (for example,
    * by testing whether the file path exists.
+   *
+   * @default fs.statSync(path).isFile()
    */
-  matcher?: (filePath: string) => boolean | null
+  test?: (filePath: string) => boolean | null | Promise<boolean | null>
 }
 
 const defaultFindOptions: Required<FindNearestFileOptions> = {
   startingFrom: '.',
   rootPattern: /^node_modules$/,
-  matcher: (filePath: string) => {
+  test: (filePath: string) => {
     try {
       if (statSync(filePath).isFile()) { return true }
     } catch { }
@@ -31,7 +33,7 @@ const defaultFindOptions: Required<FindNearestFileOptions> = {
   }
 }
 
-export function findNearestFile (filename: string, _options: FindNearestFileOptions = {}) {
+export async function findNearestFile (filename: string, _options: FindNearestFileOptions = {}) {
   const options = { ...defaultFindOptions, ..._options }
   const basePath = resolve(options.startingFrom)
   const leadingSlash = basePath[0] === '/'
@@ -48,33 +50,33 @@ export function findNearestFile (filename: string, _options: FindNearestFileOpti
 
   for (let i = segments.length; i > root; i--) {
     const filePath = join(...segments.slice(0, i), filename)
-    if (options.matcher(filePath)) { return filePath }
+    if (await options.test(filePath)) { return filePath }
   }
 
   return null
 }
 
-export function findNearestPackageJSON (id: string = process.cwd()): string | null {
+export async function findNearestPackageJSON (id: string = process.cwd()): Promise<string | null> {
   return findNearestFile('package.json', { startingFrom: id })
 }
 
-export function findNearestTSConfig (id: string = process.cwd()): string | null {
+export async function findNearestTSConfig (id: string = process.cwd()): Promise<string | null> {
   return findNearestFile('tsconfig.json', { startingFrom: id })
 }
 
 export async function readNearestPackageJSON (id?: string): Promise<PackageJson | null> {
-  const path = findNearestPackageJSON(id)
+  const filePath = await findNearestPackageJSON(id)
 
-  if (!path) { return null }
+  if (!filePath) { return null }
 
-  return readPackageJSON(path)
+  return readPackageJSON(filePath)
 }
 
 export async function readNearestTSConfig (id?: string): Promise<TSConfig | null> {
-  const path = findNearestTSConfig(id)
+  const filePath = await findNearestTSConfig(id)
 
-  if (!path) { return null }
+  if (!filePath) { return null }
 
-  return readTSConfig(path)
+  return readTSConfig(filePath)
 }
 
