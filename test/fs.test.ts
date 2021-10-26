@@ -22,24 +22,24 @@ const tests = {
 for (const filename in tests) {
   const [read, find] = tests[filename as 'tsconfig.json']
   describe(find.name, () => {
-    it('finds a package.json in root directory', () => {
-      const pkgPath = find(rFixture('.'))
+    it('finds a package.json in root directory', async () => {
+      const pkgPath = await find(rFixture('.'))
       expect(pkgPath).to.equal(rFixture(filename))
     })
-    it('handles non-existent paths', () => {
-      const pkgPath = find(rFixture('further', 'dir', 'file.json'))
+    it('handles non-existent paths', async () => {
+      const pkgPath = await find(rFixture('further', 'dir', 'file.json'))
       expect(pkgPath).to.equal(rFixture(filename))
     })
-    it('works all the way up the tree', () => {
-      const pkgPath = find('/a/full/nonexistent/path')
+    it('works all the way up the tree', async () => {
+      const pkgPath = await find('/a/full/nonexistent/path')
       expect(pkgPath).to.equal(null)
     })
-    it('stops at `node_modules`', () => {
-      const pkgPath = find(rFixture('further', 'node_modules', 'file.json'))
+    it('stops at `node_modules`', async () => {
+      const pkgPath = await find(rFixture('further', 'node_modules', 'file.json'))
       expect(pkgPath).to.equal(null)
     })
-    it(`finds the working directory ${filename}`, () => {
-      const pkgPath = find()
+    it(`finds the working directory ${filename}`, async () => {
+      const pkgPath = await find()
       expect(pkgPath).to.equal(rFixture('../..', filename))
     })
   })
