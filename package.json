@@ -14,7 +14,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "unbuild",
+    "prepare": "unbuild",
     "release": "standard-version && npm publish && git push --follow-tags",
     "test": "mocha -r jiti/register ./test/**/*.test.*",
     "test:types": "tsc --noEmit --module esnext --skipLibCheck --moduleResolution node ./test/*.test.ts"
