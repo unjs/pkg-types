@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/unjs/pkg-types/compare/v0.2.3...v0.3.0) (2021-10-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* improve resolving (#4)
+
+### Features
+
+* improve resolving ([#4](https://github.com/unjs/pkg-types/issues/4)) ([da4567f](https://github.com/unjs/pkg-types/commit/da4567f9fac680e9ce0ad1e9428da721cf4f8b7f))
+
 ### [0.2.3](https://github.com/unjs/pkg-types/compare/v0.2.2...v0.2.3) (2021-10-26)
 
 ### [0.2.2](https://github.com/unjs/pkg-types/compare/v0.2.1...v0.2.2) (2021-10-26)
