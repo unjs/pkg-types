@@ -1,7 +1,5 @@
 import { statSync } from 'fs'
-import { resolvePath } from 'mlly'
 import { join, resolve } from 'pathe'
-import { PackageJson, readPackageJSON, readTSConfig, TSConfig } from '.'
 
 export interface FindNearestFileOptions {
   /**
@@ -34,7 +32,7 @@ const defaultFindOptions: Required<FindNearestFileOptions> = {
   }
 }
 
-export async function findNearestFile (filename: string, _options: FindNearestFileOptions = {}) {
+export async function findNearestFile (filename: string, _options: FindNearestFileOptions = {}): Promise<string> {
   const options = { ...defaultFindOptions, ..._options }
   const basePath = resolve(options.startingFrom)
   const leadingSlash = basePath[0] === '/'
@@ -54,36 +52,6 @@ export async function findNearestFile (filename: string, _options: FindNearestFi
     if (await options.test(filePath)) { return filePath }
   }
 
-  return null
+  throw new Error(`Cannot find matching ${filename} in ${options.startingFrom} or parent directories`)
 }
 
-export async function findNearestPackageJSON (id: string = process.cwd()): Promise<string | null> {
-  return findNearestFile('package.json', { startingFrom: id })
-}
-
-export async function findNearestTSConfig (id: string = process.cwd()): Promise<string | null> {
-  return findNearestFile('tsconfig.json', { startingFrom: id })
-}
-
-export async function readNearestPackageJSON (id?: string): Promise<PackageJson | null> {
-  const filePath = await findNearestPackageJSON(id)
-
-  if (!filePath) { return null }
-
-  return readPackageJSON(filePath)
-}
-
-export async function resolvePackageJSON (packageName: string, paths?: string | URL | (string | URL)[]): Promise<PackageJson | null> {
-  let packageEntry = packageName
-  packageEntry = await resolvePath(packageName, { url: paths }).catch(() => null)
-  if (!packageEntry) { return null }
-  return readNearestPackageJSON(packageEntry)
-}
-
-export async function readNearestTSConfig (id?: string): Promise<TSConfig | null> {
-  const filePath = await findNearestTSConfig(id)
-
-  if (!filePath) { return null }
-
-  return readTSConfig(filePath)
-}
