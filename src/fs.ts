@@ -73,7 +73,7 @@ export async function readNearestPackageJSON (id?: string): Promise<PackageJson 
   return readPackageJSON(filePath)
 }
 
-export async function getPackageVersion (packageName: string, _require: NodeRequire = createRequire(import.meta.url), paths: string[]): Promise<string | null> {
+export async function getPackageVersion (packageName: string, _require: NodeRequire = createRequire(import.meta.url), paths?: string[]): Promise<string | null> {
   try {
     const path = isAbsolute(packageName) ? packageName : _require.resolve(packageName, { paths })
     const pkg = await readNearestPackageJSON(path) || {}
