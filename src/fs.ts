@@ -1,6 +1,6 @@
 import { statSync } from 'fs'
-import { createRequire } from 'module'
-import { isAbsolute, join, resolve } from 'pathe'
+import { resolvePath } from 'mlly'
+import { join, resolve } from 'pathe'
 import { PackageJson, readPackageJSON, readTSConfig, TSConfig } from '.'
 
 export interface FindNearestFileOptions {
@@ -73,14 +73,11 @@ export async function readNearestPackageJSON (id?: string): Promise<PackageJson 
   return readPackageJSON(filePath)
 }
 
-export async function getPackageVersion (packageName: string, _require: NodeRequire = createRequire(import.meta.url), paths?: string[]): Promise<string | null> {
-  try {
-    const path = isAbsolute(packageName) ? packageName : _require.resolve(packageName, { paths })
-    const pkg = await readNearestPackageJSON(path) || {}
-    return pkg.version || null
-  } catch {
-    return null
-  }
+export async function resolvePackageJSON (packageName: string, paths?: string | URL | (string | URL)[]): Promise<PackageJson | null> {
+  let packageEntry = packageName
+  packageEntry = await resolvePath(packageName, { url: paths }).catch(() => null)
+  if (!packageEntry) { return null }
+  return readNearestPackageJSON(packageEntry)
 }
 
 export async function readNearestTSConfig (id?: string): Promise<TSConfig | null> {
@@ -90,4 +87,3 @@ export async function readNearestTSConfig (id?: string): Promise<TSConfig | null
 
   return readTSConfig(filePath)
 }
-

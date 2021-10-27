@@ -6,7 +6,7 @@ import {
   readNearestTSConfig,
   findNearestPackageJSON,
   findNearestTSConfig,
-  getPackageVersion,
+  resolvePackageJSON,
   PackageJson,
   TSConfig,
 } from '../src'
@@ -59,12 +59,12 @@ for (const filename in tests) {
 
 describe('getPackageVersion', () => {
   it('correctly reads a version from absolute path', async () => {
-    expect(await getPackageVersion(rFixture('.'))).to.equal('1.0.0')
+    expect(await resolvePackageJSON(rFixture('.')).then(p => p?.version)).to.equal('1.0.0')
   })
   it('correctly reads a version from package', async () => {
-    expect(await getPackageVersion('pathe')).not.to.equal(null)
+    expect(await resolvePackageJSON('pathe').then(p => p?.version)).not.to.equal(null)
   })
   it('fails gracefully', async () => {
-    expect(await getPackageVersion('nonexistent')).to.equal(null)
+    expect(await resolvePackageJSON('nonexistent').then(p => p?.version)).to.equal(undefined)
   })
 })

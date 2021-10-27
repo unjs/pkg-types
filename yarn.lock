@@ -1910,6 +1910,11 @@ mlly@^0.2.6:
   dependencies:
     import-meta-resolve "^1.1.1"
 
+mlly@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/mlly/-/mlly-0.3.4.tgz#c833fd4bd7152f81d28e548c4990bf04ed1066c3"
+  integrity sha512-ITYuiYNdnoaQAtvz40veUDn2iaGUQKDG3H62M4ib/Xv9psnLTZxqKSpfDl0CNjSp7xz1jC/Fmft7m3Xkh6wmuA==
+
 mocha@^9.1.2:
   version "9.1.2"
   resolved "https://registry.yarnpkg.com/mocha/-/mocha-9.1.2.tgz#93f53175b0f0dc4014bd2d612218fccfcf3534d3"
