@@ -34,22 +34,22 @@ import { writePackageJSON } from 'pkg-types'
 await writePackageJSON('path/to/package.json', pkg)
 ```
 
-### `findNearestPackageJSON`
+### `resolvePackageJSON`
 
 ```js
-import { findNearestPackageJSON } from 'pkg-types'
-const filename = await findNearestPackageJSON()
+import { resolvePackageJSON } from 'pkg-types'
+const filename = await resolvePackageJSON()
 // or
-const packageJson = await findNearestPackageJSON('/fully/resolved/path/to/folder')
+const packageJson = await resolvePackageJSON('/fully/resolved/path/to/folder')
 ```
 
-### `readNearestPackageJSON`
+### `readPackageJSON`
 
 ```js
-import { readNearestPackageJSON } from 'pkg-types'
-const filename = await readNearestPackageJSON()
+import { readPackageJSON } from 'pkg-types'
+const filename = await readPackageJSON()
 // or
-const packageJson = await readNearestPackageJSON('/fully/resolved/path/to/folder')
+const packageJson = await readPackageJSON('/fully/resolved/path/to/folder')
 ```
 
 ### `readTSConfig`
@@ -68,29 +68,29 @@ import { writeTSConfig } from 'pkg-types'
 await writeTSConfig('path/to/tsconfig.json', tsconfig)
 ```
 
-### `findNearestTSConfig`
+### `resolveTSConfig`
 
 ```js
-import { findNearestTSConfig } from 'pkg-types'
-const filename = await findNearestTSConfig()
+import { resolveTSConfig } from 'pkg-types'
+const filename = await resolveTSConfig()
 // or
-const tsconfig = await findNearestTSConfig('/fully/resolved/path/to/folder')
+const tsconfig = await resolveTSConfig('/fully/resolved/path/to/folder')
 ```
 
-### `readNearestTSConfig`
+### `readTSConfig`
 
 ```js
-import { readNearestTSConfig } from 'pkg-types'
-const filename = await readNearestTSConfig()
+import { readTSConfig } from 'pkg-types'
+const filename = await readTSConfig()
 // or
-const tsconfig = await readNearestTSConfig('/fully/resolved/path/to/folder')
+const tsconfig = await readTSConfig('/fully/resolved/path/to/folder')
 ```
 
-### `findNearestFile`
+### `resolveFile`
 
 ```js
-import { findNearestFile } from 'pkg-types'
-const filename = await findNearestFile('README.md', {
+import { resolveFile } from 'pkg-types'
+const filename = await resolveFile('README.md', {
   startingFrom: id,
   rootPattern: /^node_modules$/,
   matcher: filename => filename.endsWith('.md'),
