@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "jsonc-parser": "^3.0.0",
-    "mlly": "^0.3.5",
+    "mlly": "^0.3.6",
     "pathe": "^0.2.0"
   },
   "devDependencies": {
