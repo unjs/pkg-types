@@ -32,6 +32,17 @@ const defaultFindOptions: Required<FindNearestFileOptions> = {
   }
 }
 
+/**
+ * @example
+ * ```js
+ * import { findNearestFile } from 'pkg-types'
+ * const filename = await findNearestFile('README.md', {
+ *   startingFrom: id,
+ *   rootPattern: /^node_modules$/,
+ *   test: filename => filename.endsWith('.md'),
+ * })
+ * ```
+ */
 export async function findNearestFile (filename: string, _options: FindNearestFileOptions = {}): Promise<string> {
   const options = { ...defaultFindOptions, ..._options }
   const basePath = resolve(options.startingFrom)
