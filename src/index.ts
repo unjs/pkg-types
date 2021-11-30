@@ -1,12 +1,14 @@
 import * as jsonc from 'jsonc-parser'
 import { promises as fsp } from 'fs'
-import { findNearestFile } from './utils'
-import { ResolveOptions, resolvePath } from 'mlly'
+import { findNearestFile, FindNearestFileOptions } from './utils'
+import { ResolveOptions as _ResolveOptions, resolvePath } from 'mlly'
 import type { PackageJson, TSConfig } from './types'
 import { isAbsolute } from 'pathe'
 
 export * from './types'
 export * from './utils'
+
+export type ResolveOptions = _ResolveOptions & FindNearestFileOptions
 
 export function definePackageJSON(pkg: PackageJson): PackageJson {
   return pkg
@@ -36,12 +38,12 @@ export async function writeTSConfig(path: string, tsconfig: TSConfig): Promise<v
   await fsp.writeFile(path, JSON.stringify(tsconfig, null, 2))
 }
 
-export async function resolvePackageJSON (id: string = process.cwd(), opts: ResolveOptions = {}): Promise<string> {
+export async function resolvePackageJSON(id: string = process.cwd(), opts: ResolveOptions = {}): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, opts)
-  return findNearestFile('package.json', { startingFrom: resolvedPath })
+  return findNearestFile('package.json', { startingFrom: resolvedPath, ...opts })
 }
 
-export async function resolveTSConfig (id: string = process.cwd(), opts: ResolveOptions = {}): Promise<string> {
+export async function resolveTSConfig(id: string = process.cwd(), opts: ResolveOptions = {}): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, opts)
-  return findNearestFile('tsconfig.json', { startingFrom: resolvedPath })
+  return findNearestFile('tsconfig.json', { startingFrom: resolvedPath, ...opts })
 }
