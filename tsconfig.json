@@ -9,8 +9,7 @@
     "declaration": true,
     "noEmit": true,
     "types": [
-      "node",
-      "mocha"
+      "node"
     ]
   },
   "include": [
