@@ -13,12 +13,12 @@ export interface PackageJson {
     /**
      * The name is what your thing is called.
      * Some rules:
-  
+
          - The name must be less than or equal to 214 characters. This includes the scope for scoped packages.
          - The name can’t start with a dot or an underscore.
          - New packages must not have uppercase letters in the name.
          - The name ends up being part of a URL, an argument on the command line, and a folder name. Therefore, the name can’t contain any non-URL-safe characters.
-  
+
      */
     name?: string
     /**
@@ -63,6 +63,7 @@ export interface PackageJson {
          */
         directory?: string
     }
+    scripts?: Record<string, string>
     /**
      * If you set `"private": true` in your package.json, then npm will refuse to publish it.
      */
@@ -152,4 +153,5 @@ export interface PackageJson {
         string | Record<'import' | 'require' | string, string>
     >
     workspaces?: string[]
+    [key: string]: any
 }
