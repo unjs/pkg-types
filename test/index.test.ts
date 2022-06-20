@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'url'
 import { dirname, resolve } from 'path'
-import { expect } from 'chai'
+import { describe, expect, it } from 'vitest'
 import { expectTypeOf } from 'expect-type'
 import {
   readPackageJSON,
