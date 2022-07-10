@@ -7,6 +7,7 @@ import type { PackageJson, TSConfig } from './types'
 
 export * from './types'
 export * from './utils'
+export * from './workspace'
 
 export type ResolveOptions = _ResolveOptions & FindNearestFileOptions
 
