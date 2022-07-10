@@ -9,18 +9,18 @@ import {
   resolvePackageJSON,
   writePackageJSON,
   writeTSConfig,
-  TSConfig,
+  TSConfig
 } from '../src'
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), 'fixture')
 
 const rFixture = (...p: string[]) => resolve(fixtureDir, ...p)
 
-async function expectToReject(p: Promise<any>) {
+async function expectToReject (p: Promise<any>) {
   return expect(await p.then(() => null).catch((err: Error) => err.toString()))
 }
 
-function testResolve(filename: string, resolveFn: (id?: string) => Promise<string | null>) {
+function testResolve (filename: string, resolveFn: (id?: string) => Promise<string | null>) {
   it('finds a package.json in root directory', async () => {
     const pkgPath = await resolveFn(rFixture('.'))
     expect(pkgPath).to.equal(rFixture(filename))
@@ -35,7 +35,7 @@ function testResolve(filename: string, resolveFn: (id?: string) => Promise<strin
   it('stops at `node_modules`', async () => {
     (await expectToReject(resolveFn(rFixture('further', 'node_modules', 'file.json')))).to.contain('Cannot find matching')
   })
-  it(`finds the working directory`, async () => {
+  it('finds the working directory', async () => {
     const pkgPath = await resolveFn()
     expect(pkgPath).to.equal(rFixture('../..', filename))
   })
@@ -50,7 +50,7 @@ describe('package.json', () => {
   })
 
   it('write package.json', async () => {
-    const pkg = await writePackageJSON(rFixture('package.json.tmp'), { version: '1.0.0' })
+    await writePackageJSON(rFixture('package.json.tmp'), { version: '1.0.0' })
     expect((await readPackageJSON(rFixture('package.json.tmp'))).version).to.equal('1.0.0')
   })
 
@@ -71,7 +71,7 @@ describe('tsconfig.json', () => {
     expect(tsConfig.compilerOptions?.target).to.equal('ESNext')
   })
   it('write tsconfig.json', async () => {
-    const tsConfig = await writeTSConfig(rFixture('tsconfig.json.tmp'), { include: ['src'] })
+    await writeTSConfig(rFixture('tsconfig.json.tmp'), { include: ['src'] })
     expect((await readTSConfig(rFixture('tsconfig.json.tmp'))).include).to.deep.equal(['src'])
   })
 

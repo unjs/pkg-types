@@ -45,7 +45,7 @@ export async function findNearestFile (filename: string, _options: FindNearestFi
 
   // Limit to node_modules scope if it exists
   let root = segments.findIndex(r => r.match(options.rootPattern))
-  if (root === -1) root = 0
+  if (root === -1) { root = 0 }
 
   for (let i = segments.length; i > root; i--) {
     const filePath = join(...segments.slice(0, i), filename)
@@ -54,4 +54,3 @@ export async function findNearestFile (filename: string, _options: FindNearestFi
 
   throw new Error(`Cannot find matching ${filename} in ${options.startingFrom} or parent directories`)
 }
-
