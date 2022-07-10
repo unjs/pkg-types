@@ -4,7 +4,6 @@ import { isAbsolute, join } from 'pathe'
 import { PackageJson } from './types'
 import { findNearestFile } from './utils'
 import { isFile } from './_utils'
-import { resolvePackageJSON } from '.'
 
 const rootFiles = ['pnpm-workspace.yaml', 'pnpm-lock.yaml', 'yarn.lock', 'lerna.json']
 
@@ -29,6 +28,6 @@ export async function findWorkspaceRoot (id: string = process.cwd(), opts: Resol
       ...opts
     })
   } catch {
-    return resolvePackageJSON(id, opts)
+    return findNearestFile('package.json', { startingFrom: resolvedPath, ...opts })
   }
 }
