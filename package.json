@@ -16,6 +16,7 @@
   "scripts": {
     "prepack": "unbuild",
     "release": "standard-version && pnpm publish && git push --follow-tags",
+    "lint": "eslint --ext .ts,.js,.mjs,.cjs .",
     "test": "vitest run",
     "test:types": "tsc --noEmit --module esnext --skipLibCheck --moduleResolution node ./test/*.test.ts"
   },
@@ -25,8 +26,10 @@
     "pathe": "^0.3.0"
   },
   "devDependencies": {
+    "@nuxtjs/eslint-config-typescript": "latest",
     "@types/node": "latest",
     "c8": "latest",
+    "eslint": "latest",
     "expect-type": "latest",
     "jiti": "latest",
     "standard-version": "latest",
