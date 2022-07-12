@@ -7,18 +7,18 @@ specifiers:
   eslint: latest
   expect-type: latest
   jiti: latest
-  jsonc-parser: ^3.0.0
-  mlly: ^0.5.3
-  pathe: ^0.3.0
+  jsonc-parser: ^3.1.0
+  mlly: ^0.5.4
+  pathe: ^0.3.2
   standard-version: latest
   typescript: latest
   unbuild: latest
   vitest: latest
 
 dependencies:
-  jsonc-parser: 3.0.0
-  mlly: 0.5.3
-  pathe: 0.3.0
+  jsonc-parser: 3.1.0
+  mlly: 0.5.4
+  pathe: 0.3.2
 
 devDependencies:
   '@nuxtjs/eslint-config-typescript': 10.0.0_4x5o4skxv6sl53vpwefgt23khm
@@ -916,7 +916,7 @@ packages:
     dev: true
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
     dev: true
 
   /concat-stream/2.0.0:
@@ -2669,8 +2669,8 @@ packages:
     hasBin: true
     dev: true
 
-  /jsonc-parser/3.0.0:
-    resolution: {integrity: sha512-fQzRfAbIBnR0IQvftw9FJveWiHp72Fg20giDrHz6TdfB12UH/uue0D3hm57UB5KgAVuniLMCaS8P1IMj9NR7cA==}
+  /jsonc-parser/3.1.0:
+    resolution: {integrity: sha512-DRf0QjnNeCUds3xTjKlQQ3DpJD51GvDjJfnxUVWg6PZTo2otSm+slzNAxU/35hF8/oJIKoG9slq30JYOsF2azg==}
 
   /jsonfile/6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
@@ -2883,12 +2883,13 @@ packages:
 
   /mlly/0.3.19:
     resolution: {integrity: sha512-zMq5n3cOf4fOzA4WoeulxagbAgMChdev3MgP6K51k7M0u2whTXxupfIY4VVzws4vxkiWhwH1rVQcsw7zDGfRhA==}
+    dev: true
 
-  /mlly/0.5.3:
-    resolution: {integrity: sha512-im69tuLD9EJh9fc9TZRpJEFvsBcGMez7glUCWDcHWWCKzhvPmNvyaYjp/+h0qJJN/Xovrs//GzGjOOKmFw4Gog==}
+  /mlly/0.5.4:
+    resolution: {integrity: sha512-gFlsLWCjVwu/LM/ZfYUkmnbBoz7eyBIMUwVQYDqhd8IvtNFDeZ95uwAyxHE2Xx7tQwePQaCo4fECZ9MWFEUTgQ==}
     dependencies:
-      pathe: 0.2.0
-      pkg-types: 0.3.2
+      pathe: 0.3.2
+      pkg-types: 0.3.3
 
   /modify-values/1.0.1:
     resolution: {integrity: sha512-xV2bxeN6F7oYjZWTe/YPAy6MN2M+sL4u/Rlm2AHCIVGfo2p1yGmBHQ6vHehl4bRTZBdHu3TSkWdYgkwpYzAGSw==}
@@ -3119,10 +3120,10 @@ packages:
 
   /pathe/0.2.0:
     resolution: {integrity: sha512-sTitTPYnn23esFR3RlqYBWn4c45WGeLcsKzQiUpXJAyfcWkolvlYpV8FLo7JishK946oQwMFUCHXQ9AjGPKExw==}
+    dev: true
 
-  /pathe/0.3.0:
-    resolution: {integrity: sha512-3vUjp552BJzCw9vqKsO5sttHkbYqqsZtH0x1PNtItgqx8BXEXzoY1SYRKcL6BTyVh4lGJGLj0tM42elUDMvcYA==}
-    dev: false
+  /pathe/0.3.2:
+    resolution: {integrity: sha512-qhnmX0TOqlCvdWWTkoM83wh5J8fZ2yhbDEc9MlsnAEtEc+JCwxUKEwmd6pkY9hRe6JR1Uecbc14VcAKX2yFSTA==}
 
   /pathval/1.1.1:
     resolution: {integrity: sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==}
@@ -3150,9 +3151,17 @@ packages:
   /pkg-types/0.3.2:
     resolution: {integrity: sha512-eBYzX/7NYsQEOR2alWY4rnQB49G62oHzFpoi9Som56aUr8vB8UGcmcIia9v8fpBeuhH3Ltentuk2OGpp4IQV3Q==}
     dependencies:
-      jsonc-parser: 3.0.0
+      jsonc-parser: 3.1.0
       mlly: 0.3.19
       pathe: 0.2.0
+    dev: true
+
+  /pkg-types/0.3.3:
+    resolution: {integrity: sha512-6AJcCMnjUQPQv/Wk960w0TOmjhdjbeaQJoSKWRQv9N3rgkessCu6J0Ydsog/nw1MbpnxHuPzYbfOn2KmlZO1FA==}
+    dependencies:
+      jsonc-parser: 3.1.0
+      mlly: 0.5.4
+      pathe: 0.3.2
 
   /pluralize/8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
@@ -3350,7 +3359,7 @@ packages:
       es-module-lexer: 0.9.3
       esbuild: 0.14.46
       joycon: 3.1.1
-      jsonc-parser: 3.0.0
+      jsonc-parser: 3.1.0
       rollup: 2.75.7
     transitivePeerDependencies:
       - supports-color
@@ -3751,7 +3760,7 @@ packages:
       magic-string: 0.26.2
       mkdirp: 1.0.4
       mkdist: 0.3.10_typescript@4.7.4
-      mlly: 0.5.3
+      mlly: 0.5.4
       mri: 1.2.0
       pathe: 0.2.0
       pkg-types: 0.3.2
