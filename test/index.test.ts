@@ -7,10 +7,10 @@ import {
   readTSConfig,
   resolveTSConfig,
   resolvePackageJSON,
+  resolveRootPackageJSON,
   writePackageJSON,
   writeTSConfig,
-  TSConfig,
-  findWorkspaceRoot
+  TSConfig
 } from '../src'
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), 'fixture')
@@ -63,8 +63,8 @@ describe('package.json', () => {
     expect(await readPackageJSON('pathe').then(p => p?.version)).to.be.a('string')
   })
 
-  it('finds the workspace root', async () => {
-    expect(await findWorkspaceRoot(rFixture('.'))).toBe(rFixture('../../package.json'))
+  it('finds the root package.json', async () => {
+    expect(await resolveRootPackageJSON(rFixture('.'))).toBe(rFixture('../../package.json'))
   })
 })
 

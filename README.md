@@ -43,6 +43,15 @@ const filename = await resolvePackageJSON()
 const packageJson = await resolvePackageJSON('/fully/resolved/path/to/folder')
 ```
 
+### `resolveRootPackageJSON`
+
+```js
+import { resolveRootPackageJSON } from 'pkg-types'
+const filename = await resolveRootPackageJSON()
+// or
+const packageJson = await resolveRootPackageJSON('/fully/resolved/path/to/folder')
+```
+
 ### `readPackageJSON`
 
 ```js
