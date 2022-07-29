@@ -50,7 +50,7 @@ export interface PackageJson {
     /**
      * You should specify a license for your package so that people know how they are permitted to use it, and any restrictions you’re placing on it.
      */
-    licence?: string
+    license?: string
     /**
      * Specify the place where your code lives. This is helpful for people who want to contribute. If the git repo is on GitHub, then the `npm docs` command will be able to find you.
      * For GitHub, GitHub gist, Bitbucket, or GitLab repositories you can use the same shortcut syntax you use for npm install:
