@@ -1,9 +1,10 @@
 import { promises as fsp } from 'fs'
 import * as jsonc from 'jsonc-parser'
 import { ResolveOptions as _ResolveOptions, resolvePath } from 'mlly'
-import { isAbsolute } from 'pathe'
+import { isAbsolute, join } from 'pathe'
 import { findNearestFile, FindNearestFileOptions } from './utils'
 import type { PackageJson, TSConfig } from './types'
+import { isFile } from './_utils'
 
 export * from './types'
 export * from './utils'
@@ -46,4 +47,31 @@ export async function resolvePackageJSON (id: string = process.cwd(), opts: Reso
 export async function resolveTSConfig (id: string = process.cwd(), opts: ResolveOptions = {}): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, opts)
   return findNearestFile('tsconfig.json', { startingFrom: resolvedPath, ...opts })
+}
+
+const rootFiles = ['pnpm-workspace.yaml', 'pnpm-lock.yaml', 'yarn.lock', 'lerna.json']
+
+export async function resolveRootPackageJSON (id: string = process.cwd(), opts: ResolveOptions = {}): Promise<string> {
+  const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, opts)
+  try {
+    return await findNearestFile('package.json', {
+      startingFrom: resolvedPath,
+      test: async (filePath) => {
+        if (!isFile(filePath)) {
+          return false
+        }
+        if (rootFiles.some(file => isFile(join(filePath, '..', file)))) {
+          return true
+        }
+        try {
+          const blob = await fsp.readFile(resolvedPath, 'utf-8')
+          return !!(JSON.parse(blob) as PackageJson).workspaces
+        } catch {}
+        return false
+      },
+      ...opts
+    })
+  } catch {
+    return findNearestFile('package.json', { startingFrom: resolvedPath, ...opts })
+  }
 }

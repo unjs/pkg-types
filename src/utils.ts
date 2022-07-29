@@ -1,5 +1,5 @@
-import { statSync } from 'fs'
 import { join, resolve } from 'pathe'
+import { isFile } from './_utils'
 
 export interface FindNearestFileOptions {
   /**
@@ -24,12 +24,7 @@ export interface FindNearestFileOptions {
 const defaultFindOptions: Required<FindNearestFileOptions> = {
   startingFrom: '.',
   rootPattern: /^node_modules$/,
-  test: (filePath: string) => {
-    try {
-      if (statSync(filePath).isFile()) { return true }
-    } catch { }
-    return null
-  }
+  test: (filePath: string) => isFile(filePath) || null
 }
 
 export async function findNearestFile (filename: string, _options: FindNearestFileOptions = {}): Promise<string> {

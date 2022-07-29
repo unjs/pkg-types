@@ -7,6 +7,7 @@ import {
   readTSConfig,
   resolveTSConfig,
   resolvePackageJSON,
+  resolveRootPackageJSON,
   writePackageJSON,
   writeTSConfig,
   TSConfig
@@ -60,6 +61,10 @@ describe('package.json', () => {
 
   it('correctly reads a version from package', async () => {
     expect(await readPackageJSON('pathe').then(p => p?.version)).to.be.a('string')
+  })
+
+  it('finds the root package.json', async () => {
+    expect(await resolveRootPackageJSON(rFixture('.'))).toBe(rFixture('../../package.json'))
   })
 })
 
