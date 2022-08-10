@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "jsonc-parser": "^3.1.0",
-    "mlly": "^0.5.7",
+    "mlly": "^0.5.9",
     "pathe": "^0.3.3"
   },
   "devDependencies": {
@@ -37,5 +37,5 @@
     "unbuild": "latest",
     "vitest": "latest"
   },
-  "packageManager": "pnpm@7.8.0"
+  "packageManager": "pnpm@7.9.0"
 }
