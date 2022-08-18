@@ -1,5 +1,4 @@
 import { promises as fsp } from 'fs'
-import * as jsonc from 'jsonc-parser'
 import { ResolveOptions as _ResolveOptions, resolvePath } from 'mlly'
 import { isAbsolute } from 'pathe'
 import { findNearestFile, FindNearestFileOptions } from './utils'
@@ -31,6 +30,7 @@ export async function writePackageJSON (path: string, pkg: PackageJson): Promise
 export async function readTSConfig (id: string, opts: ResolveOptions = {}): Promise<TSConfig> {
   const resolvedPath = await resolveTSConfig(id, opts)
   const blob = await fsp.readFile(resolvedPath, 'utf-8')
+  const jsonc = await import('jsonc-parser')
   return jsonc.parse(blob) as TSConfig
 }
 
