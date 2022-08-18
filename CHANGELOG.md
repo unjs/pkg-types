@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.4](https://github.com/unjs/pkg-types/compare/v0.3.3...v0.3.4) (2022-08-18)
+
+
+### Bug Fixes
+
+* **types:** rename `licence` to `license` ([#17](https://github.com/unjs/pkg-types/issues/17)) ([ddda0b5](https://github.com/unjs/pkg-types/commit/ddda0b509a715f26e8d0d7e73a5b58922ee6bfb4))
+
 ### [0.3.3](https://github.com/unjs/pkg-types/compare/v0.3.2...v0.3.3) (2022-06-20)
 
 
