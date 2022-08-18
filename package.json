@@ -4,6 +4,7 @@
   "description": "Node.js utilities and TypeScript definitions for `package.json` and `tsconfig.json`",
   "license": "MIT",
   "main": "./dist/index.cjs",
+  "sideEffects": false,
   "exports": {
     "import": "./dist/index.mjs",
     "require": "./dist/index.cjs"
