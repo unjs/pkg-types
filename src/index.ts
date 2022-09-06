@@ -1,9 +1,9 @@
 import { promises as fsp } from 'fs'
+import { dirname, resolve } from 'path'
 import { ResolveOptions as _ResolveOptions, resolvePath } from 'mlly'
 import { isAbsolute } from 'pathe'
 import { findFile, FindFileOptions, findNearestFile } from './utils'
 import type { PackageJson, TSConfig } from './types'
-import { dirname, resolve } from 'path'
 
 export * from './types'
 export * from './utils'
