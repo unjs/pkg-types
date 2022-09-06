@@ -110,7 +110,7 @@ const lockfile = await resolveFile('.')
 
 Try to detect workspace dir by in order:
 
-1. Farthest `.git` directory
+1. Nearest `.git` directory
 2. Farthest lockfile
 3. Farthest `package.json` file
 
