@@ -10,7 +10,7 @@ import {
   writePackageJSON,
   writeTSConfig,
   TSConfig,
-  ResolveOptions,
+  ResolveOptions
 } from '../src'
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), 'fixture')
