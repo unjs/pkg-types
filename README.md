@@ -97,6 +97,15 @@ const filename = await resolveFile('README.md', {
 })
 ```
 
+### `resolveLockFile`
+
+Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`) or throws an error.
+
+```js
+import { resolveLockFile } from 'pkg-types'
+const lockfile = await resolveFile('.')
+```
+
 ## Types
 
 **Note:** In order to make types working, you need to install `typescript` as a devDependency.
