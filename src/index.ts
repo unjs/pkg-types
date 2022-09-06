@@ -66,19 +66,19 @@ export async function findWorkspaceDir (id: string = process.cwd(), opts: Resolv
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, opts)
   const _opts = { startingFrom: resolvedPath, reverse: true, ...opts }
 
-  // Lookup for .git/config
+  // Lookdown for .git/config
   try {
     const r = await findFile('.git/config', _opts)
     return resolve(r, '../..')
   } catch { }
 
-  // Lookup for lockfile
+  // Lookdown for lockfile
   try {
     const r = await resolveLockfile(resolvedPath, _opts)
     return dirname(r)
   } catch { }
 
-  // Lookup for package.json
+  // Lookdown for package.json
   try {
     const r = await findFile(resolvedPath, _opts)
     return dirname(r)
