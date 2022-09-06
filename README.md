@@ -103,7 +103,7 @@ Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, 
 
 ```js
 import { resolveLockFile } from 'pkg-types'
-const lockfile = await resolveFile('.')
+const lockfile = await resolveLockFile('.')
 ```
 
 ## Types
