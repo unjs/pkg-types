@@ -64,17 +64,17 @@ export async function resolveLockfile (id: string = process.cwd(), opts: Resolve
 
 export async function findWorkspaceDir (id: string = process.cwd(), opts: ResolveOptions = {}): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, opts)
-  const _opts = { startingFrom: resolvedPath, reverse: true, ...opts }
+  const _opts = { startingFrom: resolvedPath, ...opts }
 
-  // Lookdown for .git/config
+  // Lookup for .git/config
   try {
-    const r = await findFile('.git/config', _opts)
+    const r = await findNearestFile('.git/config', _opts)
     return resolve(r, '../..')
   } catch { }
 
   // Lookdown for lockfile
   try {
-    const r = await resolveLockfile(resolvedPath, _opts)
+    const r = await resolveLockfile(resolvedPath, { ..._opts, reverse: true })
     return dirname(r)
   } catch { }
 
