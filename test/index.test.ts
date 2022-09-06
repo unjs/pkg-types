@@ -11,7 +11,8 @@ import {
   writeTSConfig,
   TSConfig,
   ResolveOptions,
-  resolveLockfile
+  resolveLockfile,
+  findWorkspaceDir
 } from '../src'
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), 'fixture')
@@ -95,5 +96,14 @@ describe('resolveLockfile', () => {
   })
   it('works for root dir', async () => {
     expect(await resolveLockfile(rFixture('.'))).to.equal(rFixture('../..', 'pnpm-lock.yaml'))
+  })
+})
+
+describe('findWorkspaceDir', () => {
+  it('works', async () => {
+    expect(await findWorkspaceDir(rFixture('./sub'))).to.equal(rFixture('../..'))
+    expect(await findWorkspaceDir(rFixture('.'))).to.equal(rFixture('../..'))
+    expect(await findWorkspaceDir(rFixture('..'))).to.equal(rFixture('../..'))
+    expect(await findWorkspaceDir(rFixture('../..'))).to.equal(rFixture('../..'))
   })
 })

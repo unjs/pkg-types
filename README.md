@@ -106,6 +106,21 @@ import { resolveLockFile } from 'pkg-types'
 const lockfile = await resolveLockFile('.')
 ```
 
+### `findWorkspaceDir`
+
+Try to detect workspace dir by in order:
+
+1. Nearest `.git` directory
+2. Farthest lockfile
+3. Farthest `package.json` file
+
+If fails, throws an error.
+
+```js
+import { findWorkspaceDir } from 'pkg-types'
+const workspaceDir = await findWorkspaceDir('.')
+```
+
 ## Types
 
 **Note:** In order to make types working, you need to install `typescript` as a devDependency.

@@ -61,7 +61,7 @@ export async function findFile (filename: string, _options: FindFileOptions = {}
       if (await options.test(filePath)) { return filePath }
     }
   } else {
-    for (let i = root + 1; i < segments.length; i++) {
+    for (let i = root + 1; i <= segments.length; i++) {
       const filePath = join(...segments.slice(0, i), filename)
       if (await options.test(filePath)) { return filePath }
     }
