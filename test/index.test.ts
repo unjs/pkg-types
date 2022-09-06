@@ -100,7 +100,10 @@ describe('resolveLockfile', () => {
 })
 
 describe('findWorkspaceDir', () => {
-  it('works for subdir', async () => {
+  it('works', async () => {
     expect(await findWorkspaceDir(rFixture('./sub'))).to.equal(rFixture('../..'))
+    expect(await findWorkspaceDir(rFixture('.'))).to.equal(rFixture('../..'))
+    expect(await findWorkspaceDir(rFixture('..'))).to.equal(rFixture('../..'))
+    expect(await findWorkspaceDir(rFixture('../..'))).to.equal(rFixture('../..'))
   })
 })
