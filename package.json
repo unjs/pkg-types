@@ -16,9 +16,10 @@
   ],
   "scripts": {
     "prepack": "unbuild",
-    "release": "standard-version && pnpm publish && git push --follow-tags",
+    "dev": "vitest",
+    "release": "pnpm test && standard-version && pnpm publish && git push --follow-tags",
     "lint": "eslint --ext .ts,.js,.mjs,.cjs .",
-    "test": "vitest run",
+    "test": "vitest run --coverage",
     "test:types": "tsc --noEmit --module esnext --skipLibCheck --moduleResolution node ./test/*.test.ts"
   },
   "dependencies": {

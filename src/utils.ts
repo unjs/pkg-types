@@ -1,7 +1,7 @@
 import { statSync } from 'fs'
 import { join, resolve } from 'pathe'
 
-export interface FindNearestFileOptions {
+export interface FindFileOptions {
   /**
    * The starting directory for the search.
    * @default . (same as `process.cwd()`)
@@ -13,6 +13,10 @@ export interface FindNearestFileOptions {
    */
   rootPattern?: RegExp
   /**
+   * If true, search starts from root level descending into subdirectories
+   */
+  reverse?: boolean
+  /**
    * A matcher that can evaluate whether the given path is a valid file (for example,
    * by testing whether the file path exists.
    *
@@ -21,9 +25,13 @@ export interface FindNearestFileOptions {
   test?: (filePath: string) => boolean | null | Promise<boolean | null>
 }
 
-const defaultFindOptions: Required<FindNearestFileOptions> = {
+/** @deprecated */
+export type FindNearestFileOptions = FindFileOptions
+
+const defaultFindOptions: Required<FindFileOptions> = {
   startingFrom: '.',
   rootPattern: /^node_modules$/,
+  reverse: false,
   test: (filePath: string) => {
     try {
       if (statSync(filePath).isFile()) { return true }
@@ -32,7 +40,7 @@ const defaultFindOptions: Required<FindNearestFileOptions> = {
   }
 }
 
-export async function findNearestFile (filename: string, _options: FindNearestFileOptions = {}): Promise<string> {
+export async function findFile (filename: string, _options: FindFileOptions = {}): Promise<string> {
   const options = { ...defaultFindOptions, ..._options }
   const basePath = resolve(options.startingFrom)
   const leadingSlash = basePath[0] === '/'
@@ -47,10 +55,25 @@ export async function findNearestFile (filename: string, _options: FindNearestFi
   let root = segments.findIndex(r => r.match(options.rootPattern))
   if (root === -1) { root = 0 }
 
-  for (let i = segments.length; i > root; i--) {
-    const filePath = join(...segments.slice(0, i), filename)
-    if (await options.test(filePath)) { return filePath }
+  if (!options.reverse) {
+    for (let i = segments.length; i > root; i--) {
+      const filePath = join(...segments.slice(0, i), filename)
+      if (await options.test(filePath)) { return filePath }
+    }
+  } else {
+    for (let i = root + 1; i < segments.length; i++) {
+      const filePath = join(...segments.slice(0, i), filename)
+      if (await options.test(filePath)) { return filePath }
+    }
   }
 
   throw new Error(`Cannot find matching ${filename} in ${options.startingFrom} or parent directories`)
+}
+
+export function findNearestFile (filename: string, _options: FindFileOptions = {}): Promise<string> {
+  return findFile(filename, _options)
+}
+
+export function findFarthestFile (filename: string, _options: FindFileOptions = {}): Promise<string> {
+  return findFile(filename, { ..._options, reverse: true })
 }
