@@ -47,3 +47,16 @@ export async function resolveTSConfig (id: string = process.cwd(), opts: Resolve
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, opts)
   return findNearestFile('tsconfig.json', { startingFrom: resolvedPath, ...opts })
 }
+
+const lockFiles = ['yarn.lock', 'package-lock.json', 'pnpm-lock.yaml', 'npm-shrinkwrap.json']
+
+export async function resolveLockfile (id: string = process.cwd(), opts: ResolveOptions = {}): Promise<string> {
+  const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, opts)
+  const _opts = { startingFrom: resolvedPath, ...opts }
+  for (const lockFile of lockFiles) {
+    try {
+      return await findNearestFile(lockFile, _opts)
+    } catch { }
+  }
+  throw new Error('No lockfile found from ' + id)
+}

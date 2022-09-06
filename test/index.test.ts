@@ -10,7 +10,8 @@ import {
   writePackageJSON,
   writeTSConfig,
   TSConfig,
-  ResolveOptions
+  ResolveOptions,
+  resolveLockfile
 } from '../src'
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), 'fixture')
@@ -85,5 +86,14 @@ describe('tsconfig.json', () => {
     expectTypeOf(options.moduleResolution).toEqualTypeOf<any>()
     // TODO: type check this file.
     // expectTypeOf(options.maxNodeModuleJsDepth).toEqualTypeOf<number | undefined>()
+  })
+})
+
+describe('resolveLockfile', () => {
+  it('works for subdir', async () => {
+    expect(await resolveLockfile(rFixture('./sub'))).to.equal(rFixture('./sub/yarn.lock'))
+  })
+  it('works for root dir', async () => {
+    expect(await resolveLockfile(rFixture('.'))).to.equal(rFixture('../..', 'pnpm-lock.yaml'))
   })
 })
