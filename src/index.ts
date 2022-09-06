@@ -78,7 +78,7 @@ export async function findWorkspaceDir (id: string = process.cwd(), opts: Resolv
     return dirname(r)
   } catch { }
 
-  // Try to find a package.json
+  // Lookup for package.json
   try {
     const r = await findFile(resolvedPath, _opts)
     return dirname(r)
