@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.5](https://github.com/unjs/pkg-types/compare/v0.3.4...v0.3.5) (2022-09-06)
+
+
+### Features
+
+* `findFarthestFile` ([#32](https://github.com/unjs/pkg-types/issues/32)) ([0d8319e](https://github.com/unjs/pkg-types/commit/0d8319e2f90fcfe38447730c70deb2437c16e688))
+* `findWorkspaceDir` ([#34](https://github.com/unjs/pkg-types/issues/34)) ([8b53c08](https://github.com/unjs/pkg-types/commit/8b53c0802cdd119beebc563d5fc791248391ccb7))
+* add `resolveLockfile` ([#14](https://github.com/unjs/pkg-types/issues/14)) ([6b12948](https://github.com/unjs/pkg-types/commit/6b12948ae3ea29972b3f365047cba695ad322c4f))
+
 ### [0.3.4](https://github.com/unjs/pkg-types/compare/v0.3.3...v0.3.4) (2022-08-18)
 
 
