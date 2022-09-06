@@ -1,13 +1,13 @@
 import { promises as fsp } from 'fs'
 import { ResolveOptions as _ResolveOptions, resolvePath } from 'mlly'
 import { isAbsolute } from 'pathe'
-import { findNearestFile, FindNearestFileOptions } from './utils'
+import { FindFileOptions, findNearestFile } from './utils'
 import type { PackageJson, TSConfig } from './types'
 
 export * from './types'
 export * from './utils'
 
-export type ResolveOptions = _ResolveOptions & FindNearestFileOptions
+export type ResolveOptions = _ResolveOptions & FindFileOptions
 
 export function definePackageJSON (pkg: PackageJson): PackageJson {
   return pkg

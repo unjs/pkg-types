@@ -9,7 +9,8 @@ import {
   resolvePackageJSON,
   writePackageJSON,
   writeTSConfig,
-  TSConfig
+  TSConfig,
+  ResolveOptions,
 } from '../src'
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), 'fixture')
@@ -20,10 +21,14 @@ async function expectToReject (p: Promise<any>) {
   return expect(await p.then(() => null).catch((err: Error) => err.toString()))
 }
 
-function testResolve (filename: string, resolveFn: (id?: string) => Promise<string | null>) {
+function testResolve (filename: string, resolveFn: (id?: string, opts?: ResolveOptions) => Promise<string | null>) {
   it('finds a package.json in root directory', async () => {
     const pkgPath = await resolveFn(rFixture('.'))
     expect(pkgPath).to.equal(rFixture(filename))
+  })
+  it('finds package.json from root', async () => {
+    const pkgPath = await resolveFn(rFixture('.'), { reverse: true })
+    expect(pkgPath).to.equal(rFixture('../..', filename)) // Top level in pkg-types repo
   })
   it('handles non-existent paths', async () => {
     const pkgPath = await resolveFn(rFixture('further', 'dir', 'file.json'))
