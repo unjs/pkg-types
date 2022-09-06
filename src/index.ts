@@ -50,7 +50,7 @@ export async function resolveTSConfig (id: string = process.cwd(), opts: Resolve
 
 const lockFiles = ['yarn.lock', 'package-lock.json', 'pnpm-lock.yaml', 'npm-shrinkwrap.json']
 
-export async function resolveLockfile(id: string = process.cwd(), opts: ResolveOptions = {}): Promise<string> {
+export async function resolveLockfile (id: string = process.cwd(), opts: ResolveOptions = {}): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, opts)
   const _opts = { startingFrom: resolvedPath, ...opts }
   for (const lockFile of lockFiles) {

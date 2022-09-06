@@ -90,10 +90,10 @@ describe('tsconfig.json', () => {
 })
 
 describe('resolveLockfile', () => {
-  it ('works for subdir', async () => {
+  it('works for subdir', async () => {
     expect(await resolveLockfile(rFixture('./sub'))).to.equal(rFixture('./sub/yarn.lock'))
   })
-  it ('works for root dir', async () => {
+  it('works for root dir', async () => {
     expect(await resolveLockfile(rFixture('.'))).to.equal(rFixture('../..', 'pnpm-lock.yaml'))
   })
 })
