@@ -13,7 +13,7 @@ export interface FindFileOptions {
    */
   rootPattern?: RegExp
   /**
-   * If true, search starts from root level before descending into subdirectories
+   * If true, search starts from root level descending into subdirectories
    */
   reverse?: boolean
   /**
