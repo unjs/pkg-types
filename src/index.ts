@@ -1,8 +1,9 @@
 import { promises as fsp } from 'fs'
 import { ResolveOptions as _ResolveOptions, resolvePath } from 'mlly'
 import { isAbsolute } from 'pathe'
-import { FindFileOptions, findNearestFile } from './utils'
+import { findFile, FindFileOptions, findNearestFile } from './utils'
 import type { PackageJson, TSConfig } from './types'
+import { dirname, resolve } from 'path'
 
 export * from './types'
 export * from './utils'
@@ -59,4 +60,29 @@ export async function resolveLockfile (id: string = process.cwd(), opts: Resolve
     } catch { }
   }
   throw new Error('No lockfile found from ' + id)
+}
+
+export async function findWorkspaceDir (id: string = process.cwd(), opts: ResolveOptions = {}): Promise<string> {
+  const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, opts)
+  const _opts = { startingFrom: resolvedPath, reverse: true, ...opts }
+
+  // Lookup for .git/config
+  try {
+    const r = await findFile('.git/config', _opts)
+    return resolve(r, '../..')
+  } catch { }
+
+  // Lookup for lockfile
+  try {
+    const r = await resolveLockfile(resolvedPath, _opts)
+    return dirname(r)
+  } catch { }
+
+  // Try to find a package.json
+  try {
+    const r = await findFile(resolvedPath, _opts)
+    return dirname(r)
+  } catch { }
+
+  throw new Error('Cannot detect workspace root from ' + id)
 }
