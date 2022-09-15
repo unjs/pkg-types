@@ -18,7 +18,7 @@ export function defineTSConfig (tsconfig: TSConfig): TSConfig {
   return tsconfig
 }
 
-export async function readPackageJSON (id: string, opts: ResolveOptions = {}): Promise<PackageJson> {
+export async function readPackageJSON (id?: string, opts: ResolveOptions = {}): Promise<PackageJson> {
   const resolvedPath = await resolvePackageJSON(id, opts)
   const blob = await fsp.readFile(resolvedPath, 'utf-8')
   return JSON.parse(blob) as PackageJson
@@ -28,7 +28,7 @@ export async function writePackageJSON (path: string, pkg: PackageJson): Promise
   await fsp.writeFile(path, JSON.stringify(pkg, null, 2))
 }
 
-export async function readTSConfig (id: string, opts: ResolveOptions = {}): Promise<TSConfig> {
+export async function readTSConfig (id?: string, opts: ResolveOptions = {}): Promise<TSConfig> {
   const resolvedPath = await resolveTSConfig(id, opts)
   const blob = await fsp.readFile(resolvedPath, 'utf-8')
   const jsonc = await import('jsonc-parser')
