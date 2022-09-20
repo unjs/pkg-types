@@ -8,7 +8,7 @@ specifiers:
   expect-type: ^0.14.2
   jiti: ^1.16.0
   jsonc-parser: ^3.2.0
-  mlly: ^0.5.15
+  mlly: ^0.5.16
   pathe: ^0.3.8
   standard-version: ^9.5.0
   typescript: ^4.8.3
@@ -17,7 +17,7 @@ specifiers:
 
 dependencies:
   jsonc-parser: 3.2.0
-  mlly: 0.5.15
+  mlly: 0.5.16
   pathe: 0.3.8
 
 devDependencies:
@@ -3043,8 +3043,8 @@ packages:
       typescript: 4.8.3
     dev: true
 
-  /mlly/0.5.15:
-    resolution: {integrity: sha512-cA1DS4Va2t0h/1c044haUDubeWwlKrvToLbOT3Oprpr2tW5dJTObEIXDdONRN/ahKm0GWEPVeptbg0dlzl8gBQ==}
+  /mlly/0.5.16:
+    resolution: {integrity: sha512-LaJ8yuh4v0zEmge/g3c7jjFlhoCPfQn6RCjXgm9A0Qiuochq4BcuOxVfWmdnCoLTlg2MV+hqhOek+W2OhG0Lwg==}
     dependencies:
       acorn: 8.8.0
       pathe: 0.3.8
@@ -3317,19 +3317,11 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /pkg-types/0.3.4:
-    resolution: {integrity: sha512-s214f/xkRpwlwVBToWq9Mu0XlU3HhZMYCnr2var8+jjbavBHh/VCh4pBLsJW29rJ//B1jb4HlpMIaNIMH+W2/w==}
-    dependencies:
-      jsonc-parser: 3.2.0
-      mlly: 0.5.15
-      pathe: 0.3.8
-    dev: true
-
   /pkg-types/0.3.5:
     resolution: {integrity: sha512-VkxCBFVgQhNHYk9subx+HOhZ4jzynH11ah63LZsprTKwPCWG9pfWBlkElWFbvkP9BVR0dP1jS9xPdhaHQNK74Q==}
     dependencies:
       jsonc-parser: 3.2.0
-      mlly: 0.5.15
+      mlly: 0.5.16
       pathe: 0.3.8
 
   /pluralize/8.0.0:
@@ -3972,10 +3964,10 @@ packages:
       magic-string: 0.26.3
       mkdirp: 1.0.4
       mkdist: 0.3.13_typescript@4.8.3
-      mlly: 0.5.15
+      mlly: 0.5.16
       mri: 1.2.0
       pathe: 0.3.8
-      pkg-types: 0.3.4
+      pkg-types: 0.3.5
       pretty-bytes: 6.0.0
       rimraf: 3.0.2
       rollup: 2.79.0
