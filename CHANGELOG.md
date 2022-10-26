@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.6](https://github.com/unjs/pkg-types/compare/v0.3.5...v0.3.6) (2022-10-26)
+
+
+### Features
+
+* detect bun lockfiles ([#57](https://github.com/unjs/pkg-types/issues/57)) ([7619c79](https://github.com/unjs/pkg-types/commit/7619c793af5e965616ba97639917accb839eeefc))
+
+
+### Bug Fixes
+
+* `readPackageJSON` and `readPackageJSON` can be called without id ([#39](https://github.com/unjs/pkg-types/issues/39)) ([1b149ef](https://github.com/unjs/pkg-types/commit/1b149ef98dca4f7306f6276f8214ff85edc720d8))
+
 ### [0.3.5](https://github.com/unjs/pkg-types/compare/v0.3.4...v0.3.5) (2022-09-06)
 
 
