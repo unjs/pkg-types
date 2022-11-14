@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/unjs/pkg-types/compare/v0.3.6...v1.0.0) (2022-11-14)
+
+
+### Features
+
+* allow caching `readPackageJSON` and `readTSConfig` ([#47](https://github.com/unjs/pkg-types/issues/47)) ([ca127d0](https://github.com/unjs/pkg-types/commit/ca127d0600010c66d3f4d072f109730500e16923))
+
 ### [0.3.6](https://github.com/unjs/pkg-types/compare/v0.3.5...v0.3.6) (2022-10-26)
 
 
