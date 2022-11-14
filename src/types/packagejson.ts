@@ -134,7 +134,7 @@ export interface PackageJson {
      * @default 'commonjs'
      * @since Node.js v14
      */
-    type?: 'module' | 'commonjs'
+    type?: "module" | "commonjs"
     /**
      * Alternate and extensible alternative to "main" entry point.
      *
@@ -149,8 +149,8 @@ export interface PackageJson {
     exports?:
     | string
     | Record<
-        'import' | 'require' | '.' | 'node' | 'browser' | string,
-        string | Record<'import' | 'require' | string, string>
+        "import" | "require" | "." | "node" | "browser" | string,
+        string | Record<"import" | "require" | string, string>
     >
     workspaces?: string[]
     [key: string]: any

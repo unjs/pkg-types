@@ -25,13 +25,13 @@
   "dependencies": {
     "jsonc-parser": "^3.2.0",
     "mlly": "^0.5.16",
-    "pathe": "^0.3.9"
+    "pathe": "^1.0.0"
   },
   "devDependencies": {
-    "@nuxtjs/eslint-config-typescript": "^11.0.0",
     "@types/node": "^18.11.9",
     "@vitest/coverage-c8": "^0.25.2",
     "eslint": "^8.27.0",
+    "eslint-config-unjs": "^0.0.2",
     "expect-type": "^0.15.0",
     "jiti": "^1.16.0",
     "standard-version": "^9.5.0",
