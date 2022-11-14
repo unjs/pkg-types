@@ -9,6 +9,7 @@ export * from './types'
 export * from './utils'
 
 export type ResolveOptions = _ResolveOptions & FindFileOptions
+export type ReadOptions = { cache?: boolean | Map<string, Record<string, any>> }
 
 export function definePackageJSON (pkg: PackageJson): PackageJson {
   return pkg
@@ -18,21 +19,35 @@ export function defineTSConfig (tsconfig: TSConfig): TSConfig {
   return tsconfig
 }
 
-export async function readPackageJSON (id?: string, opts: ResolveOptions = {}): Promise<PackageJson> {
+const FileCache = new Map<string, Record<string, any>>()
+
+export async function readPackageJSON (id?: string, opts: ResolveOptions & ReadOptions = {}): Promise<PackageJson> {
   const resolvedPath = await resolvePackageJSON(id, opts)
+  const cache = opts.cache && typeof opts.cache !== 'boolean' ? opts.cache : FileCache
+  if (opts.cache && cache.has(resolvedPath)) {
+    return cache.get(resolvedPath)!
+  }
   const blob = await fsp.readFile(resolvedPath, 'utf-8')
-  return JSON.parse(blob) as PackageJson
+  const parsed = JSON.parse(blob) as PackageJson
+  cache.set(resolvedPath, parsed)
+  return parsed
 }
 
 export async function writePackageJSON (path: string, pkg: PackageJson): Promise<void> {
   await fsp.writeFile(path, JSON.stringify(pkg, null, 2))
 }
 
-export async function readTSConfig (id?: string, opts: ResolveOptions = {}): Promise<TSConfig> {
+export async function readTSConfig (id?: string, opts: ResolveOptions & ReadOptions = {}): Promise<TSConfig> {
   const resolvedPath = await resolveTSConfig(id, opts)
+  const cache = opts.cache && typeof opts.cache !== 'boolean' ? opts.cache : FileCache
+  if (opts.cache && cache.has(resolvedPath)) {
+    return cache.get(resolvedPath)!
+  }
   const blob = await fsp.readFile(resolvedPath, 'utf-8')
   const jsonc = await import('jsonc-parser')
-  return jsonc.parse(blob) as TSConfig
+  const parsed = jsonc.parse(blob) as TSConfig
+  cache.set(resolvedPath, parsed)
+  return parsed
 }
 
 export async function writeTSConfig (path: string, tsconfig: TSConfig): Promise<void> {
