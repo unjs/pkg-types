@@ -1,6 +1,5 @@
 import { promises as fsp } from "node:fs";
-import { dirname } from "node:path";
-import { resolve, isAbsolute } from "pathe";
+import { dirname, resolve, isAbsolute } from "pathe";
 import { ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
 import { findFile, FindFileOptions, findNearestFile } from "./utils";
 import type { PackageJson, TSConfig } from "./types";
