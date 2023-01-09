@@ -25,7 +25,7 @@ pnpm add pkg-types
 
 ```js
 import { readPackageJSON } from 'pkg-types'
-const filename = await readPackageJSON()
+const localPackageJson = await readPackageJSON()
 // or
 const packageJson = await readPackageJSON('/fully/resolved/path/to/folder')
 ```
