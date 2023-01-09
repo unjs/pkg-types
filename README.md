@@ -14,6 +14,9 @@ npm i pkg-types
 
 # yarn
 yarn add pkg-types
+
+# pnpm
+pnpm add pkg-types
 ```
 
 ## Usage
@@ -22,8 +25,9 @@ yarn add pkg-types
 
 ```js
 import { readPackageJSON } from 'pkg-types'
-
-const pkg = await readPackageJSON('path/to/package.json')
+const localPackageJson = await readPackageJSON()
+// or
+const packageJson = await readPackageJSON('/fully/resolved/path/to/folder')
 ```
 
 ### `writePackageJSON`
@@ -41,15 +45,6 @@ import { resolvePackageJSON } from 'pkg-types'
 const filename = await resolvePackageJSON()
 // or
 const packageJson = await resolvePackageJSON('/fully/resolved/path/to/folder')
-```
-
-### `readPackageJSON`
-
-```js
-import { readPackageJSON } from 'pkg-types'
-const filename = await readPackageJSON()
-// or
-const packageJson = await readPackageJSON('/fully/resolved/path/to/folder')
 ```
 
 ### `readTSConfig`
