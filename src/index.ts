@@ -7,22 +7,30 @@ import type { PackageJson, TSConfig } from "./types";
 export * from "./types";
 export * from "./utils";
 
-export type ResolveOptions = _ResolveOptions & FindFileOptions
-export type ReadOptions = { cache?: boolean | Map<string, Record<string, any>> }
+export type ResolveOptions = _ResolveOptions & FindFileOptions;
+export type ReadOptions = {
+  cache?: boolean | Map<string, Record<string, any>>;
+};
 
-export function definePackageJSON (package_: PackageJson): PackageJson {
+export function definePackageJSON(package_: PackageJson): PackageJson {
   return package_;
 }
 
-export function defineTSConfig (tsconfig: TSConfig): TSConfig {
+export function defineTSConfig(tsconfig: TSConfig): TSConfig {
   return tsconfig;
 }
 
 const FileCache = new Map<string, Record<string, any>>();
 
-export async function readPackageJSON (id?: string, options: ResolveOptions & ReadOptions = {}): Promise<PackageJson> {
+export async function readPackageJSON(
+  id?: string,
+  options: ResolveOptions & ReadOptions = {}
+): Promise<PackageJson> {
   const resolvedPath = await resolvePackageJSON(id, options);
-  const cache = options.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
+  const cache =
+    options.cache && typeof options.cache !== "boolean"
+      ? options.cache
+      : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
     return cache.get(resolvedPath)!;
   }
@@ -32,13 +40,22 @@ export async function readPackageJSON (id?: string, options: ResolveOptions & Re
   return parsed;
 }
 
-export async function writePackageJSON (path: string, package_: PackageJson): Promise<void> {
+export async function writePackageJSON(
+  path: string,
+  package_: PackageJson
+): Promise<void> {
   await fsp.writeFile(path, JSON.stringify(package_, undefined, 2));
 }
 
-export async function readTSConfig (id?: string, options: ResolveOptions & ReadOptions = {}): Promise<TSConfig> {
+export async function readTSConfig(
+  id?: string,
+  options: ResolveOptions & ReadOptions = {}
+): Promise<TSConfig> {
   const resolvedPath = await resolveTSConfig(id, options);
-  const cache = options.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
+  const cache =
+    options.cache && typeof options.cache !== "boolean"
+      ? options.cache
+      : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
     return cache.get(resolvedPath)!;
   }
@@ -49,23 +66,47 @@ export async function readTSConfig (id?: string, options: ResolveOptions & ReadO
   return parsed;
 }
 
-export async function writeTSConfig (path: string, tsconfig: TSConfig): Promise<void> {
+export async function writeTSConfig(
+  path: string,
+  tsconfig: TSConfig
+): Promise<void> {
   await fsp.writeFile(path, JSON.stringify(tsconfig, undefined, 2));
 }
 
-export async function resolvePackageJSON (id: string = process.cwd(), options: ResolveOptions = {}): Promise<string> {
+export async function resolvePackageJSON(
+  id: string = process.cwd(),
+  options: ResolveOptions = {}
+): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
-  return findNearestFile("package.json", { startingFrom: resolvedPath, ...options });
+  return findNearestFile("package.json", {
+    startingFrom: resolvedPath,
+    ...options,
+  });
 }
 
-export async function resolveTSConfig (id: string = process.cwd(), options: ResolveOptions = {}): Promise<string> {
+export async function resolveTSConfig(
+  id: string = process.cwd(),
+  options: ResolveOptions = {}
+): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
-  return findNearestFile("tsconfig.json", { startingFrom: resolvedPath, ...options });
+  return findNearestFile("tsconfig.json", {
+    startingFrom: resolvedPath,
+    ...options,
+  });
 }
 
-const lockFiles = ["yarn.lock", "package-lock.json", "pnpm-lock.yaml", "npm-shrinkwrap.json", "bun.lockb"];
+const lockFiles = [
+  "yarn.lock",
+  "package-lock.json",
+  "pnpm-lock.yaml",
+  "npm-shrinkwrap.json",
+  "bun.lockb",
+];
 
-export async function resolveLockfile (id: string = process.cwd(), options: ResolveOptions = {}): Promise<string> {
+export async function resolveLockfile(
+  id: string = process.cwd(),
+  options: ResolveOptions = {}
+): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
   const _options = { startingFrom: resolvedPath, ...options };
   for (const lockFile of lockFiles) {
@@ -76,7 +117,10 @@ export async function resolveLockfile (id: string = process.cwd(), options: Reso
   throw new Error("No lockfile found from " + id);
 }
 
-export async function findWorkspaceDir (id: string = process.cwd(), options: ResolveOptions = {}): Promise<string> {
+export async function findWorkspaceDir(
+  id: string = process.cwd(),
+  options: ResolveOptions = {}
+): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
   const _options = { startingFrom: resolvedPath, ...options };
 
@@ -88,7 +132,10 @@ export async function findWorkspaceDir (id: string = process.cwd(), options: Res
 
   // Lookdown for lockfile
   try {
-    const r = await resolveLockfile(resolvedPath, { ..._options, reverse: true });
+    const r = await resolveLockfile(resolvedPath, {
+      ..._options,
+      reverse: true,
+    });
     return dirname(r);
   } catch {}
 
