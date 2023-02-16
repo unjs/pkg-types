@@ -1,5 +1,5 @@
 import { fileURLToPath } from "node:url";
-import { dirname, resolve } from "node:path";
+import { dirname, resolve } from "pathe";
 import { describe, expect, it } from "vitest";
 import { expectTypeOf } from "expect-type";
 import {
