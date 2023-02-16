@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.0.2
+
+
+### 🩹 Fixes
+
+  - Resolve paths with `pathe` (#72)
+
+### 📖 Documentation
+
+  - Remove duplicate section (#96)
+
+### 🏡 Chore
+
+  - Add @danielroe to license (648f7c5)
+  - Switch to changelogen for release (489eba0)
+  - Update mlly (6b7b8fa)
+
+### 🎨 Styles
+
+  - Lint with prettier (d74afab)
+
+### ❤️  Contributors
+
+- Pooya Parsa <pooya@pi0.io>
+- ZhangZhiChao 
+- Lxxyx <Lxxyxzj@gmail.com>
+
 ### [1.0.1](https://github.com/unjs/pkg-types/compare/v1.0.0...v1.0.1) (2022-11-14)
 
 ## [1.0.0](https://github.com/unjs/pkg-types/compare/v0.3.6...v1.0.0) (2022-11-14)
