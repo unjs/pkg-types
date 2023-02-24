@@ -24,6 +24,7 @@
     "test:types": "tsc --noEmit --module esnext --skipLibCheck --moduleResolution node ./test/*.test.ts"
   },
   "dependencies": {
+    "detect-indent": "^7.0.1",
     "jsonc-parser": "^3.2.0",
     "mlly": "^1.1.1",
     "pathe": "^1.1.0"

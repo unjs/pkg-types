@@ -1,5 +1,7 @@
-import { statSync } from "node:fs";
+import { statSync, existsSync } from "node:fs";
+import { readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "pathe";
+import detectIndent from "detect-indent";
 
 export interface FindFileOptions {
   /**
@@ -29,6 +31,16 @@ export interface FindFileOptions {
 
 /** @deprecated */
 export type FindNearestFileOptions = FindFileOptions;
+
+export type WriteOptions = {
+  indent?: number | string;
+  newline?: boolean | string;
+};
+
+export type ResolvedWriteOptions = {
+  indent: number | string;
+  newline: string;
+};
 
 const defaultFindOptions: Required<FindFileOptions> = {
   startingFrom: ".",
@@ -96,4 +108,36 @@ export function findFarthestFile(
   _options: FindFileOptions = {}
 ): Promise<string> {
   return findFile(filename, { ..._options, reverse: true });
+}
+
+export async function resolveWriteOptions(
+  path: string,
+  options: WriteOptions
+): Promise<ResolvedWriteOptions> {
+  const file = existsSync(path) ? await readFile(path, "utf8") : undefined;
+  const indent = options.indent ?? (file ? detectIndent(file).indent : 2);
+  const newline =
+    options.newline === true
+      ? "\n"
+      : options.newline === false
+      ? ""
+      : options.newline ?? (file ? (file.endsWith("\n") ? "\n" : "") : "\n");
+
+  return {
+    indent,
+    newline,
+  };
+}
+
+export async function writeJsonFile(
+  path: string,
+  value: any,
+  options: WriteOptions = {}
+): Promise<void> {
+  const resolvedOpts = await resolveWriteOptions(path, options);
+
+  let content = JSON.stringify(value, undefined, resolvedOpts.indent);
+  content += resolvedOpts.newline;
+
+  await writeFile(path, content);
 }

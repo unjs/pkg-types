@@ -4,6 +4,7 @@ specifiers:
   '@types/node': ^18.13.0
   '@vitest/coverage-c8': ^0.28.5
   changelogen: ^0.4.1
+  detect-indent: ^7.0.1
   eslint: ^8.34.0
   eslint-config-unjs: ^0.1.0
   expect-type: ^0.15.0
@@ -17,6 +18,7 @@ specifiers:
   vitest: ^0.28.5
 
 dependencies:
+  detect-indent: 7.0.1
   jsonc-parser: 3.2.0
   mlly: 1.1.1
   pathe: 1.1.0
@@ -1498,6 +1500,11 @@ packages:
   /destr/1.2.2:
     resolution: {integrity: sha512-lrbCJwD9saUQrqUfXvl6qoM+QN3W7tLV5pAOs+OqOmopCCz/JkE05MHedJR1xfk4IAnZuJXPVuN5+7jNA2ZCiA==}
     dev: true
+
+  /detect-indent/7.0.1:
+    resolution: {integrity: sha512-Mc7QhQ8s+cLrnUfU/Ji94vG/r8M26m8f++vyres4ZoojaRDpZ1eSIh/EpzLNwlWuvzSZ3UbDFspjFvTDXe6e/g==}
+    engines: {node: '>=12.20'}
+    dev: false
 
   /diff/5.1.0:
     resolution: {integrity: sha512-D+mk+qE8VC/PAUrlAU34N+VfXev0ghe5ywmpqrawphmVZc1bEfn56uo9qpyGp1p4xpzOHkSW4ztBd6L7Xx4ACw==}
