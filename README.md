@@ -51,8 +51,9 @@ const packageJson = await resolvePackageJSON('/fully/resolved/path/to/folder')
 
 ```js
 import { readTSConfig } from 'pkg-types'
-
-const pkg = await readTSConfig('path/to/tsconfig.json')
+const tsconfig = await readTSConfig()
+// or
+const tsconfig = await readTSConfig('/fully/resolved/path/to/folder')
 ```
 
 ### `writeTSConfig`
@@ -70,15 +71,6 @@ import { resolveTSConfig } from 'pkg-types'
 const filename = await resolveTSConfig()
 // or
 const tsconfig = await resolveTSConfig('/fully/resolved/path/to/folder')
-```
-
-### `readTSConfig`
-
-```js
-import { readTSConfig } from 'pkg-types'
-const filename = await readTSConfig()
-// or
-const tsconfig = await readTSConfig('/fully/resolved/path/to/folder')
 ```
 
 ### `resolveFile`
