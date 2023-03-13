@@ -51,7 +51,7 @@ const packageJson = await resolvePackageJSON('/fully/resolved/path/to/folder')
 
 ```js
 import { readTSConfig } from 'pkg-types'
-const filename = await readTSConfig()
+const tsconfig = await readTSConfig()
 // or
 const tsconfig = await readTSConfig('/fully/resolved/path/to/folder')
 ```
