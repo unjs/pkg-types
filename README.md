@@ -108,6 +108,33 @@ import { findWorkspaceDir } from 'pkg-types'
 const workspaceDir = await findWorkspaceDir('.')
 ```
 
+### `resolveWorkspace`
+
+Find monorepo workspace config (support: `pnpm`, `yarn`, `npm`, `lerna`), will return `root` path, `type` of monorepo manager, `workspaces` config.
+
+If fails, throws an error.
+
+```js
+import { resolveWorkspace } from 'pkg-types'
+const {
+  root,
+  type,
+  workspaces,
+} = await resolveWorkspace('.')
+```
+
+### `resolveWorkspacePkgs`
+
+Find monorepo workspace packages and read each package `package.json`
+
+```js
+import { resolveWorkspacePkgs } from 'pkg-types'
+const { type, root, packages } = await resolveWorkspacePkgs('.')
+console.log(root) // { dir: 'fully/resolved/root/path', pakcageJson: { ... } }
+console.log(packages) // [ { dir: 'fully/resolved/foo/path', pakcageJson: { ... } } ]
+```
+
+
 ## Types
 
 **Note:** In order to make types working, you need to install `typescript` as a devDependency.
