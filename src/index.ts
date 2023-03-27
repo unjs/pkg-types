@@ -260,3 +260,43 @@ export async function resolveWorkspace(
 
   throw new Error(`Cannot dected workspace from ${id}`);
 }
+
+export async function resolveWorkspacePkgs(
+  id: string | Awaited<ReturnType<typeof resolveWorkspace>>,
+  options: ResolveOptions = {}
+): Promise<{
+  type: PackageWorkspaceTypes;
+  root: {
+    dir: string;
+    packageJson: PackageJson;
+  };
+  packages: {
+    dir: string;
+    packageJson: PackageJson;
+  }[];
+}> {
+  const config =
+    typeof id === "string" ? await resolveWorkspace(id, options) : id;
+  const globby = await import("globby").then((r) => r.globby);
+  const pkgDirs: string[] = await globby(config.workspaces, {
+    cwd: config.root,
+    onlyDirectories: true,
+    expandDirectories: false,
+    ignore: ["**/node_modules"],
+  });
+  const pkgAbsoluteDirs = pkgDirs.map((p) => resolve(config.root, p)).sort();
+
+  return {
+    type: config.type,
+    root: {
+      dir: config.root,
+      packageJson: await readPackageJSON(config.root, options),
+    },
+    packages: await Promise.all(
+      pkgAbsoluteDirs.map(async (dir) => ({
+        dir,
+        packageJson: await readPackageJSON(dir, options),
+      }))
+    ),
+  };
+}
