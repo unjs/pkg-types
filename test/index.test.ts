@@ -14,6 +14,7 @@ import {
   resolveLockfile,
   findWorkspaceDir,
   resolveWorkspace,
+  resolveWorkspacePkgs,
 } from "../src";
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "fixture");
@@ -182,6 +183,20 @@ describe("resolveWorkspace", () => {
       expect(result.type).to.eq(item.type);
       expect(result.workspaces.length).to.eq(1);
       expect(result.workspaces[0]).to.eq("packages/*");
+    });
+  }
+});
+
+describe("resolveWorkspacePkgs", () => {
+  for (const item of workspaceCases) {
+    it(`works for ${item.name}`, async () => {
+      const result = await resolveWorkspacePkgs(item.pkgDir);
+      expect(result.root.dir).to.eq(item.pkgDir);
+      expect(result.type).to.eq(item.type);
+      expect(result.packages.length).to.eq(2);
+      expect(
+        result.packages.map((item) => item.packageJson.name)
+      ).toMatchObject(expect.arrayContaining(["foo", "bar"]));
     });
   }
 });
