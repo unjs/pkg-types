@@ -13,6 +13,7 @@ import {
   ResolveOptions,
   resolveLockfile,
   findWorkspaceDir,
+  resolveWorkspace,
 } from "../src";
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "fixture");
@@ -138,4 +139,49 @@ describe("findWorkspaceDir", () => {
       rFixture("../..")
     );
   });
+});
+
+const workspaceCases = [
+  {
+    name: "pnpm",
+    type: "pnpm",
+    pkgDir: rFixture("./monorepo-pnpm"),
+  },
+  {
+    name: "lerna",
+    type: "lerna",
+    pkgDir: rFixture("./monorepo-lerna"),
+  },
+  {
+    name: "yarn",
+    type: "yarn",
+    pkgDir: rFixture("./monorepo-yarn"),
+  },
+  {
+    name: "npm",
+    type: "npm",
+    pkgDir: rFixture("./monorepo-npm"),
+  },
+  {
+    name: "lerna use npm workspaces",
+    type: "npm",
+    pkgDir: rFixture("./monorepo-lerna-use-npm-workspaces"),
+  },
+  {
+    name: "lerna use yarn workspaces",
+    type: "yarn",
+    pkgDir: rFixture("./monorepo-lerna-use-yarn-workspaces"),
+  },
+];
+
+describe("resolveWorkspace", () => {
+  for (const item of workspaceCases) {
+    it(`works for ${item.name}`, async () => {
+      const result = await resolveWorkspace(item.pkgDir);
+      expect(result.root).to.eq(item.pkgDir);
+      expect(result.type).to.eq(item.type);
+      expect(result.workspaces.length).to.eq(1);
+      expect(result.workspaces[0]).to.eq("packages/*");
+    });
+  }
 });
