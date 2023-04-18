@@ -15,6 +15,7 @@ import {
   findWorkspaceDir,
   resolveWorkspace,
   resolveWorkspacePkgs,
+  resolveWorkspacePkgsGraph,
 } from "../src";
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "fixture");
@@ -197,6 +198,15 @@ describe("resolveWorkspacePkgs", () => {
       expect(
         result.packages.map((item) => item.packageJson.name)
       ).toMatchObject(expect.arrayContaining(["foo", "bar"]));
+    });
+  }
+});
+
+describe("resolveWorkspacePkgsGraph", () => {
+  for (const item of workspaceCases) {
+    it(`works for ${item.name}`, async () => {
+      const result = await resolveWorkspacePkgsGraph(item.pkgDir);
+      expect(result).toEqual([["foo"], ["bar"]]);
     });
   }
 });
