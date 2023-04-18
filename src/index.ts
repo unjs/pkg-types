@@ -1,6 +1,7 @@
 import { promises as fsp } from "node:fs";
 import { dirname, resolve, isAbsolute } from "pathe";
 import { ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
+import { sortPackages } from "@pnpm/sort-packages";
 import {
   findFile,
   FindFileOptions,
@@ -299,4 +300,30 @@ export async function resolveWorkspacePkgs(
       }))
     ),
   };
+}
+
+export async function resolveWorkspacePkgsGraph(
+  id:
+    | string
+    | Awaited<ReturnType<typeof resolveWorkspace>>
+    | Awaited<ReturnType<typeof resolveWorkspacePkgs>>,
+  options: ResolveOptions = {}
+): Promise<string[][]> {
+  const resolvedPkgs =
+    typeof id === "object" && "packages" in id
+      ? id
+      : await resolveWorkspacePkgs(id, options);
+
+  const pkgGraph = {} as any;
+  for (const pkg of resolvedPkgs.packages) {
+    const { name, dependencies, devDependencies } = pkg.packageJson;
+    pkgGraph[name!] = {
+      dependencies: [
+        ...Object.keys(dependencies ?? {}),
+        ...Object.keys(devDependencies ?? {}),
+      ],
+    };
+  }
+
+  return sortPackages(pkgGraph);
 }

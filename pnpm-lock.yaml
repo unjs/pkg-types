@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@pnpm/sort-packages': ^5.0.1
   '@types/node': ^18.13.0
   '@vitest/coverage-c8': ^0.28.5
   changelogen: ^0.4.1
@@ -19,6 +20,7 @@ specifiers:
   yaml: ^2.2.1
 
 dependencies:
+  '@pnpm/sort-packages': 5.0.1
   globby: 13.1.3
   jsonc-parser: 3.2.0
   mlly: 1.1.1
@@ -756,6 +758,23 @@ packages:
       tiny-glob: 0.2.9
       tslib: 2.5.0
     dev: true
+
+  /@pnpm/graph-sequencer/1.1.0:
+    resolution: {integrity: sha512-YWrRI5VWm14GXrYeNB0lgQ42eVyvbTKwlWZkHDTnMcKkExJkOo3/dh6oQ7IRovw26w0jrdyCC5kAsUK3yPCFGQ==}
+    dev: false
+
+  /@pnpm/sort-packages/5.0.1:
+    resolution: {integrity: sha512-utsPnrfqVmueuUDgVB+8y7u8nZaKwikNMVdODH483CJEmrtcMAk/6f711st4/0A9XXSyHrPiSxDx+/N02e5k8A==}
+    engines: {node: '>=16.14'}
+    dependencies:
+      '@pnpm/graph-sequencer': 1.1.0
+      '@pnpm/types': 9.0.0
+    dev: false
+
+  /@pnpm/types/9.0.0:
+    resolution: {integrity: sha512-+nNqpNvqb1u3WW/cHDo7tGjqJBWWe4GAHEdELrz4QMQwGAtG/1GF6NMc0cewdwgU2k67CI3JHGu4quZJnMEUJg==}
+    engines: {node: '>=16.14'}
+    dev: false
 
   /@rollup/plugin-alias/4.0.3_rollup@3.15.0:
     resolution: {integrity: sha512-ZuDWE1q4PQDhvm/zc5Prun8sBpLJy41DMptYrS6MhAy9s9kL/doN1613BWfEchGVfKxzliJ3BjbOPizXX38DbQ==}

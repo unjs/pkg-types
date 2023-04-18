@@ -24,6 +24,7 @@
     "test:types": "tsc --noEmit --module esnext --skipLibCheck --moduleResolution node ./test/*.test.ts"
   },
   "dependencies": {
+    "@pnpm/sort-packages": "^5.0.1",
     "globby": "^13.1.3",
     "jsonc-parser": "^3.2.0",
     "mlly": "^1.1.1",
