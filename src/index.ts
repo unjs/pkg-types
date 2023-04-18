@@ -1,7 +1,13 @@
 import { promises as fsp } from "node:fs";
 import { dirname, resolve, isAbsolute } from "pathe";
 import { ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
-import { findFile, FindFileOptions, findNearestFile } from "./utils";
+import {
+  findFile,
+  FindFileOptions,
+  findNearestFile,
+  writeJsonFile,
+  WriteOptions,
+} from "./utils";
 import type { PackageJson, TSConfig } from "./types";
 
 export * from "./types";
@@ -42,9 +48,10 @@ export async function readPackageJSON(
 
 export async function writePackageJSON(
   path: string,
-  package_: PackageJson
+  package_: PackageJson,
+  options: WriteOptions = {}
 ): Promise<void> {
-  await fsp.writeFile(path, JSON.stringify(package_, undefined, 2));
+  await writeJsonFile(path, package_, options);
 }
 
 export async function readTSConfig(
@@ -68,9 +75,10 @@ export async function readTSConfig(
 
 export async function writeTSConfig(
   path: string,
-  tsconfig: TSConfig
+  tsconfig: TSConfig,
+  options: WriteOptions = {}
 ): Promise<void> {
-  await fsp.writeFile(path, JSON.stringify(tsconfig, undefined, 2));
+  await writeJsonFile(path, tsconfig, options);
 }
 
 export async function resolvePackageJSON(
