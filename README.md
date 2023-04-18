@@ -134,6 +134,15 @@ console.log(root) // { dir: 'fully/resolved/root/path', pakcageJson: { ... } }
 console.log(packages) // [ { dir: 'fully/resolved/foo/path', pakcageJson: { ... } } ]
 ```
 
+### `resolveWorkspacePkgsGraph`
+
+Find monorepo workspace packages graph sort by `devDependency` and `dependency`
+
+```js
+import { resolveWorkspacePkgsGraph } from 'pkg-types'
+const pkgsGraph = await resolveWorkspacePkgsGraph('.')
+console.log(pkgsGraph) // [['foo'], ['bar']]
+```
 
 ## Types
 
