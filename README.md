@@ -130,8 +130,8 @@ Find monorepo workspace packages and read each package `package.json`
 ```js
 import { resolveWorkspacePkgs } from 'pkg-types'
 const { type, root, packages } = await resolveWorkspacePkgs('.')
-console.log(root) // { dir: 'fully/resolved/root/path', pakcageJson: { ... } }
-console.log(packages) // [ { dir: 'fully/resolved/foo/path', pakcageJson: { ... } } ]
+console.log(root) // { dir: 'fully/resolved/root/path', packageJson: { ... } }
+console.log(packages) // [ { dir: 'fully/resolved/foo/path', packageJson: { ... } } ]
 ```
 
 ### `resolveWorkspacePkgsGraph`
