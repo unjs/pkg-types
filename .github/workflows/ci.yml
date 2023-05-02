@@ -9,6 +9,18 @@ on:
       - main
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: corepack enable
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: "pnpm"
+      - run: pnpm install
+      - run: pnpm lint
+
   ci:
     strategy:
       matrix:
@@ -22,7 +34,6 @@ jobs:
           node-version: 16
           cache: "pnpm"
       - run: pnpm install
-      - run: pnpm lint
       - run: pnpm prepack
       - run: pnpm test
       - run: pnpm test:types
