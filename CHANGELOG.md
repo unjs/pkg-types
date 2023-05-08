@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.0.3
+
+[compare changes](https://undefined/undefined/compare/v1.0.2...v1.0.3)
+
+
+### 🩹 Fixes
+
+  - Add `exports.types` field (#120)
+
+### 📖 Documentation
+
+  - Remove duplicate usage in readme (#115)
+
+### 🤖 CI
+
+  - Remove lint workflow from matrix (a5a00af)
+  - Revert to node 16 (f6cb62c)
+
+### ❤️  Contributors
+
+- Daniel Roe <daniel@roe.dev>
+- Saman Hosseini <bounoable@gmail.com>
+- Ʀᴀʏ ([@so1ve](http://github.com/so1ve))
+
 ## v1.0.2
 
 
