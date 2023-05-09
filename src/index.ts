@@ -38,7 +38,7 @@ export async function readPackageJSON(
       ? options.cache
       : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
-    return cache.get(resolvedPath)!;
+    return cache.get(resolvedPath) as PackageJson;
   }
   const blob = await fsp.readFile(resolvedPath, "utf8");
   const parsed = JSON.parse(blob) as PackageJson;
@@ -63,7 +63,7 @@ export async function readTSConfig(
       ? options.cache
       : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
-    return cache.get(resolvedPath)!;
+    return cache.get(resolvedPath) as TSConfig;
   }
   const blob = await fsp.readFile(resolvedPath, "utf8");
   const jsonc = await import("jsonc-parser");
@@ -244,7 +244,7 @@ export async function resolveWorkspace(
 
         const workspaces = Array.isArray(content.workspaces)
           ? content.workspaces
-          : content.workspaces!.packages;
+          : content.workspaces.packages;
 
         if (!Array.isArray(workspaces)) {
           continue;
@@ -317,7 +317,11 @@ export async function resolveWorkspacePkgsGraph(
   const pkgGraph = {} as any;
   for (const pkg of resolvedPkgs.packages) {
     const { name, dependencies, devDependencies } = pkg.packageJson;
-    pkgGraph[name!] = {
+    if (!name) {
+      continue;
+    }
+
+    pkgGraph[name] = {
       dependencies: [
         ...Object.keys(dependencies ?? {}),
         ...Object.keys(devDependencies ?? {}),
