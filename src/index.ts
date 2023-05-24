@@ -12,6 +12,24 @@ export type ReadOptions = {
   cache?: boolean | Map<string, Record<string, any>>;
 };
 
+export type WriteOptions = {
+  indent?: number | 'tab';
+  eol?: 'LF' | 'CRLF';
+  eolFinal?: boolean;
+};
+
+const EOL_CRLF = '\r\n';
+const EOL_LF = '\n';
+
+function stringifyJSON(value: any, options: WriteOptions = {}) {
+  const eol = (options.eol === 'CRLF') ? EOL_CRLF : EOL_LF;
+  const jstr = JSON.stringify(value, undefined,
+    (options.indent === 'tab') ? '\t' : (options.indent ?? 2));
+
+  return (eol !== EOL_LF ? jstr.replaceAll(EOL_LF, eol) : jstr) +
+    ((options.eolFinal ?? jstr.includes(EOL_LF)) ? eol : '');
+}
+
 export function definePackageJSON(package_: PackageJson): PackageJson {
   return package_;
 }
@@ -42,9 +60,10 @@ export async function readPackageJSON(
 
 export async function writePackageJSON(
   path: string,
-  package_: PackageJson
+  package_: PackageJson,
+  options?: WriteOptions
 ): Promise<void> {
-  await fsp.writeFile(path, JSON.stringify(package_, undefined, 2));
+  await fsp.writeFile(path, stringifyJSON(package_, options));
 }
 
 export async function readTSConfig(
@@ -68,9 +87,10 @@ export async function readTSConfig(
 
 export async function writeTSConfig(
   path: string,
-  tsconfig: TSConfig
+  tsconfig: TSConfig,
+  options?: WriteOptions
 ): Promise<void> {
-  await fsp.writeFile(path, JSON.stringify(tsconfig, undefined, 2));
+  await fsp.writeFile(path, stringifyJSON(tsconfig, options));
 }
 
 export async function resolvePackageJSON(
