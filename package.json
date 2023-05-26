@@ -22,7 +22,7 @@
     "lint": "eslint --ext .ts,.js,.mjs,.cjs . && prettier -c src test",
     "lint:fix": "eslint --fix --ext .ts,.js,.mjs,.cjs . && prettier -w src test",
     "test": "vitest run --coverage",
-    "test:types": "tsc --noEmit --module esnext --skipLibCheck --moduleResolution node ./test/*.test.ts"
+    "test:types": "tsc --noEmit --module esnext --target esnext --skipLibCheck --moduleResolution node ./test/*.test.ts"
   },
   "dependencies": {
     "jsonc-parser": "^3.2.0",

@@ -13,21 +13,26 @@ export type ReadOptions = {
 };
 
 export type WriteOptions = {
-  indent?: number | 'tab';
-  eol?: 'LF' | 'CRLF';
+  indent?: number | "tab";
+  eol?: "LF" | "CRLF";
   eolFinal?: boolean;
 };
 
-const EOL_CRLF = '\r\n';
-const EOL_LF = '\n';
+const EOL_CRLF = "\r\n";
+const EOL_LF = "\n";
 
 function stringifyJSON(value: any, options: WriteOptions = {}) {
-  const eol = (options.eol === 'CRLF') ? EOL_CRLF : EOL_LF;
-  const jstr = JSON.stringify(value, undefined,
-    (options.indent === 'tab') ? '\t' : (options.indent ?? 2));
+  const eol = options.eol === "CRLF" ? EOL_CRLF : EOL_LF;
+  const jstr = JSON.stringify(
+    value,
+    undefined,
+    options.indent === "tab" ? "\t" : options.indent ?? 2
+  );
 
-  return (eol !== EOL_LF ? jstr.replaceAll(EOL_LF, eol) : jstr) +
-    ((options.eolFinal ?? jstr.includes(EOL_LF)) ? eol : '');
+  return (
+    (eol !== EOL_LF ? jstr.replaceAll(EOL_LF, eol) : jstr) +
+    (options.eolFinal ?? jstr.includes(EOL_LF) ? eol : "")
+  );
 }
 
 export function definePackageJSON(package_: PackageJson): PackageJson {
@@ -50,6 +55,7 @@ export async function readPackageJSON(
       ? options.cache
       : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return cache.get(resolvedPath)!;
   }
   const blob = await fsp.readFile(resolvedPath, "utf8");
@@ -76,6 +82,7 @@ export async function readTSConfig(
       ? options.cache
       : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return cache.get(resolvedPath)!;
   }
   const blob = await fsp.readFile(resolvedPath, "utf8");
