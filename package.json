@@ -32,6 +32,7 @@
   "devDependencies": {
     "@types/node": "^18.16.19",
     "@vitest/coverage-v8": "^0.33.0",
+    "@vue/language-core": "^1.8.5",
     "changelogen": "^0.5.4",
     "eslint": "^8.44.0",
     "eslint-config-unjs": "^0.2.1",
