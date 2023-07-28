@@ -79,6 +79,17 @@ describe("package.json", () => {
     ).to.equal("1.0.0");
   });
 
+  it("read & write package.json preserve EOL", async () => {
+    const pkg = await readPackageJSON(rFixture("package.json"));
+    await writePackageJSON(rFixture("package.json.tmp"), pkg);
+
+    const { promises: fsp } = await import("node:fs");
+    const sourcePkg = await fsp.readFile(rFixture("package.json"), "utf8");
+    const writtenPkg = await fsp.readFile(rFixture("package.json.tmp"), "utf8");
+
+    expect(writtenPkg).to.equal(sourcePkg);
+  });
+
   it("correctly reads a version from absolute path", async () => {
     expect(
       await readPackageJSON(rFixture(".")).then((p) => p?.version)

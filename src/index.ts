@@ -1,6 +1,7 @@
 import { promises as fsp } from "node:fs";
 import { dirname, resolve, isAbsolute } from "pathe";
 import { ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
+import { detectNewline } from "detect-newline";
 import { findFile, FindFileOptions, findNearestFile } from "./utils";
 import type { PackageJson, TSConfig } from "./types";
 
@@ -21,6 +22,7 @@ export function defineTSConfig(tsconfig: TSConfig): TSConfig {
 }
 
 const FileCache = new Map<string, Record<string, any>>();
+let EOL: string | undefined;
 
 export async function readPackageJSON(
   id?: string,
@@ -32,9 +34,11 @@ export async function readPackageJSON(
       ? options.cache
       : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return cache.get(resolvedPath)!;
   }
   const blob = await fsp.readFile(resolvedPath, "utf8");
+  EOL = detectNewline(blob);
   const parsed = JSON.parse(blob) as PackageJson;
   cache.set(resolvedPath, parsed);
   return parsed;
@@ -44,7 +48,7 @@ export async function writePackageJSON(
   path: string,
   package_: PackageJson
 ): Promise<void> {
-  await fsp.writeFile(path, JSON.stringify(package_, undefined, 2));
+  await fsp.writeFile(path, stringifyJSON(package_));
 }
 
 export async function readTSConfig(
@@ -57,9 +61,11 @@ export async function readTSConfig(
       ? options.cache
       : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return cache.get(resolvedPath)!;
   }
   const blob = await fsp.readFile(resolvedPath, "utf8");
+  EOL = detectNewline(blob);
   const jsonc = await import("jsonc-parser");
   const parsed = jsonc.parse(blob) as TSConfig;
   cache.set(resolvedPath, parsed);
@@ -70,7 +76,7 @@ export async function writeTSConfig(
   path: string,
   tsconfig: TSConfig
 ): Promise<void> {
-  await fsp.writeFile(path, JSON.stringify(tsconfig, undefined, 2));
+  await fsp.writeFile(path, stringifyJSON(tsconfig));
 }
 
 export async function resolvePackageJSON(
@@ -146,4 +152,8 @@ export async function findWorkspaceDir(
   } catch {}
 
   throw new Error("Cannot detect workspace root from " + id);
+}
+
+function stringifyJSON(value: any): string {
+  return JSON.stringify(value, undefined, 2) + (EOL || "");
 }
