@@ -75,15 +75,15 @@ export async function findFile(
     root = 0;
   }
 
-  if (!options.reverse) {
-    for (let index = segments.length; index > root; index--) {
+  if (options.reverse) {
+    for (let index = root + 1; index <= segments.length; index++) {
       const filePath = join(...segments.slice(0, index), filename);
       if (await options.test(filePath)) {
         return filePath;
       }
     }
   } else {
-    for (let index = root + 1; index <= segments.length; index++) {
+    for (let index = segments.length; index > root; index--) {
       const filePath = join(...segments.slice(0, index), filename);
       if (await options.test(filePath)) {
         return filePath;
