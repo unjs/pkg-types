@@ -91,7 +91,7 @@ export interface PackageJson {
   /**
    * If your module is meant to be used client-side the browser field should be used instead of the main field. This is helpful to hint users that it might rely on primitives that aren’t available in Node.js modules. (e.g. window)
    */
-  browser?: string;
+  browser?: string | Record<string, string | false>;
   /**
    * A map of command name to local file name. On install, npm will symlink that file into `prefix/bin` for global installs, or `./node_modules/.bin/` for local installs.
    */
