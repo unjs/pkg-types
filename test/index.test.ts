@@ -1,7 +1,9 @@
 import { fileURLToPath } from "node:url";
+import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "pathe";
 import { describe, expect, it } from "vitest";
 import { expectTypeOf } from "expect-type";
+import detectIndent from "detect-indent";
 import {
   readPackageJSON,
   readTSConfig,
@@ -89,6 +91,36 @@ describe("package.json", () => {
     expect(await readPackageJSON("pathe").then((p) => p?.version)).to.be.a(
       "string"
     );
+  });
+
+  it("write package.json with tab indent", async () => {
+    const path = rFixture("package.json.tab.tmp");
+    const indent = "\t";
+    await writePackageJSON(path, { version: "1.0.0" }, { indent });
+    const file = await readFile(path, "utf8");
+    expect(detectIndent(file).indent).toBe(indent);
+  });
+
+  it("write package.json with 4 space indent", async () => {
+    const path = rFixture("package.json.3space.tmp");
+    const indent = 4;
+    await writePackageJSON(path, { version: "1.0.0" }, { indent });
+    const file = await readFile(path, "utf8");
+    expect(detectIndent(file).indent).toBe("    ");
+  });
+
+  it("write package.json with newline", async () => {
+    const path = rFixture("package.json.newline.tmp");
+    await writePackageJSON(path, { version: "1.0.0" }, { newline: true });
+    const file = await readFile(path, "utf8");
+    expect(file.endsWith("\n")).toBe(true);
+  });
+
+  it("write package.json with no newline", async () => {
+    const path = rFixture("package.json.no-newline.tmp");
+    await writePackageJSON(path, { version: "1.0.0" }, { newline: false });
+    const file = await readFile(path, "utf8");
+    expect(file.endsWith("\n")).toBe(false);
   });
 });
 
