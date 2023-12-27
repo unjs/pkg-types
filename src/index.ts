@@ -1,8 +1,10 @@
 import { promises as fsp } from "node:fs";
 import { dirname, resolve, isAbsolute } from "pathe";
 import { ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
+import detectIndent from "detect-indent";
+import { detectNewline } from "detect-newline";
 import { findFile, FindFileOptions, findNearestFile } from "./utils";
-import type { PackageJson, TSConfig } from "./types";
+import type { PackageJsonFile, TSConfig } from "./types";
 
 export * from "./types";
 export * from "./utils";
@@ -12,7 +14,7 @@ export type ReadOptions = {
   cache?: boolean | Map<string, Record<string, any>>;
 };
 
-export function definePackageJSON(package_: PackageJson): PackageJson {
+export function definePackageJSON(package_: PackageJsonFile): PackageJsonFile {
   return package_;
 }
 
@@ -25,26 +27,36 @@ const FileCache = new Map<string, Record<string, any>>();
 export async function readPackageJSON(
   id?: string,
   options: ResolveOptions & ReadOptions = {}
-): Promise<PackageJson> {
+): Promise<PackageJsonFile & PackageJsonFile> {
   const resolvedPath = await resolvePackageJSON(id, options);
   const cache =
     options.cache && typeof options.cache !== "boolean"
       ? options.cache
       : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
-    return cache.get(resolvedPath)!;
+    return cache.get(resolvedPath)! as PackageJsonFile & PackageJsonFile;
   }
   const blob = await fsp.readFile(resolvedPath, "utf8");
-  const parsed = JSON.parse(blob) as PackageJson;
-  cache.set(resolvedPath, parsed);
-  return parsed;
+  const meta = {
+    indent: detectIndent(blob).indent,
+    newline: detectNewline(blob),
+  };
+  const parsed = JSON.parse(blob) as PackageJsonFile;
+  const file = { ...parsed, ...meta };
+  cache.set(resolvedPath, file);
+  return file;
 }
 
 export async function writePackageJSON(
   path: string,
-  package_: PackageJson
+  package_: PackageJsonFile & PackageJsonFile
 ): Promise<void> {
-  await fsp.writeFile(path, JSON.stringify(package_, undefined, 2));
+  const { indent, newline, ...data } = package_;
+  let json = JSON.stringify(data, undefined, indent);
+  if (newline) {
+    json += newline;
+  }
+  await fsp.writeFile(path, json);
 }
 
 export async function readTSConfig(
