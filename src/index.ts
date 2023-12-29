@@ -2,8 +2,7 @@ import { promises as fsp } from "node:fs";
 import { dirname, resolve, isAbsolute } from "pathe";
 import { ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
 import detectIndent from "detect-indent";
-import { detectNewline } from "detect-newline";
-import { findFile, FindFileOptions, findNearestFile } from "./utils";
+import { detectNewline, findFile, FindFileOptions, findNearestFile } from "./utils";
 import type { PackageJsonFile, TSConfig } from "./types";
 
 export * from "./types";

@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  detect-indent:
+    specifier: ^7.0.1
+    version: 7.0.1
   jsonc-parser:
     specifier: ^3.2.0
     version: 3.2.0
@@ -25,12 +28,6 @@ devDependencies:
   changelogen:
     specifier: ^0.5.5
     version: 0.5.5
-  detect-indent:
-    specifier: ^7.0.1
-    version: 7.0.1
-  detect-newline:
-    specifier: ^4.0.1
-    version: 4.0.1
   eslint:
     specifier: ^8.55.0
     version: 8.55.0
@@ -1750,12 +1747,7 @@ packages:
   /detect-indent@7.0.1:
     resolution: {integrity: sha512-Mc7QhQ8s+cLrnUfU/Ji94vG/r8M26m8f++vyres4ZoojaRDpZ1eSIh/EpzLNwlWuvzSZ3UbDFspjFvTDXe6e/g==}
     engines: {node: '>=12.20'}
-    dev: true
-
-  /detect-newline@4.0.1:
-    resolution: {integrity: sha512-qE3Veg1YXzGHQhlA6jzebZN2qVf6NX+A7m7qlhCGG30dJixrAQhYOsJjsnBjJkCSmuOPpCk30145fr8FV0bzog==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-    dev: true
+    dev: false
 
   /diff-sequences@29.6.3:
     resolution: {integrity: sha512-EjePK1srD3P08o2j4f0ExnylqRs5B9tJjcp9t1krH2qRi8CCdsYfwe9JgSLurFBWwq4uOlipzfk5fHNvwFKr8Q==}
