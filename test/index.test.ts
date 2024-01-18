@@ -79,6 +79,28 @@ describe("package.json", () => {
     ).to.equal("1.0.0");
   });
 
+  it("correctly indents package.json", async () => {
+    const indent = "  ";
+    await writePackageJSON(rFixture("package.json.tmp"), {
+      version: "1.0.0",
+      indent,
+    });
+    expect(
+      (await readPackageJSON(rFixture("package.json.tmp"))).indent
+    ).to.equal(indent);
+  });
+
+  it("correctly adds EOF newline to package.json", async () => {
+    const newline = "\n";
+    await writePackageJSON(rFixture("package.json.tmp"), {
+      version: "1.0.0",
+      newline,
+    });
+    expect(
+      (await readPackageJSON(rFixture("package.json.tmp"))).newline
+    ).to.equal(newline);
+  });
+
   it("correctly reads a version from absolute path", async () => {
     expect(
       await readPackageJSON(rFixture(".")).then((p) => p?.version)

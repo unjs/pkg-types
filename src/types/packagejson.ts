@@ -157,3 +157,8 @@ export interface PackageJson {
   workspaces?: string[];
   [key: string]: any;
 }
+
+export type PackageJsonFile = {
+  indent?: string;
+  newline?: string | undefined;
+} & PackageJson;
