@@ -7,21 +7,49 @@ import type { PackageJson, TSConfig } from "./types";
 export * from "./types";
 export * from "./utils";
 
+/**
+ * Represents the options for resolving paths with additional file finding capabilities.
+ * Extends {@link _ResolveOptions} and {@link FindFileOptions}.
+ */
 export type ResolveOptions = _ResolveOptions & FindFileOptions;
+
+/**
+ * Options for reading files with optional caching.
+ */
 export type ReadOptions = {
+  /**
+   * Specifies whether the read results should be cached. Can be a boolean or a map to hold the cached data.
+   * @optional
+   */
   cache?: boolean | Map<string, Record<string, any>>;
 };
 
+/**
+ * Defines a PackageJson structure.
+ * @param package_ - The package.json content as an object. See {@link PackageJson}.
+ * @returns the same package.json object.
+ */
 export function definePackageJSON(package_: PackageJson): PackageJson {
   return package_;
 }
 
+/**
+ * Defines a TSConfig structure.
+ * @param tsconfig - The contents of tsconfig.json as an object. See {@link TSConfig}.
+ * @returns the same tsconfig.json object.
+ */
 export function defineTSConfig(tsconfig: TSConfig): TSConfig {
   return tsconfig;
 }
 
 const FileCache = new Map<string, Record<string, any>>();
 
+/**
+ * Asynchronously reads a package.json file.
+ * @param id - The path identifier for the package.json, defaults to the current working directory.
+ * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
+ * @returns a promise resolving to the parsed package.json object.
+ */
 export async function readPackageJSON(
   id?: string,
   options: ResolveOptions & ReadOptions = {}
@@ -40,6 +68,11 @@ export async function readPackageJSON(
   return parsed;
 }
 
+/**
+ * Asynchronously writes data to a package.json file.
+ * @param path - The path to the file where the package.json is written.
+ * @param package_ - The package.json object to write. See {@link PackageJson}.
+ */
 export async function writePackageJSON(
   path: string,
   package_: PackageJson
@@ -47,6 +80,12 @@ export async function writePackageJSON(
   await fsp.writeFile(path, JSON.stringify(package_, undefined, 2));
 }
 
+/**
+ * Asynchronously reads a tsconfig.json file.
+ * @param id - The path to the tsconfig.json file, defaults to the current working directory.
+ * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
+ * @returns a promise resolving to the parsed tsconfig.json object.
+ */
 export async function readTSConfig(
   id?: string,
   options: ResolveOptions & ReadOptions = {}
@@ -66,6 +105,11 @@ export async function readTSConfig(
   return parsed;
 }
 
+/**
+ * Asynchronously writes data to a tsconfig.json file.
+ * @param path - The path to the file where the tsconfig.json is written.
+ * @param tsconfig - The tsconfig.json object to write. See {@link TSConfig}.
+ */
 export async function writeTSConfig(
   path: string,
   tsconfig: TSConfig
@@ -73,6 +117,12 @@ export async function writeTSConfig(
   await fsp.writeFile(path, JSON.stringify(tsconfig, undefined, 2));
 }
 
+/**
+ * Resolves the path to the nearest package.json file from a given directory.
+ * @param id - The base path for the search, defaults to the current working directory.
+ * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
+ * @returns A promise resolving to the path of the nearest package.json file.
+ */
 export async function resolvePackageJSON(
   id: string = process.cwd(),
   options: ResolveOptions = {}
@@ -84,6 +134,12 @@ export async function resolvePackageJSON(
   });
 }
 
+/**
+ * Resolves the path to the nearest tsconfig.json file from a given directory.
+ * @param id - The base path for the search, defaults to the current working directory.
+ * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
+ * @returns A promise resolving to the path of the nearest tsconfig.json file.
+ */
 export async function resolveTSConfig(
   id: string = process.cwd(),
   options: ResolveOptions = {}
@@ -103,6 +159,12 @@ const lockFiles = [
   "bun.lockb",
 ];
 
+/**
+ * Resolves the path to the nearest tsconfig.json file from a given directory.
+ * @param id - The base path for the search, defaults to the current working directory.
+ * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
+ * @returns A promise resolving to the path of the nearest tsconfig.json file.
+ */
 export async function resolveLockfile(
   id: string = process.cwd(),
   options: ResolveOptions = {}
@@ -117,6 +179,13 @@ export async function resolveLockfile(
   throw new Error("No lockfile found from " + id);
 }
 
+/**
+ * Detects the workspace directory based on common project markers (.git, lockfiles, package.json).
+ * Throws an error if the workspace root cannot be detected.
+ * @param id - The base path to search, defaults to the current working directory.
+ * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
+ * @returns a promise resolving to the path of the detected workspace directory.
+ */
 export async function findWorkspaceDir(
   id: string = process.cwd(),
   options: ResolveOptions = {}
