@@ -118,11 +118,11 @@ export interface PackageJson {
    */
   peerDependencies?: Record<string, string>;
   /**
-   * TypeScript typings, typically ending by .d.ts
+   * TypeScript typings, typically ending by `.d.ts`.
    */
   types?: string;
   /**
-   * TypeScript typings for the main entry-point, typically ending by .d.ts
+   * This field is synonymous with `types`.
    */
   typings?: string;
   /**
