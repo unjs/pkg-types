@@ -52,7 +52,7 @@ const FileCache = new Map<string, Record<string, any>>();
  */
 export async function readPackageJSON(
   id?: string,
-  options: ResolveOptions & ReadOptions = {}
+  options: ResolveOptions & ReadOptions = {},
 ): Promise<PackageJson> {
   const resolvedPath = await resolvePackageJSON(id, options);
   const cache =
@@ -75,7 +75,7 @@ export async function readPackageJSON(
  */
 export async function writePackageJSON(
   path: string,
-  package_: PackageJson
+  package_: PackageJson,
 ): Promise<void> {
   await fsp.writeFile(path, JSON.stringify(package_, undefined, 2));
 }
@@ -88,7 +88,7 @@ export async function writePackageJSON(
  */
 export async function readTSConfig(
   id?: string,
-  options: ResolveOptions & ReadOptions = {}
+  options: ResolveOptions & ReadOptions = {},
 ): Promise<TSConfig> {
   const resolvedPath = await resolveTSConfig(id, options);
   const cache =
@@ -112,7 +112,7 @@ export async function readTSConfig(
  */
 export async function writeTSConfig(
   path: string,
-  tsconfig: TSConfig
+  tsconfig: TSConfig,
 ): Promise<void> {
   await fsp.writeFile(path, JSON.stringify(tsconfig, undefined, 2));
 }
@@ -125,7 +125,7 @@ export async function writeTSConfig(
  */
 export async function resolvePackageJSON(
   id: string = process.cwd(),
-  options: ResolveOptions = {}
+  options: ResolveOptions = {},
 ): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
   return findNearestFile("package.json", {
@@ -142,7 +142,7 @@ export async function resolvePackageJSON(
  */
 export async function resolveTSConfig(
   id: string = process.cwd(),
-  options: ResolveOptions = {}
+  options: ResolveOptions = {},
 ): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
   return findNearestFile("tsconfig.json", {
@@ -167,14 +167,16 @@ const lockFiles = [
  */
 export async function resolveLockfile(
   id: string = process.cwd(),
-  options: ResolveOptions = {}
+  options: ResolveOptions = {},
 ): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
   const _options = { startingFrom: resolvedPath, ...options };
   for (const lockFile of lockFiles) {
     try {
       return await findNearestFile(lockFile, _options);
-    } catch {}
+    } catch {
+      // Ignore
+    }
   }
   throw new Error("No lockfile found from " + id);
 }
@@ -188,7 +190,7 @@ export async function resolveLockfile(
  */
 export async function findWorkspaceDir(
   id: string = process.cwd(),
-  options: ResolveOptions = {}
+  options: ResolveOptions = {},
 ): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
   const _options = { startingFrom: resolvedPath, ...options };
@@ -197,7 +199,9 @@ export async function findWorkspaceDir(
   try {
     const r = await findNearestFile(".git/config", _options);
     return resolve(r, "../..");
-  } catch {}
+  } catch {
+    // Ignore
+  }
 
   // Lookdown for lockfile
   try {
@@ -206,13 +210,17 @@ export async function findWorkspaceDir(
       reverse: true,
     });
     return dirname(r);
-  } catch {}
+  } catch {
+    // Ignore
+  }
 
   // Lookdown for package.json
   try {
     const r = await findFile(resolvedPath, _options);
     return dirname(r);
-  } catch {}
+  } catch {
+    // Ignore
+  }
 
   throw new Error("Cannot detect workspace root from " + id);
 }

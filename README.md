@@ -1,87 +1,101 @@
 # pkg-types
 
-> Node.js utilities and TypeScript definitions for `package.json` and `tsconfig.json`
+<!-- automd:badges color=yellow codecov -->
 
-```
-＼⍩⃝／
-```
+[![npm version](https://img.shields.io/npm/v/pkg-types?color=yellow)](https://npmjs.com/package/pkg-types)
+[![npm downloads](https://img.shields.io/npm/dm/pkg-types?color=yellow)](https://npmjs.com/package/pkg-types)
+[![codecov](https://img.shields.io/codecov/c/gh/unjs/pkg-types?color=yellow)](https://codecov.io/gh/unjs/pkg-types)
+
+<!-- /automd -->
+
+Node.js utilities and TypeScript definitions for `package.json` and `tsconfig.json`.
 
 ## Install
 
+<!-- automd:pm-i -->
+
 ```sh
+# ✨ Auto-detect
+npx nypm install pkg-types
+
 # npm
-npm i pkg-types
+npm install pkg-types
 
 # yarn
 yarn add pkg-types
 
 # pnpm
-pnpm add pkg-types
+pnpm install pkg-types
+
+# bun
+bun install pkg-types
 ```
+
+<!-- /automd -->
 
 ## Usage
 
 ### `readPackageJSON`
 
 ```js
-import { readPackageJSON } from 'pkg-types'
-const localPackageJson = await readPackageJSON()
+import { readPackageJSON } from "pkg-types";
+const localPackageJson = await readPackageJSON();
 // or
-const packageJson = await readPackageJSON('/fully/resolved/path/to/folder')
+const packageJson = await readPackageJSON("/fully/resolved/path/to/folder");
 ```
 
 ### `writePackageJSON`
 
 ```js
-import { writePackageJSON } from 'pkg-types'
+import { writePackageJSON } from "pkg-types";
 
-await writePackageJSON('path/to/package.json', pkg)
+await writePackageJSON("path/to/package.json", pkg);
 ```
 
 ### `resolvePackageJSON`
 
 ```js
-import { resolvePackageJSON } from 'pkg-types'
-const filename = await resolvePackageJSON()
+import { resolvePackageJSON } from "pkg-types";
+const filename = await resolvePackageJSON();
 // or
-const packageJson = await resolvePackageJSON('/fully/resolved/path/to/folder')
+const packageJson = await resolvePackageJSON("/fully/resolved/path/to/folder");
 ```
 
 ### `readTSConfig`
 
 ```js
-import { readTSConfig } from 'pkg-types'
-const tsconfig = await readTSConfig()
+import { readTSConfig } from "pkg-types";
+const tsconfig = await readTSConfig();
 // or
-const tsconfig = await readTSConfig('/fully/resolved/path/to/folder')
+const tsconfig2 = await readTSConfig("/fully/resolved/path/to/folder");
 ```
 
 ### `writeTSConfig`
 
 ```js
-import { writeTSConfig } from 'pkg-types'
+import { writeTSConfig } from "pkg-types";
 
-await writeTSConfig('path/to/tsconfig.json', tsconfig)
+await writeTSConfig("path/to/tsconfig.json", tsconfig);
 ```
 
 ### `resolveTSConfig`
 
 ```js
-import { resolveTSConfig } from 'pkg-types'
-const filename = await resolveTSConfig()
+import { resolveTSConfig } from "pkg-types";
+const filename = await resolveTSConfig();
 // or
-const tsconfig = await resolveTSConfig('/fully/resolved/path/to/folder')
+const tsconfig = await resolveTSConfig("/fully/resolved/path/to/folder");
 ```
 
 ### `resolveFile`
 
 ```js
-import { resolveFile } from 'pkg-types'
-const filename = await resolveFile('README.md', {
+import { resolveFile } from "pkg-types";
+const filename = await resolveFile("README.md", {
   startingFrom: id,
   rootPattern: /^node_modules$/,
-  matcher: filename => filename.endsWith('.md'),
-})
+  matcher: (filename) => filename.endsWith(".md"),
+});
 ```
 
 ### `resolveLockFile`
@@ -89,8 +103,8 @@ const filename = await resolveFile('README.md', {
 Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`) or throws an error.
 
 ```js
-import { resolveLockFile } from 'pkg-types'
-const lockfile = await resolveLockFile('.')
+import { resolveLockFile } from "pkg-types";
+const lockfile = await resolveLockFile(".");
 ```
 
 ### `findWorkspaceDir`
@@ -104,8 +118,8 @@ Try to detect workspace dir by in order:
 If fails, throws an error.
 
 ```js
-import { findWorkspaceDir } from 'pkg-types'
-const workspaceDir = await findWorkspaceDir('.')
+import { findWorkspaceDir } from "pkg-types";
+const workspaceDir = await findWorkspaceDir(".");
 ```
 
 ## Types
@@ -115,7 +129,7 @@ const workspaceDir = await findWorkspaceDir('.')
 You can directly use typed interfaces:
 
 ```ts
-import type { TSConfig, PackageJSON } from 'pkg-types'
+import type { TSConfig, PackageJSON } from "pkg-types";
 ```
 
 You can also use define utils for type support for using in plain `.js` files and auto-complete in IDE.
@@ -138,4 +152,13 @@ const pkg = defineTSConfig({})
 
 ## License
 
-MIT - Made with 💛
+<!-- automd:contributors license=MIT author="pi0,danielroe" -->
+
+Published under the [MIT](https://github.com/unjs/pkg-types/blob/main/LICENSE) license.
+Made by [@pi0](https://github.com/pi0), [@danielroe](https://github.com/danielroe) and [community](https://github.com/unjs/pkg-types/graphs/contributors) 💛
+<br><br>
+<a href="https://github.com/unjs/pkg-types/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=unjs/pkg-types" />
+</a>
+
+<!-- /automd -->
