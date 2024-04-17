@@ -16,7 +16,8 @@
     "dist"
   ],
   "scripts": {
-    "prepack": "unbuild",
+    "build": "unbuild",
+    "prepack": "pnpm build",
     "dev": "vitest",
     "release": "pnpm test && changelogen --release && npm publish && git push --follow-tags",
     "lint": "eslint && prettier -c src test",
