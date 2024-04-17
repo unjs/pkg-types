@@ -3,6 +3,7 @@ import { dirname, resolve, isAbsolute } from "pathe";
 import { ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
 import { findFile, FindFileOptions, findNearestFile } from "./utils";
 import type { PackageJson, TSConfig } from "./types";
+import { parseJSONC } from "confbox";
 
 export * from "./types";
 export * from "./utils";
@@ -97,9 +98,8 @@ export async function readTSConfig(
   if (options.cache && cache.has(resolvedPath)) {
     return cache.get(resolvedPath)!;
   }
-  const blob = await fsp.readFile(resolvedPath, "utf8");
-  const jsonc = await import("jsonc-parser");
-  const parsed = jsonc.parse(blob) as TSConfig;
+  const text = await fsp.readFile(resolvedPath, "utf8");
+  const parsed = parseJSONC(text) as TSConfig;
   cache.set(resolvedPath, parsed);
   return parsed;
 }
