@@ -9,7 +9,6 @@ export * from "./utils";
 
 /**
  * Represents the options for resolving paths with additional file finding capabilities.
- * Extends {@link _ResolveOptions} and {@link FindFileOptions}.
  */
 export type ResolveOptions = _ResolveOptions & FindFileOptions;
 
@@ -18,16 +17,16 @@ export type ResolveOptions = _ResolveOptions & FindFileOptions;
  */
 export type ReadOptions = {
   /**
-   * Specifies whether the read results should be cached. Can be a boolean or a map to hold the cached data.
-   * @optional
+   * Specifies whether the read results should be cached.
+   * Can be a boolean or a map to hold the cached data.
    */
   cache?: boolean | Map<string, Record<string, any>>;
 };
 
 /**
  * Defines a PackageJson structure.
- * @param package_ - The package.json content as an object. See {@link PackageJson}.
- * @returns the same package.json object.
+ * @param package_ - The `package.json` content as an object. See {@link PackageJson}.
+ * @returns the same `package.json` object.
  */
 export function definePackageJSON(package_: PackageJson): PackageJson {
   return package_;
@@ -35,8 +34,8 @@ export function definePackageJSON(package_: PackageJson): PackageJson {
 
 /**
  * Defines a TSConfig structure.
- * @param tsconfig - The contents of tsconfig.json as an object. See {@link TSConfig}.
- * @returns the same tsconfig.json object.
+ * @param tsconfig - The contents of `tsconfig.json` as an object. See {@link TSConfig}.
+ * @returns the same `tsconfig.json` object.
  */
 export function defineTSConfig(tsconfig: TSConfig): TSConfig {
   return tsconfig;
@@ -45,10 +44,10 @@ export function defineTSConfig(tsconfig: TSConfig): TSConfig {
 const FileCache = new Map<string, Record<string, any>>();
 
 /**
- * Asynchronously reads a package.json file.
+ * Asynchronously reads a `package.json` file.
  * @param id - The path identifier for the package.json, defaults to the current working directory.
  * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
- * @returns a promise resolving to the parsed package.json object.
+ * @returns a promise resolving to the parsed `package.json` object.
  */
 export async function readPackageJSON(
   id?: string,
@@ -69,9 +68,9 @@ export async function readPackageJSON(
 }
 
 /**
- * Asynchronously writes data to a package.json file.
- * @param path - The path to the file where the package.json is written.
- * @param package_ - The package.json object to write. See {@link PackageJson}.
+ * Asynchronously writes data to a `package.json` file.
+ * @param path - The path to the file where the `package.json` is written.
+ * @param package_ - The `package.json` object to write. See {@link PackageJson}.
  */
 export async function writePackageJSON(
   path: string,
@@ -81,10 +80,10 @@ export async function writePackageJSON(
 }
 
 /**
- * Asynchronously reads a tsconfig.json file.
- * @param id - The path to the tsconfig.json file, defaults to the current working directory.
+ * Asynchronously reads a `tsconfig.json` file.
+ * @param id - The path to the `tsconfig.json` file, defaults to the current working directory.
  * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
- * @returns a promise resolving to the parsed tsconfig.json object.
+ * @returns a promise resolving to the parsed `tsconfig.json` object.
  */
 export async function readTSConfig(
   id?: string,
@@ -106,9 +105,9 @@ export async function readTSConfig(
 }
 
 /**
- * Asynchronously writes data to a tsconfig.json file.
- * @param path - The path to the file where the tsconfig.json is written.
- * @param tsconfig - The tsconfig.json object to write. See {@link TSConfig}.
+ * Asynchronously writes data to a `tsconfig.json` file.
+ * @param path - The path to the file where the `tsconfig.json` is written.
+ * @param tsconfig - The `tsconfig.json` object to write. See {@link TSConfig}.
  */
 export async function writeTSConfig(
   path: string,
@@ -118,10 +117,10 @@ export async function writeTSConfig(
 }
 
 /**
- * Resolves the path to the nearest package.json file from a given directory.
+ * Resolves the path to the nearest `package.json` file from a given directory.
  * @param id - The base path for the search, defaults to the current working directory.
  * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
- * @returns A promise resolving to the path of the nearest package.json file.
+ * @returns A promise resolving to the path of the nearest `package.json` file.
  */
 export async function resolvePackageJSON(
   id: string = process.cwd(),
@@ -135,10 +134,10 @@ export async function resolvePackageJSON(
 }
 
 /**
- * Resolves the path to the nearest tsconfig.json file from a given directory.
+ * Resolves the path to the nearest `tsconfig.json` file from a given directory.
  * @param id - The base path for the search, defaults to the current working directory.
  * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
- * @returns A promise resolving to the path of the nearest tsconfig.json file.
+ * @returns A promise resolving to the path of the nearest `tsconfig.json` file.
  */
 export async function resolveTSConfig(
   id: string = process.cwd(),
@@ -160,10 +159,10 @@ const lockFiles = [
 ];
 
 /**
- * Resolves the path to the nearest tsconfig.json file from a given directory.
+ * Resolves the path to the nearest `tsconfig.json` file from a given directory.
  * @param id - The base path for the search, defaults to the current working directory.
  * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
- * @returns A promise resolving to the path of the nearest tsconfig.json file.
+ * @returns A promise resolving to the path of the nearest `tsconfig.json` file.
  */
 export async function resolveLockfile(
   id: string = process.cwd(),
@@ -182,7 +181,7 @@ export async function resolveLockfile(
 }
 
 /**
- * Detects the workspace directory based on common project markers (.git, lockfiles, package.json).
+ * Detects the workspace directory based on common project markers (`.git`, lockfiles, `package.json`).
  * Throws an error if the workspace root cannot be detected.
  * @param id - The base path to search, defaults to the current working directory.
  * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
