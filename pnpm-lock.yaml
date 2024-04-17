@@ -8,9 +8,9 @@ importers:
 
   .:
     dependencies:
-      jsonc-parser:
-        specifier: ^3.2.1
-        version: 3.2.1
+      confbox:
+        specifier: ^0.1.6
+        version: 0.1.6
       mlly:
         specifier: ^1.6.1
         version: 1.6.1

@@ -26,7 +26,7 @@
     "test:types": "tsc --noEmit --module esnext --skipLibCheck --moduleResolution node ./test/*.test.ts"
   },
   "dependencies": {
-    "jsonc-parser": "^3.2.1",
+    "confbox": "^0.1.6",
     "mlly": "^1.6.1",
     "pathe": "^1.1.2"
   },
