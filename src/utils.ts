@@ -45,6 +45,13 @@ const defaultFindOptions: Required<FindFileOptions> = {
   },
 };
 
+/**
+ * Asynchronously finds a file by name, starting from the specified directory and traversing up (or down if reverse).
+ * @param filename - The name of the file to find.
+ * @param _options - Options to customise the search behaviour.
+ * @returns a promise that resolves to the path of the file found.
+ * @throws Will throw an error if the file cannot be found.
+ */
 export async function findFile(
   filename: string,
   _options: FindFileOptions = {},
@@ -86,6 +93,13 @@ export async function findFile(
   );
 }
 
+/**
+ * Asynchronously finds the next file with the given name, starting in the given directory and moving up.
+ * Alias for findFile without reversing the search.
+ * @param filename - The name of the file to find.
+ * @param _options - Options to customise the search behaviour.
+ * @returns A promise that resolves to the path of the next file found.
+ */
 export function findNearestFile(
   filename: string,
   _options: FindFileOptions = {},
@@ -93,6 +107,13 @@ export function findNearestFile(
   return findFile(filename, _options);
 }
 
+/**
+ * Asynchronously finds the furthest file with the given name, starting from the root directory and moving downwards.
+ * This is essentially the reverse of `findNearestFile'.
+ * @param filename - The name of the file to find.
+ * @param _options - Options to customise the search behaviour, with reverse set to true.
+ * @returns A promise that resolves to the path of the farthest file found.
+ */
 export function findFarthestFile(
   filename: string,
   _options: FindFileOptions = {},

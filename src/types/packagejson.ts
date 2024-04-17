@@ -118,9 +118,12 @@ export interface PackageJson {
    */
   peerDependencies?: Record<string, string>;
   /**
-   * TypeScript typings, typically ending by .d.ts
+   * TypeScript typings, typically ending by `.d.ts`.
    */
   types?: string;
+  /**
+   * This field is synonymous with `types`.
+   */
   typings?: string;
   /**
    * Non-Standard Node.js alternate entry-point to main.
@@ -154,6 +157,9 @@ export interface PackageJson {
         "import" | "require" | "." | "node" | "browser" | string,
         string | Record<"import" | "require" | string, string>
       >;
+  /**
+   * The optional engines field is used to specify the versions of npm and node that your stuff works on.
+   */
   workspaces?: string[];
   [key: string]: any;
 }
