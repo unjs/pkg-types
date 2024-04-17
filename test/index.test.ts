@@ -73,6 +73,11 @@ describe("package.json", () => {
     expect(package_.name).to.equal("foo");
   });
 
+  it("read package.json (jsonc)", async () => {
+    const package_ = await readPackageJSON(rFixture("jsonc/package.json"));
+    expect(package_.name).to.equal("foo");
+  });
+
   it("write package.json", async () => {
     await writePackageJSON(rFixture("package.json.tmp"), { version: "1.0.0" });
     expect(
