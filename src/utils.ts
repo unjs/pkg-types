@@ -23,7 +23,7 @@ export interface FindFileOptions {
    * @default fs.statSync(path).isFile()
    */
   test?: (
-    filePath: string
+    filePath: string,
   ) => boolean | undefined | Promise<boolean | undefined>;
 }
 
@@ -39,13 +39,15 @@ const defaultFindOptions: Required<FindFileOptions> = {
       if (statSync(filePath).isFile()) {
         return true;
       }
-    } catch {}
+    } catch {
+      // Ignore
+    }
   },
 };
 
 export async function findFile(
   filename: string,
-  _options: FindFileOptions = {}
+  _options: FindFileOptions = {},
 ): Promise<string> {
   const options = { ...defaultFindOptions, ..._options };
   const basePath = resolve(options.startingFrom);
@@ -80,20 +82,20 @@ export async function findFile(
   }
 
   throw new Error(
-    `Cannot find matching ${filename} in ${options.startingFrom} or parent directories`
+    `Cannot find matching ${filename} in ${options.startingFrom} or parent directories`,
   );
 }
 
 export function findNearestFile(
   filename: string,
-  _options: FindFileOptions = {}
+  _options: FindFileOptions = {},
 ): Promise<string> {
   return findFile(filename, _options);
 }
 
 export function findFarthestFile(
   filename: string,
-  _options: FindFileOptions = {}
+  _options: FindFileOptions = {},
 ): Promise<string> {
   return findFile(filename, { ..._options, reverse: true });
 }

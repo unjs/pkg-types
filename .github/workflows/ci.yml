@@ -9,32 +9,18 @@ on:
       - main
 
 jobs:
-  lint:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 20
           cache: "pnpm"
       - run: pnpm install
       - run: pnpm lint
-
-  ci:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - run: corepack enable
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 16
-          cache: "pnpm"
-      - run: pnpm install
-      - run: pnpm prepack
-      - run: pnpm test
       - run: pnpm test:types
+      - run: pnpm build
+      - run: pnpm vitest --coverage
       - uses: codecov/codecov-action@v4
