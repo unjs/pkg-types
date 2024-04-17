@@ -1,6 +1,5 @@
 {
-  // Comment
-  "compilerOptions": {
+  "compilerOptions": { // Comment
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -8,7 +7,11 @@
     "outDir": "dist",
     "strict": true,
     "declaration": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

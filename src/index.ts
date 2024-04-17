@@ -3,7 +3,7 @@ import { dirname, resolve, isAbsolute } from "pathe";
 import { ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
 import { findFile, FindFileOptions, findNearestFile } from "./utils";
 import type { PackageJson, TSConfig } from "./types";
-import { parseJSONC } from "confbox";
+import { parseJSONC, parseJSON, stringifyJSON, stringifyJSONC } from "confbox";
 
 export * from "./types";
 export * from "./utils";
@@ -63,7 +63,7 @@ export async function readPackageJSON(
     return cache.get(resolvedPath)!;
   }
   const blob = await fsp.readFile(resolvedPath, "utf8");
-  const parsed = JSON.parse(blob) as PackageJson;
+  const parsed = parseJSON(blob) as PackageJson;
   cache.set(resolvedPath, parsed);
   return parsed;
 }
@@ -77,7 +77,7 @@ export async function writePackageJSON(
   path: string,
   package_: PackageJson,
 ): Promise<void> {
-  await fsp.writeFile(path, JSON.stringify(package_, undefined, 2));
+  await fsp.writeFile(path, stringifyJSON(package_));
 }
 
 /**
@@ -113,7 +113,7 @@ export async function writeTSConfig(
   path: string,
   tsconfig: TSConfig,
 ): Promise<void> {
-  await fsp.writeFile(path, JSON.stringify(tsconfig, undefined, 2));
+  await fsp.writeFile(path, stringifyJSONC(tsconfig));
 }
 
 /**

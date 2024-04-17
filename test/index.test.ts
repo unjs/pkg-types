@@ -14,6 +14,7 @@ import {
   resolveLockfile,
   findWorkspaceDir,
 } from "../src";
+import { readFile } from "node:fs/promises";
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "fixture");
 
@@ -90,6 +91,19 @@ describe("package.json", () => {
       "string",
     );
   });
+
+  it("styles are preserved", async () => {
+    const originalContent = await readFile(rFixture("package.json"), "utf8");
+    await writePackageJSON(
+      rFixture("package.json") + ".tmp",
+      await readPackageJSON(rFixture("package.json")),
+    );
+    const newContent = await readFile(
+      rFixture("package.json") + ".tmp",
+      "utf8",
+    );
+    expect(newContent).toBe(originalContent);
+  });
 });
 
 describe("tsconfig.json", () => {
@@ -111,6 +125,19 @@ describe("tsconfig.json", () => {
     expectTypeOf(options.moduleResolution).toEqualTypeOf<any>();
     // TODO: type check this file.
     // expectTypeOf(options.maxNodeModuleJsDepth).toEqualTypeOf<number | undefined>()
+  });
+
+  it("styles are preserved", async () => {
+    const originalContent = await readFile(rFixture("tsconfig.json"), "utf8");
+    await writeTSConfig(
+      rFixture("tsconfig.json") + ".tmp",
+      await readTSConfig(rFixture("tsconfig.json")),
+    );
+    const newContent = await readFile(
+      rFixture("tsconfig.json") + ".tmp",
+      "utf8",
+    );
+    expect(newContent).toBe(originalContent.replace(/\s*\/\/\s*.+/g, ""));
   });
 });
 
