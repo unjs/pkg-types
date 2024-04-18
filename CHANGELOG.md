@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.1.0
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v1.0.3...v1.1.0)
+
+### 🚀 Enhancements
+
+- Auto detect and preserve format ([#175](https://github.com/unjs/pkg-types/pull/175))
+- Try to parse `package.json` as jsonc ([#176](https://github.com/unjs/pkg-types/pull/176))
+
+### 🩹 Fixes
+
+- Add object syntax browser field type ([#145](https://github.com/unjs/pkg-types/pull/145))
+- **types:** Allow `extends` as array ([#151](https://github.com/unjs/pkg-types/pull/151))
+- Add `imports` field to the types ([#160](https://github.com/unjs/pkg-types/pull/160))
+
+### 💅 Refactors
+
+- Migrate from `jsonc-parser` to `unjs/confbox` ([#174](https://github.com/unjs/pkg-types/pull/174))
+
+### 📖 Documentation
+
+- Add missing jsdocs ([#171](https://github.com/unjs/pkg-types/pull/171))
+
+### 🏡 Chore
+
+- Update repo ([f289b3a](https://github.com/unjs/pkg-types/commit/f289b3a))
+- Add build command ([984edb6](https://github.com/unjs/pkg-types/commit/984edb6))
+- Remove `.eslintignore` ([f1c1705](https://github.com/unjs/pkg-types/commit/f1c1705))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Max ([@onmax](http://github.com/onmax))
+- Parbez <imranbarbhuiya.fsd@gmail.com>
+
 ## v1.0.3
 
 [compare changes](https://undefined/undefined/compare/v1.0.2...v1.0.3)
