@@ -63,7 +63,12 @@ export async function readPackageJSON(
     return cache.get(resolvedPath)!;
   }
   const blob = await fsp.readFile(resolvedPath, "utf8");
-  const parsed = parseJSON(blob) as PackageJson;
+  let parsed: PackageJson;
+  try {
+    parsed = parseJSON(blob) as PackageJson;
+  } catch {
+    parsed = parseJSONC(blob) as PackageJson;
+  }
   cache.set(resolvedPath, parsed);
   return parsed;
 }
