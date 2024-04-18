@@ -158,6 +158,11 @@ export interface PackageJson {
         string | Record<"import" | "require" | string, string>
       >;
   /**
+   *  Docs:
+   *  - https://nodejs.org/api/packages.html#imports
+   */
+  imports?: Record<string, string | Record<string, string>>;
+  /**
    * The optional engines field is used to specify the versions of npm and node that your stuff works on.
    */
   workspaces?: string[];
