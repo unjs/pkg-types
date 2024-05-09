@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.1.1
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v1.1.0...v1.1.1)
+
+### 🩹 Fixes
+
+- Check for all lockfiles before ascending directories ([#179](https://github.com/unjs/pkg-types/pull/179))
+
+### 🏡 Chore
+
+- Update lockfile ([bfd1fca](https://github.com/unjs/pkg-types/commit/bfd1fca))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Werheng Zhang ([@werheng](http://github.com/werheng))
+
 ## v1.1.0
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v1.0.3...v1.1.0)
