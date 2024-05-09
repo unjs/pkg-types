@@ -164,10 +164,10 @@ const lockFiles = [
 ];
 
 /**
- * Resolves the path to the nearest `tsconfig.json` file from a given directory.
+ * Resolves the path to the nearest lockfile from a given directory.
  * @param id - The base path for the search, defaults to the current working directory.
  * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
- * @returns A promise resolving to the path of the nearest `tsconfig.json` file.
+ * @returns A promise resolving to the path of the nearest lockfile.
  */
 export async function resolveLockfile(
   id: string = process.cwd(),
@@ -175,13 +175,13 @@ export async function resolveLockfile(
 ): Promise<string> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
   const _options = { startingFrom: resolvedPath, ...options };
-  for (const lockFile of lockFiles) {
-    try {
-      return await findNearestFile(lockFile, _options);
-    } catch {
-      // Ignore
-    }
+
+  try {
+    return await findNearestFile(lockFiles, _options);
+  } catch {
+    // Ignore
   }
+
   throw new Error("No lockfile found from " + id);
 }
 
