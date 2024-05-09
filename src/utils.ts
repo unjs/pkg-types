@@ -53,9 +53,10 @@ const defaultFindOptions: Required<FindFileOptions> = {
  * @throws Will throw an error if the file cannot be found.
  */
 export async function findFile(
-  filename: string,
+  filename: string | string[],
   _options: FindFileOptions = {},
 ): Promise<string> {
+  const filenames = Array.isArray(filename) ? filename : [filename];
   const options = { ...defaultFindOptions, ..._options };
   const basePath = resolve(options.startingFrom);
   const leadingSlash = basePath[0] === "/";
@@ -74,16 +75,20 @@ export async function findFile(
 
   if (options.reverse) {
     for (let index = root + 1; index <= segments.length; index++) {
-      const filePath = join(...segments.slice(0, index), filename);
-      if (await options.test(filePath)) {
-        return filePath;
+      for (const filename of filenames) {
+        const filePath = join(...segments.slice(0, index), filename);
+        if (await options.test(filePath)) {
+          return filePath;
+        }
       }
     }
   } else {
     for (let index = segments.length; index > root; index--) {
-      const filePath = join(...segments.slice(0, index), filename);
-      if (await options.test(filePath)) {
-        return filePath;
+      for (const filename of filenames) {
+        const filePath = join(...segments.slice(0, index), filename);
+        if (await options.test(filePath)) {
+          return filePath;
+        }
       }
     }
   }
@@ -101,7 +106,7 @@ export async function findFile(
  * @returns A promise that resolves to the path of the next file found.
  */
 export function findNearestFile(
-  filename: string,
+  filename: string | string[],
   _options: FindFileOptions = {},
 ): Promise<string> {
   return findFile(filename, _options);
