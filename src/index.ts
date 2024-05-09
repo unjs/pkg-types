@@ -164,10 +164,10 @@ const lockFiles = [
 ];
 
 /**
- * Resolves the path to the nearest `lockfiles` from a given directory.
+ * Resolves the path to the nearest lockfile from a given directory.
  * @param id - The base path for the search, defaults to the current working directory.
  * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
- * @returns A promise resolving to the path of the nearest `lockfiles`.
+ * @returns A promise resolving to the path of the nearest lockfile.
  */
 export async function resolveLockfile(
   id: string = process.cwd(),
