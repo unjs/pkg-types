@@ -211,7 +211,7 @@ export async function findWorkspaceDir(
   try {
     const r = await resolveLockfile(resolvedPath, {
       ..._options,
-      reverse: true,
+      reverse: false,
     });
     return dirname(r);
   } catch {
