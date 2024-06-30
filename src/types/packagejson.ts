@@ -21,7 +21,8 @@ export type PackageJsonExports =
         | "node"
         | "browser"
         | "default"
-        | string]: PackageJsonExports;
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        | (string & {})]: PackageJsonExports;
     };
 
 export interface PackageJson {
