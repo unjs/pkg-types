@@ -9,6 +9,22 @@ export type PackageJsonPerson =
       url?: string;
     };
 
+export type PackageJsonExports =
+  | string
+  | string[]
+  | {
+      [P in
+        | "."
+        | "import"
+        | "require"
+        | "types"
+        | "node"
+        | "browser"
+        | "default"
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        | (string & {})]: PackageJsonExports;
+    };
+
 export interface PackageJson {
   /**
      * The name is what your thing is called.
@@ -148,15 +164,9 @@ export interface PackageJson {
    * Docs:
    * - https://nodejs.org/docs/latest-v14.x/api/esm.html#esm_exports_sugar
    *
-   * @default 'commonjs'
-   * @since Node.js v14
+   * @since Node.js v12.7
    */
-  exports?:
-    | string
-    | Record<
-        "import" | "require" | "." | "node" | "browser" | string,
-        string | Record<"import" | "require" | string, string>
-      >;
+  exports?: PackageJsonExports;
   /**
    *  Docs:
    *  - https://nodejs.org/api/packages.html#imports
