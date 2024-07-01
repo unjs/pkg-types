@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.1.2
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v1.1.1...v1.1.2)
+
+### 🩹 Fixes
+
+- Expand the types of `exports` ([#183](https://github.com/unjs/pkg-types/pull/183))
+
+### 🏡 Chore
+
+- Update deps ([f62330a](https://github.com/unjs/pkg-types/commit/f62330a))
+
+### ❤️ Contributors
+
+- Pooya Parsa <pooya@pi0.io>
+- Kevin Deng 三咲智子 <sxzz@sxzz.moe>
+
 ## v1.1.1
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v1.1.0...v1.1.1)
