@@ -17,57 +17,14 @@ test("types", () => {
     },
     {
       exports: {
-        ".": {
-          import: {
-            types: "./dist/vue.d.mts",
-            node: "./index.mjs",
-            default: "./dist/vue.runtime.esm-bundler.js",
+        ".": [
+          {
+            import: "./esm/index.js",
+            require: "./cjs/index.js",
           },
-          require: {
-            types: "./dist/vue.d.ts",
-            node: {
-              production: "./dist/vue.cjs.prod.js",
-              development: "./dist/vue.cjs.js",
-              default: "./index.js",
-            },
-            default: "./index.js",
-          },
-        },
-        "./server-renderer": {
-          import: {
-            types: "./server-renderer/index.d.mts",
-            default: "./server-renderer/index.mjs",
-          },
-          require: {
-            types: "./server-renderer/index.d.ts",
-            default: "./server-renderer/index.js",
-          },
-        },
-        "./compiler-sfc": {
-          import: {
-            types: "./compiler-sfc/index.d.mts",
-            browser: "./compiler-sfc/index.browser.mjs",
-            default: "./compiler-sfc/index.mjs",
-          },
-          require: {
-            types: "./compiler-sfc/index.d.ts",
-            browser: "./compiler-sfc/index.browser.js",
-            default: "./compiler-sfc/index.js",
-          },
-        },
-        "./jsx-runtime": {
-          types: "./jsx-runtime/index.d.ts",
-          import: "./jsx-runtime/index.mjs",
-          require: "./jsx-runtime/index.js",
-        },
-        "./jsx-dev-runtime": {
-          types: "./jsx-runtime/index.d.ts",
-          import: "./jsx-runtime/index.mjs",
-          require: "./jsx-runtime/index.js",
-        },
-        "./jsx": "./jsx.d.ts",
-        "./dist/*": "./dist/*",
-        "./package.json": "./package.json",
+          "./fallback/index.js",
+        ],
+        "./feature": ["./features/feature.mjs", "./features/feature.js"],
       },
     },
   ]);

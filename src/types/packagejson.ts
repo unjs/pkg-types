@@ -20,7 +20,10 @@ type PackageJsonExportKey =
   | (string & {}); // eslint-disable-line @typescript-eslint/ban-types
 
 type PackageJsonExportsObject = {
-  [P in PackageJsonExportKey]?: string | PackageJsonExportsObject;
+  [P in PackageJsonExportKey]?:
+    | string
+    | PackageJsonExportsObject
+    | Array<string | PackageJsonExportsObject>;
 };
 
 export type PackageJsonExports = string | PackageJsonExportsObject;
