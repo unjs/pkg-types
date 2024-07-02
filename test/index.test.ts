@@ -9,8 +9,8 @@ import {
   resolvePackageJSON,
   writePackageJSON,
   writeTSConfig,
-  TSConfig,
-  ResolveOptions,
+  type TSConfig,
+  type ResolveOptions,
   resolveLockfile,
   findWorkspaceDir,
 } from "../src";

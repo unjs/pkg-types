@@ -1,7 +1,7 @@
 import { promises as fsp } from "node:fs";
 import { dirname, resolve, isAbsolute } from "pathe";
-import { ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
-import { findFile, FindFileOptions, findNearestFile } from "./utils";
+import { type ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
+import { findFile, type FindFileOptions, findNearestFile } from "./utils";
 import type { PackageJson, TSConfig } from "./types";
 import { parseJSONC, parseJSON, stringifyJSON, stringifyJSONC } from "confbox";
 

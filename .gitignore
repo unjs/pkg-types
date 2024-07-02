@@ -5,3 +5,4 @@ node_modules
 .nyc*
 coverage
 .DS_Store
+tsconfig.vitest-temp.json
