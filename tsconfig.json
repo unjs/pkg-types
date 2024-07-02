@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "Preserve",
-    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
