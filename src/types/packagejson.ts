@@ -9,21 +9,27 @@ export type PackageJsonPerson =
       url?: string;
     };
 
+type PackageJsonExportKey =
+  | "."
+  | "import"
+  | "require"
+  | "types"
+  | "node"
+  | "browser"
+  | "default"
+  | (string & {}); // eslint-disable-line @typescript-eslint/ban-types
+
+type PackageJsonExportsObject = {
+  [P in PackageJsonExportKey]?:
+    | string
+    | PackageJsonExportsObject
+    | Array<string | PackageJsonExportsObject>;
+};
+
 export type PackageJsonExports =
   | string
-  | string[]
-  | {
-      [P in
-        | "."
-        | "import"
-        | "require"
-        | "types"
-        | "node"
-        | "browser"
-        | "default"
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        | (string & {})]: PackageJsonExports;
-    };
+  | PackageJsonExportsObject
+  | Array<string | PackageJsonExportsObject>;
 
 export interface PackageJson {
   /**
