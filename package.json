@@ -18,12 +18,11 @@
   "scripts": {
     "build": "unbuild",
     "prepack": "pnpm build",
-    "dev": "vitest",
+    "dev": "vitest --typecheck",
     "release": "pnpm test && changelogen --release && npm publish && git push --follow-tags",
     "lint": "eslint && prettier -c src test",
     "lint:fix": "automd && eslint --fix . && prettier -w src test",
-    "test": "vitest run --coverage",
-    "test:types": "tsc --noEmit --module esnext --skipLibCheck --moduleResolution node ./test/*.test.ts"
+    "test": "vitest run --typecheck --coverage"
   },
   "dependencies": {
     "confbox": "^0.1.7",
