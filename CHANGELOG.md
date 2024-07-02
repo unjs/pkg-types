@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.1.3
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v1.1.2...v1.1.3)
+
+### 🩹 Fixes
+
+- Fix types for `PackageJson` exports ([#185](https://github.com/unjs/pkg-types/pull/185))
+
+### 🏡 Chore
+
+- Update tsconfig and enable type tests ([#184](https://github.com/unjs/pkg-types/pull/184))
+
+### 🤖 CI
+
+- Enable `--typecheck` for vitest step ([cacfa8e](https://github.com/unjs/pkg-types/commit/cacfa8e))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+
 ## v1.1.2
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v1.1.1...v1.1.2)
