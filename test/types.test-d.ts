@@ -13,6 +13,15 @@ test("types", () => {
     {
       exports: {
         ".": "./index.mjs",
+        "./feature": "./features/feature.mjs",
+      },
+    },
+    {
+      exports: {
+        node: {
+          import: "./node/index.mjs",
+          require: "./node/index.js",
+        },
       },
     },
     {
