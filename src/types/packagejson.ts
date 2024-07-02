@@ -26,7 +26,10 @@ type PackageJsonExportsObject = {
     | Array<string | PackageJsonExportsObject>;
 };
 
-export type PackageJsonExports = string | PackageJsonExportsObject;
+export type PackageJsonExports =
+  | string
+  | PackageJsonExportsObject
+  | Array<string | PackageJsonExportsObject>;
 
 export interface PackageJson {
   /**

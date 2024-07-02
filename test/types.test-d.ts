@@ -25,6 +25,9 @@ test("types", () => {
       },
     },
     {
+      exports: ["./a.mjs", "./a.d.ts"],
+    },
+    {
       exports: {
         ".": [
           {
