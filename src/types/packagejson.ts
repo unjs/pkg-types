@@ -115,6 +115,10 @@ export interface PackageJson {
    */
   browser?: string | Record<string, string | false>;
   /**
+   * The `unpkg` field is used to specify the URL to a UMD module for your package. This is used by default in the unpkg.com CDN service.
+   */
+  unpkg?: string;
+  /**
    * A map of command name to local file name. On install, npm will symlink that file into `prefix/bin` for global installs, or `./node_modules/.bin/` for local installs.
    */
   bin?: string | Record<string, string>;
@@ -182,5 +186,31 @@ export interface PackageJson {
    * The optional engines field is used to specify the versions of npm and node that your stuff works on.
    */
   workspaces?: string[];
+  typesVersions?: Record<string, Record<string, string[]>>;
+  os?: string[];
+  cpu?: string[];
+  publishConfig?: {
+    registry: string;
+    tag: string;
+    access: "public" | "restricted";
+
+    // pnpm
+    executableFiles?: string[];
+    directory?: string;
+    linkDirectory?: boolean;
+  } & Pick<
+    PackageJson,
+    | "bin"
+    | "main"
+    | "exports"
+    | "types"
+    | "typings"
+    | "module"
+    | "browser"
+    | "unpkg"
+    | "typesVersions"
+    | "os"
+    | "cpu"
+  >;
   [key: string]: any;
 }
