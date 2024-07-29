@@ -33,15 +33,13 @@ export type PackageJsonExports =
 
 export interface PackageJson {
   /**
-     * The name is what your thing is called.
-     * Some rules:
-
-         - The name must be less than or equal to 214 characters. This includes the scope for scoped packages.
-         - The name can’t start with a dot or an underscore.
-         - New packages must not have uppercase letters in the name.
-         - The name ends up being part of a URL, an argument on the command line, and a folder name. Therefore, the name can’t contain any non-URL-safe characters.
-
-     */
+   * The name is what your thing is called.
+   * Some rules:
+   * - The name must be less than or equal to 214 characters. This includes the scope for scoped packages.
+   * - The name can’t start with a dot or an underscore.
+   * - New packages must not have uppercase letters in the name.
+   * - The name ends up being part of a URL, an argument on the command line, and a folder name. Therefore, the name can’t contain any non-URL-safe characters.
+   */
   name?: string;
   /**
    * Version must be parseable by `node-semver`, which is bundled with npm as a dependency. (`npm install semver` to use it yourself.)
@@ -183,20 +181,93 @@ export interface PackageJson {
    */
   imports?: Record<string, string | Record<string, string>>;
   /**
-   * The optional engines field is used to specify the versions of npm and node that your stuff works on.
+   * The field is used to define a set of sub-packages (or workspaces) within a monorepo.
+   *
+   * This field is an array of glob patterns or an object with specific configurations for managing
+   * multiple packages in a single repository.
    */
   workspaces?: string[];
+  /**
+   * The field is is used to specify different TypeScript declaration files for
+   * different versions of TypeScript, allowing for version-specific type definitions.
+   */
   typesVersions?: Record<string, Record<string, string[]>>;
+  /**
+   * You can specify which operating systems your module will run on:
+   * ```json
+   * {
+   *   "os": ["darwin", "linux"]
+   * }
+   * ```
+   * You can also block instead of allowing operating systems, just prepend the blocked os with a '!':
+   * ```json
+   * {
+   *   "os": ["!win32"]
+   * }
+   * ```
+   * The host operating system is determined by `process.platform`
+   * It is allowed to both block and allow an item, although there isn't any good reason to do this.
+   */
   os?: string[];
+  /**
+   * If your code only runs on certain cpu architectures, you can specify which ones.
+   * ```json
+   * {
+   *   "cpu": ["x64", "ia32"]
+   * }
+   * ```
+   * Like the `os` option, you can also block architectures:
+   * ```json
+   * {
+   *   "cpu": ["!arm", "!mips"]
+   * }
+   * ```
+   * The host architecture is determined by `process.arch`
+   */
   cpu?: string[];
+  /**
+   * This is a set of config values that will be used at publish-time.
+   */
   publishConfig?: {
+    /**
+     * The registry that will be used if the package is published.
+     */
     registry: string;
+    /**
+     * The tag that will be used if the package is published.
+     */
     tag: string;
+    /**
+     * The access level that will be used if the package is published.
+     */
     access: "public" | "restricted";
-
-    // pnpm
+    /**
+     * **pnpm-only**
+     *
+     * By default, for portability reasons, no files except those listed in
+     * the bin field will be marked as executable in the resulting package
+     * archive. The executableFiles field lets you declare additional fields
+     * that must have the executable flag (+x) set even if
+     * they aren't directly accessible through the bin field.
+     */
     executableFiles?: string[];
+    /**
+     * **pnpm-only**
+     *
+     * You also can use the field `publishConfig.directory` to customize
+     * the published subdirectory relative to the current `package.json`.
+     *
+     * It is expected to have a modified version of the current package in
+     * the specified directory (usually using third party build tools).
+     */
     directory?: string;
+    /**
+     * **pnpm-only**
+     *
+     * When set to `true`, the project will be symlinked from the
+     * `publishConfig.directory` location during local development.
+     * @default true
+     */
     linkDirectory?: boolean;
   } & Pick<
     PackageJson,
