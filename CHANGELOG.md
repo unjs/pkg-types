@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.2.0
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v1.1.3...v1.2.0)
+
+### 🚀 Enhancements
+
+- Add more fields into package.json ([#190](https://github.com/unjs/pkg-types/pull/190))
+
+### 🏡 Chore
+
+- Ignore fixture for renovate ([24c8fce](https://github.com/unjs/pkg-types/commit/24c8fce))
+- Update deps ([b539054](https://github.com/unjs/pkg-types/commit/b539054))
+
+### ❤️ Contributors
+
+- Kevin Deng 三咲智子 <sxzz@sxzz.moe>
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- 三咲智子 Kevin Deng <sxzz@sxzz.moe>
+
 ## v1.1.3
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v1.1.2...v1.1.3)
