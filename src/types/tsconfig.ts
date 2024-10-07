@@ -22,4 +22,5 @@ export interface TSConfig {
   files?: string[];
   include?: string[];
   typeAcquisition?: TypeAcquisition;
+  references?: { path: string }[];
 }
