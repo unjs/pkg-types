@@ -37,7 +37,7 @@
     "eslint": "^9.9.0",
     "eslint-config-unjs": "^0.3.2",
     "expect-type": "^0.20.0",
-    "jiti": "^1.21.6",
+    "jiti": "^2.3.3",
     "prettier": "^3.3.3",
     "typescript": "^5.5.4",
     "unbuild": "^2.0.0",
