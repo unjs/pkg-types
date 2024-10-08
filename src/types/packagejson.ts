@@ -33,11 +33,11 @@ export interface PackageJson {
    * The url to your project’s issue tracker and / or the email address to which issues should be reported. These are helpful for people who encounter issues with your package.
    */
   bugs?:
-  | string
-  | {
-    url?: string;
-    email?: string;
-  };
+    | string
+    | {
+        url?: string;
+        email?: string;
+      };
 
   /**
    * You should specify a license for your package so that people know how they are permitted to use it, and any restrictions you’re placing on it.
@@ -49,15 +49,15 @@ export interface PackageJson {
    * For GitHub, GitHub gist, Bitbucket, or GitLab repositories you can use the same shortcut syntax you use for npm install:
    */
   repository?:
-  | string
-  | {
-    type: string;
-    url: string;
-    /**
-     * If the `package.json` for your package is not in the root directory (for example if it is part of a monorepo), you can specify the directory in which it lives:
-     */
-    directory?: string;
-  };
+    | string
+    | {
+        type: string;
+        url: string;
+        /**
+         * If the `package.json` for your package is not in the root directory (for example if it is part of a monorepo), you can specify the directory in which it lives:
+         */
+        directory?: string;
+      };
 
   /**
    * The `scripts` field is a dictionary containing script commands that are run at various times in the lifecycle of your package.
@@ -299,10 +299,10 @@ export interface PackageJson {
 export type PackageJsonPerson =
   | string
   | {
-    name: string;
-    email?: string;
-    url?: string;
-  };
+      name: string;
+      email?: string;
+      url?: string;
+    };
 
 type PackageJsonExportKey =
   | "."
@@ -316,9 +316,9 @@ type PackageJsonExportKey =
 
 type PackageJsonExportsObject = {
   [P in PackageJsonExportKey]?:
-  | string
-  | PackageJsonExportsObject
-  | Array<string | PackageJsonExportsObject>;
+    | string
+    | PackageJsonExportsObject
+    | Array<string | PackageJsonExportsObject>;
 };
 
 export type PackageJsonExports =
