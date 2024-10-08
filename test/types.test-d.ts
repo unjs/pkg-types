@@ -7,6 +7,18 @@ test("types", () => {
     {},
     { name: "foo" },
     { version: "1.0.0" },
+    // Partial objects
+    {
+      bugs: {},
+      bin: {},
+      dependencies: {},
+      devDependencies: {},
+      repository: { type: "", url: "" }, // TODO: should empty strings be allowed?
+      exports: {},
+      imports: {},
+      typesVersions: {},
+      publishConfig: {},
+    },
     // Exports field
     { exports: "./index.mjs" },
     { exports: {} },
