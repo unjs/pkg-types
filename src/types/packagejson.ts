@@ -232,15 +232,15 @@ export interface PackageJson {
     /**
      * The registry that will be used if the package is published.
      */
-    registry: string;
+    registry?: string;
     /**
      * The tag that will be used if the package is published.
      */
-    tag: string;
+    tag?: string;
     /**
      * The access level that will be used if the package is published.
      */
-    access: "public" | "restricted";
+    access?: "public" | "restricted";
     /**
      * **pnpm-only**
      *
