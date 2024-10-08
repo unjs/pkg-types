@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.2.1
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v1.2.0...v1.2.1)
+
+### 🩹 Fixes
+
+- Optional fields from `publishConfig` ([#194](https://github.com/unjs/pkg-types/pull/194))
+- **tsconfig:** Add missing `references` key ([#198](https://github.com/unjs/pkg-types/pull/198))
+
+### 🏡 Chore
+
+- Update dependencies ([c173fc7](https://github.com/unjs/pkg-types/commit/c173fc7))
+- Lint ([ce3d808](https://github.com/unjs/pkg-types/commit/ce3d808))
+- Format packagejson.ts ([5cbff11](https://github.com/unjs/pkg-types/commit/5cbff11))
+- Apply automated updates ([e1234ea](https://github.com/unjs/pkg-types/commit/e1234ea))
+
+### ✅ Tests
+
+- **packagejson:** Add tests for partial objects ([e2dc735](https://github.com/unjs/pkg-types/commit/e2dc735))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Johan Meester <johan.meester71@gmail.com>
+- Kevin Deng 三咲智子 <sxzz@sxzz.moe>
+
 ## v1.2.0
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v1.1.3...v1.2.0)
