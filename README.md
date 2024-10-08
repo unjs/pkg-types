@@ -3,7 +3,7 @@
 <!-- automd:badges color=yellow codecov -->
 
 [![npm version](https://img.shields.io/npm/v/pkg-types?color=yellow)](https://npmjs.com/package/pkg-types)
-[![npm downloads](https://img.shields.io/npm/dm/pkg-types?color=yellow)](https://npmjs.com/package/pkg-types)
+[![npm downloads](https://img.shields.io/npm/dm/pkg-types?color=yellow)](https://npm.chart.dev/pkg-types)
 [![codecov](https://img.shields.io/codecov/c/gh/unjs/pkg-types?color=yellow)](https://codecov.io/gh/unjs/pkg-types)
 
 <!-- /automd -->
@@ -29,6 +29,9 @@ pnpm install pkg-types
 
 # bun
 bun install pkg-types
+
+# deno
+deno install pkg-types
 ```
 
 <!-- /automd -->

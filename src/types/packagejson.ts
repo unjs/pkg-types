@@ -17,7 +17,7 @@ type PackageJsonExportKey =
   | "node"
   | "browser"
   | "default"
-  | (string & {}); // eslint-disable-line @typescript-eslint/ban-types
+  | (string & {});
 
 type PackageJsonExportsObject = {
   [P in PackageJsonExportKey]?:
