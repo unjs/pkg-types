@@ -20,6 +20,8 @@ const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "fixture");
 
 const rFixture = (...p: string[]) => resolve(fixtureDir, ...p);
 
+const normalizeWinLines = (s: string) => s.replace(/\r\n/g, "\n");
+
 async function expectToReject(p: Promise<any>) {
   return expect(
     await p.then(() => {}).catch((error: Error) => error.toString()),
@@ -98,7 +100,10 @@ describe("package.json", () => {
   });
 
   it("styles are preserved", async () => {
-    const originalContent = await readFile(rFixture("package.json"), "utf8");
+    const originalContent = await readFile(
+      rFixture("package.json"),
+      "utf8",
+    ).then(normalizeWinLines);
     await writePackageJSON(
       rFixture("package.json") + ".tmp",
       await readPackageJSON(rFixture("package.json")),
@@ -106,7 +111,7 @@ describe("package.json", () => {
     const newContent = await readFile(
       rFixture("package.json") + ".tmp",
       "utf8",
-    );
+    ).then(normalizeWinLines);
     expect(newContent).toBe(originalContent);
   });
 });
@@ -133,7 +138,10 @@ describe("tsconfig.json", () => {
   });
 
   it("styles are preserved", async () => {
-    const originalContent = await readFile(rFixture("tsconfig.json"), "utf8");
+    const originalContent = await readFile(
+      rFixture("tsconfig.json"),
+      "utf8",
+    ).then(normalizeWinLines);
     await writeTSConfig(
       rFixture("tsconfig.json") + ".tmp",
       await readTSConfig(rFixture("tsconfig.json")),
@@ -141,7 +149,7 @@ describe("tsconfig.json", () => {
     const newContent = await readFile(
       rFixture("tsconfig.json") + ".tmp",
       "utf8",
-    );
+    ).then(normalizeWinLines);
     expect(newContent).toBe(originalContent.replace(/\s*\/\/\s*.+/g, ""));
   });
 });
