@@ -293,7 +293,7 @@ export interface PackageJson {
   /**
    * See: https://nodejs.org/api/packages.html#packagemanager
    * This field defines which package manager is expected to be used when working on the current project.
-   * Should be of the format: `<package manager name>@<version>`
+   * Should be of the format: `<name>@<version>[#hash]`
    */
   packageManager?: string;
 
