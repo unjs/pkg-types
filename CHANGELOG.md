@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.3.0
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v1.2.1...v1.3.0)
+
+### 🚀 Enhancements
+
+- **types:** Add `packageManager` field to `PackageJson` ([#204](https://github.com/unjs/pkg-types/pull/204))
+
+### 🏡 Chore
+
+- **release:** V1.2.1 ([395df23](https://github.com/unjs/pkg-types/commit/395df23))
+- Update deps ([cf98e6c](https://github.com/unjs/pkg-types/commit/cf98e6c))
+
+### 🤖 CI
+
+- Enable tests on windows ([#205](https://github.com/unjs/pkg-types/pull/205))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Colonel-Sandvich ([@Colonel-Sandvich](http://github.com/Colonel-Sandvich))
+
 ## v1.2.1
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v1.2.0...v1.2.1)
