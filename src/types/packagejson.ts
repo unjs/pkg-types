@@ -290,6 +290,14 @@ export interface PackageJson {
     | "cpu"
   >;
 
+  /**
+   * **experimental**
+   * See: https://nodejs.org/api/packages.html#packagemanager
+   * This field defines which package manager is expected to be used when working on the current project.
+   * Should be of the format: `<package manager name>@<version>`
+   */
+  packageManager?: string;
+
   [key: string]: any;
 }
 
