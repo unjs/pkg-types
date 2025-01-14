@@ -161,7 +161,7 @@ const lockFiles = [
   "pnpm-lock.yaml",
   "npm-shrinkwrap.json",
   "bun.lockb",
-  "bun.lock"
+  "bun.lock",
 ];
 
 /**
