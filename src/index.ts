@@ -229,16 +229,19 @@ export async function findWorkspaceDir(
 
 // --- internal ---
 
- function _resolvePath(id: string, opts: ResolveOptions = {}) {
+function _resolvePath(id: string, opts: ResolveOptions = {}) {
   if (isAbsolute(id)) {
     return id;
   }
   try {
     // TODO: Support import.meta.main when available to prefer over cwd()
     // https://github.com/nodejs/node/issues/49440
-    const resolved = import.meta.resolve(id, opts.parent || opts.url || process.cwd());
+    const resolved = import.meta.resolve(
+      id,
+      opts.parent || opts.url || process.cwd(),
+    );
     if (resolved && typeof resolved === "string") {
-      return normalize(fileURLToPath(resolved))
+      return normalize(fileURLToPath(resolved));
     }
   } catch {
     // Ignore
