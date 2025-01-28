@@ -7,7 +7,7 @@ import {
   findNearestFile,
   existsFile,
 } from "./utils";
-import type { PackageJson, TSConfig } from "./types";
+import type { PackageJson, TSConfig, Workspace, WorkspaceType } from "./types";
 import {
   parseJSONC,
   parseJSON,
@@ -241,22 +241,20 @@ export async function findWorkspaceDir(
   throw new Error("Cannot detect workspace root from " + id);
 }
 
-export type PackageWorkspaceTypes = "npm" | "yarn" | "pnpm" | "lerna";
-
 const workspaceConfigFiles = [
   {
     type: "pnpm",
-    detect: "pnpm-lock.yaml",
+    lockFile: "pnpm-lock.yaml",
     config: "pnpm-workspace.yaml",
   },
   {
     type: "lerna",
-    detect: "lerna.json",
+    lockFile: "lerna.json",
     config: "lerna.json",
   },
   {
     type: "yarn",
-    detect: "yarn.lock",
+    lockFile: "yarn.lock",
     config: "package.json",
   },
   {
@@ -268,11 +266,7 @@ const workspaceConfigFiles = [
 export async function resolveWorkspace(
   id: string = process.cwd(),
   options: ResolveOptions = {},
-): Promise<{
-  root: string;
-  type: PackageWorkspaceTypes;
-  workspaces: string[];
-}> {
+): Promise<Workspace> {
   const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
 
   for (const item of workspaceConfigFiles) {
@@ -280,8 +274,8 @@ export async function resolveWorkspace(
       startingFrom: resolvedPath,
       test: (filePath) => {
         const dir = dirname(filePath);
-        if ("detect" in item) {
-          const detectPath = resolve(dir, item.detect);
+        if ("lockFile" in item) {
+          const detectPath = resolve(dir, item.lockFile);
           if (!existsFile(detectPath)) {
             return false;
           }
@@ -352,7 +346,7 @@ export async function resolveWorkspacePkgs(
   id: string | Awaited<ReturnType<typeof resolveWorkspace>>,
   options: ResolveOptions = {},
 ): Promise<{
-  type: PackageWorkspaceTypes;
+  type: WorkspaceType;
   root: {
     dir: string;
     packageJson: PackageJson;
