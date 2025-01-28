@@ -187,32 +187,32 @@ const workspaceCases = [
   {
     name: "pnpm",
     type: "pnpm",
-    pkgDir: rFixture("./monorepo-pnpm"),
+    pkgDir: rFixture("./monorepo/pnpm"),
   },
   {
     name: "lerna",
     type: "lerna",
-    pkgDir: rFixture("./monorepo-lerna"),
+    pkgDir: rFixture("./monorepo/lerna"),
   },
   {
     name: "yarn",
     type: "yarn",
-    pkgDir: rFixture("./monorepo-yarn"),
+    pkgDir: rFixture("./monorepo/yarn"),
   },
   {
     name: "npm",
     type: "npm",
-    pkgDir: rFixture("./monorepo-npm"),
+    pkgDir: rFixture("./monorepo/npm"),
   },
   {
     name: "lerna use npm workspaces",
     type: "npm",
-    pkgDir: rFixture("./monorepo-lerna-use-npm-workspaces"),
+    pkgDir: rFixture("./monorepo/lerna-use-npm-workspaces"),
   },
   {
     name: "lerna use yarn workspaces",
     type: "yarn",
-    pkgDir: rFixture("./monorepo-lerna-use-yarn-workspaces"),
+    pkgDir: rFixture("./monorepo/lerna-use-yarn-workspaces"),
   },
 ];
 
