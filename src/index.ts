@@ -1,10 +1,21 @@
 import { promises as fsp } from "node:fs";
 import { dirname, resolve, isAbsolute } from "pathe";
 import { type ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
-import { findFile, type FindFileOptions, findNearestFile, existsFile } from "./utils";
+import {
+  findFile,
+  type FindFileOptions,
+  findNearestFile,
+  existsFile,
+} from "./utils";
 import type { PackageJson, TSConfig } from "./types";
-import { parseJSONC, parseJSON, stringifyJSON, stringifyJSONC, parseYAML } from "confbox";
-import { glob } from "tinyglobby"
+import {
+  parseJSONC,
+  parseJSON,
+  stringifyJSON,
+  stringifyJSONC,
+  parseYAML,
+} from "confbox";
+import { glob } from "tinyglobby";
 export * from "./types";
 export * from "./utils";
 
@@ -256,7 +267,7 @@ const workspaceConfigFiles = [
 
 export async function resolveWorkspace(
   id: string = process.cwd(),
-  options: ResolveOptions = {}
+  options: ResolveOptions = {},
 ): Promise<{
   root: string;
   type: PackageWorkspaceTypes;
@@ -339,7 +350,7 @@ export async function resolveWorkspace(
 
 export async function resolveWorkspacePkgs(
   id: string | Awaited<ReturnType<typeof resolveWorkspace>>,
-  options: ResolveOptions = {}
+  options: ResolveOptions = {},
 ): Promise<{
   type: PackageWorkspaceTypes;
   root: {
@@ -371,7 +382,7 @@ export async function resolveWorkspacePkgs(
       pkgAbsoluteDirs.map(async (dir) => ({
         dir,
         packageJson: await readPackageJSON(dir, options),
-      }))
+      })),
     ),
   };
 }
@@ -381,7 +392,7 @@ export async function resolveWorkspacePkgsGraph(
     | string
     | Awaited<ReturnType<typeof resolveWorkspace>>
     | Awaited<ReturnType<typeof resolveWorkspacePkgs>>,
-  options: ResolveOptions = {}
+  options: ResolveOptions = {},
 ): Promise<string[][]> {
   const resolvedPkgs =
     typeof id === "object" && "packages" in id

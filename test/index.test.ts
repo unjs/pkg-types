@@ -236,7 +236,7 @@ describe("resolveWorkspacePkgs", () => {
       expect(result.type).to.eq(item.type);
       expect(result.packages.length).to.eq(2);
       expect(
-        result.packages.map((item) => item.packageJson.name)
+        result.packages.map((item) => item.packageJson.name),
       ).toMatchObject(expect.arrayContaining(["foo", "bar"]));
     });
   }
@@ -246,18 +246,14 @@ describe("resolveWorkspacePkgsGraph", () => {
   for (const item of workspaceCases) {
     it(`works for ${item.name}`, async () => {
       const result = await resolveWorkspacePkgsGraph(item.pkgDir);
-      expect(result).toMatchObject(
-        {
-          "bar": {
-            "dependencies": [
-              "foo",
-            ],
-          },
-          "foo": {
-            "dependencies": [],
-          },
-        }
-      )
+      expect(result).toMatchObject({
+        bar: {
+          dependencies: ["foo"],
+        },
+        foo: {
+          dependencies: [],
+        },
+      });
     });
   }
 });
