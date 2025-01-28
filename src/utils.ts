@@ -120,7 +120,7 @@ export function findNearestFile(
  * @returns A promise that resolves to the path of the farthest file found.
  */
 export function findFarthestFile(
-  filename: string,
+  filename: string | string[],
   _options: FindFileOptions = {},
 ): Promise<string> {
   return findFile(filename, { ..._options, reverse: true });
