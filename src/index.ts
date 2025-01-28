@@ -1,5 +1,6 @@
 import { promises as fsp } from "node:fs";
-import { dirname, resolve, isAbsolute } from "pathe";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve, isAbsolute, normalize } from "pathe";
 import {
   type FindFileOptions,
   findNearestFile,
@@ -226,14 +227,19 @@ export async function findWorkspaceDir(
   throw new Error("Cannot detect workspace root from " + id);
 }
 
-async function _resolvePath(id: string, opts: ResolveOptions = {}) {
+// --- internal ---
+
+ function _resolvePath(id: string, opts: ResolveOptions = {}) {
   if (isAbsolute(id)) {
     return id;
   }
   try {
     // TODO: Support import.meta.main when available to prefer over cwd()
-    //  https://github.com/nodejs/node/issues/49440
-    id = await import.meta.resolve(id, opts.parent || opts.url || process.cwd());
+    // https://github.com/nodejs/node/issues/49440
+    const resolved = import.meta.resolve(id, opts.parent || opts.url || process.cwd());
+    if (resolved && typeof resolved === "string") {
+      return normalize(fileURLToPath(resolved))
+    }
   } catch {
     // Ignore
   }
