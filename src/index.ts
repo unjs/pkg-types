@@ -140,7 +140,7 @@ export async function resolvePackageJSON(
 ): Promise<string> {
   return findNearestFile("package.json", {
     ...options,
-    startingFrom: await _resolvePath(id, options),
+    startingFrom: _resolvePath(id, options),
   });
 }
 
@@ -156,7 +156,7 @@ export async function resolveTSConfig(
 ): Promise<string> {
   return findNearestFile("tsconfig.json", {
     ...options,
-    startingFrom: await _resolvePath(id, options),
+    startingFrom: _resolvePath(id, options),
   });
 }
 
@@ -181,7 +181,7 @@ export async function resolveLockfile(
 ): Promise<string> {
   return findNearestFile(lockFiles, {
     ...options,
-    startingFrom: await _resolvePath(id, options),
+    startingFrom: _resolvePath(id, options),
   });
 }
 
@@ -197,7 +197,7 @@ export async function findWorkspaceDir(
   options: ResolveOptions = {},
 ): Promise<string> {
   // Resolve the starting path
-  const startingFrom = await _resolvePath(id, options);
+  const startingFrom = _resolvePath(id, options);
   options = { startingFrom, ...options } as ResolveOptions;
 
   // Lookdown for .git/config
