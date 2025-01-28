@@ -1,6 +1,6 @@
 import { promises as fsp } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, resolve, isAbsolute, normalize } from "pathe";
+import { dirname, resolve, isAbsolute } from "pathe";
 import {
   type FindFileOptions,
   findNearestFile,
@@ -241,7 +241,7 @@ function _resolvePath(id: string, opts: ResolveOptions = {}) {
       opts.parent || opts.url || process.cwd(),
     );
     if (resolved && typeof resolved === "string") {
-      return normalize(fileURLToPath(resolved));
+      return fileURLToPath(resolved);
     }
   } catch {
     // Ignore
