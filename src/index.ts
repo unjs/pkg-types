@@ -1,10 +1,21 @@
 import { promises as fsp } from "node:fs";
 import { dirname, resolve, isAbsolute } from "pathe";
 import { type ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
-import { findFile, type FindFileOptions, findNearestFile } from "./utils";
-import type { PackageJson, TSConfig } from "./types";
-import { parseJSONC, parseJSON, stringifyJSON, stringifyJSONC } from "confbox";
-
+import {
+  findFile,
+  type FindFileOptions,
+  findNearestFile,
+  existsFile,
+} from "./utils";
+import type { PackageJson, TSConfig, Workspace, WorkspaceType } from "./types";
+import {
+  parseJSONC,
+  parseJSON,
+  stringifyJSON,
+  stringifyJSONC,
+  parseYAML,
+} from "confbox";
+import { glob } from "tinyglobby";
 export * from "./types";
 export * from "./utils";
 
@@ -60,7 +71,7 @@ export async function readPackageJSON(
       ? options.cache
       : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
-    return cache.get(resolvedPath)!;
+    return cache.get(resolvedPath) as PackageJson;
   }
   const blob = await fsp.readFile(resolvedPath, "utf8");
   let parsed: PackageJson;
@@ -101,7 +112,7 @@ export async function readTSConfig(
       ? options.cache
       : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
-    return cache.get(resolvedPath)!;
+    return cache.get(resolvedPath) as TSConfig;
   }
   const text = await fsp.readFile(resolvedPath, "utf8");
   const parsed = parseJSONC(text) as TSConfig;
@@ -228,4 +239,174 @@ export async function findWorkspaceDir(
   }
 
   throw new Error("Cannot detect workspace root from " + id);
+}
+
+const workspaceConfigFiles = [
+  {
+    type: "pnpm",
+    lockFile: "pnpm-lock.yaml",
+    config: "pnpm-workspace.yaml",
+  },
+  {
+    type: "lerna",
+    lockFile: "lerna.json",
+    config: "lerna.json",
+  },
+  {
+    type: "yarn",
+    lockFile: "yarn.lock",
+    config: "package.json",
+  },
+  {
+    type: "npm",
+    config: "package.json",
+  },
+] as const;
+
+export async function resolveWorkspace(
+  id: string = process.cwd(),
+  options: ResolveOptions = {},
+): Promise<Workspace> {
+  const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
+
+  for (const item of workspaceConfigFiles) {
+    const configFilePath = await findNearestFile(item.config, {
+      startingFrom: resolvedPath,
+      test: (filePath) => {
+        const dir = dirname(filePath);
+        if ("lockFile" in item) {
+          const detectPath = resolve(dir, item.lockFile);
+          if (!existsFile(detectPath)) {
+            return false;
+          }
+        }
+
+        const configPath = resolve(dir, item.config);
+        return existsFile(configPath);
+      },
+      ...options,
+    }).catch(() => undefined);
+
+    if (!configFilePath) {
+      continue;
+    }
+
+    const rootDir = dirname(configFilePath);
+    const configString = await fsp.readFile(configFilePath, "utf8");
+
+    switch (item.type) {
+      case "pnpm": {
+        const content = parseYAML(configString) as any;
+        return {
+          type: item.type,
+          root: rootDir,
+          workspaces: content.packages,
+        };
+      }
+      case "lerna": {
+        const content = JSON.parse(configString);
+        if (content.useWorkspaces === true) {
+          // If lerna set `useWorkspaces`, fallback to yarn or npm
+          continue;
+        }
+        return {
+          type: item.type,
+          root: rootDir,
+          workspaces: content.packages || ["packages/*"], // is lerna default workspaces
+        };
+      }
+      case "yarn":
+      case "npm": {
+        const content = JSON.parse(configString);
+        if (!("workspaces" in content)) {
+          continue;
+        }
+
+        const workspaces = Array.isArray(content.workspaces)
+          ? content.workspaces
+          : content.workspaces.packages;
+
+        if (!Array.isArray(workspaces)) {
+          continue;
+        }
+
+        return {
+          type: item.type,
+          root: rootDir,
+          workspaces,
+        };
+      }
+    }
+  }
+
+  throw new Error(`Cannot dected workspace from ${id}`);
+}
+
+export async function resolveWorkspacePkgs(
+  id: string | Awaited<ReturnType<typeof resolveWorkspace>>,
+  options: ResolveOptions = {},
+): Promise<{
+  type: WorkspaceType;
+  root: {
+    dir: string;
+    packageJson: PackageJson;
+  };
+  packages: {
+    dir: string;
+    packageJson: PackageJson;
+  }[];
+}> {
+  const config =
+    typeof id === "string" ? await resolveWorkspace(id, options) : id;
+  const pkgDirs: string[] = await glob(config.workspaces, {
+    cwd: config.root,
+    onlyDirectories: true,
+    expandDirectories: false,
+    ignore: ["**/node_modules"],
+  });
+  const pkgAbsoluteDirs = pkgDirs.map((p) => resolve(config.root, p)).sort();
+
+  return {
+    type: config.type,
+    root: {
+      dir: config.root,
+      packageJson: await readPackageJSON(config.root, options),
+    },
+    packages: await Promise.all(
+      pkgAbsoluteDirs.map(async (dir) => ({
+        dir,
+        packageJson: await readPackageJSON(dir, options),
+      })),
+    ),
+  };
+}
+
+export async function resolveWorkspacePkgsGraph(
+  id:
+    | string
+    | Awaited<ReturnType<typeof resolveWorkspace>>
+    | Awaited<ReturnType<typeof resolveWorkspacePkgs>>,
+  options: ResolveOptions = {},
+): Promise<string[][]> {
+  const resolvedPkgs =
+    typeof id === "object" && "packages" in id
+      ? id
+      : await resolveWorkspacePkgs(id, options);
+
+  const pkgGraph = {} as any;
+  for (const pkg of resolvedPkgs.packages) {
+    const { name, dependencies, devDependencies } = pkg.packageJson;
+    if (!name) {
+      continue;
+    }
+
+    pkgGraph[name] = {
+      dependencies: [
+        ...Object.keys(dependencies ?? {}),
+        ...Object.keys(devDependencies ?? {}),
+      ],
+    };
+  }
+
+  return pkgGraph;
 }

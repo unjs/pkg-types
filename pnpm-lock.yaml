@@ -17,6 +17,9 @@ importers:
       pathe:
         specifier: ^2.0.2
         version: 2.0.2
+      tinyglobby:
+        specifier: ^0.2.10
+        version: 0.2.10
     devDependencies:
       '@types/node':
         specifier: ^22.12.0

@@ -13,6 +13,9 @@ import {
   type ResolveOptions,
   resolveLockfile,
   findWorkspaceDir,
+  resolveWorkspace,
+  resolveWorkspacePkgs,
+  resolveWorkspacePkgsGraph,
 } from "../src";
 import { readFile } from "node:fs/promises";
 
@@ -178,4 +181,79 @@ describe("findWorkspaceDir", () => {
       rFixture("../.."),
     );
   });
+});
+
+const workspaceCases = [
+  {
+    name: "pnpm",
+    type: "pnpm",
+    pkgDir: rFixture("./monorepo/pnpm"),
+  },
+  {
+    name: "lerna",
+    type: "lerna",
+    pkgDir: rFixture("./monorepo/lerna"),
+  },
+  {
+    name: "yarn",
+    type: "yarn",
+    pkgDir: rFixture("./monorepo/yarn"),
+  },
+  {
+    name: "npm",
+    type: "npm",
+    pkgDir: rFixture("./monorepo/npm"),
+  },
+  {
+    name: "lerna use npm workspaces",
+    type: "npm",
+    pkgDir: rFixture("./monorepo/lerna-use-npm-workspaces"),
+  },
+  {
+    name: "lerna use yarn workspaces",
+    type: "yarn",
+    pkgDir: rFixture("./monorepo/lerna-use-yarn-workspaces"),
+  },
+];
+
+describe("resolveWorkspace", () => {
+  for (const item of workspaceCases) {
+    it(`works for ${item.name}`, async () => {
+      const result = await resolveWorkspace(item.pkgDir);
+      expect(result.root).to.eq(item.pkgDir);
+      expect(result.type).to.eq(item.type);
+      expect(result.workspaces.length).to.eq(1);
+      expect(result.workspaces[0]).to.eq("packages/*");
+    });
+  }
+});
+
+describe("resolveWorkspacePkgs", () => {
+  for (const item of workspaceCases) {
+    it(`works for ${item.name}`, async () => {
+      const result = await resolveWorkspacePkgs(item.pkgDir);
+      expect(result.root.dir).to.eq(item.pkgDir);
+      expect(result.type).to.eq(item.type);
+      expect(result.packages.length).to.eq(2);
+      expect(
+        result.packages.map((item) => item.packageJson.name),
+      ).toMatchObject(expect.arrayContaining(["foo", "bar"]));
+    });
+  }
+});
+
+describe("resolveWorkspacePkgsGraph", () => {
+  for (const item of workspaceCases) {
+    it(`works for ${item.name}`, async () => {
+      const result = await resolveWorkspacePkgsGraph(item.pkgDir);
+      expect(result).toMatchObject({
+        bar: {
+          dependencies: ["foo"],
+        },
+        foo: {
+          dependencies: [],
+        },
+      });
+    });
+  }
 });
