@@ -26,9 +26,9 @@
   },
   "dependencies": {
     "confbox": "^0.1.8",
-    "globby": "^14.0.2",
     "mlly": "^1.7.4",
-    "pathe": "^2.0.2"
+    "pathe": "^2.0.2",
+    "tinyglobby": "^0.2.10"
   },
   "devDependencies": {
     "@types/node": "^22.12.0",

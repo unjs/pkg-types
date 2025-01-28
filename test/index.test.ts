@@ -246,7 +246,18 @@ describe("resolveWorkspacePkgsGraph", () => {
   for (const item of workspaceCases) {
     it(`works for ${item.name}`, async () => {
       const result = await resolveWorkspacePkgsGraph(item.pkgDir);
-      expect(result).toEqual([["foo"], ["bar"]]);
+      expect(result).toMatchObject(
+        {
+          "bar": {
+            "dependencies": [
+              "foo",
+            ],
+          },
+          "foo": {
+            "dependencies": [],
+          },
+        }
+      )
     });
   }
 });

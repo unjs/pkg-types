@@ -11,15 +11,15 @@ importers:
       confbox:
         specifier: ^0.1.8
         version: 0.1.8
-      globby:
-        specifier: ^14.0.2
-        version: 14.0.2
       mlly:
         specifier: ^1.7.4
         version: 1.7.4
       pathe:
         specifier: ^2.0.2
         version: 2.0.2
+      tinyglobby:
+        specifier: ^0.2.10
+        version: 0.2.10
     devDependencies:
       '@types/node':
         specifier: ^22.12.0

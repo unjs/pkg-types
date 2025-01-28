@@ -3,8 +3,8 @@ import { dirname, resolve, isAbsolute } from "pathe";
 import { type ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
 import { findFile, type FindFileOptions, findNearestFile, existsFile } from "./utils";
 import type { PackageJson, TSConfig } from "./types";
-import { parseJSONC, parseJSON, stringifyJSON, stringifyJSONC } from "confbox";
-
+import { parseJSONC, parseJSON, stringifyJSON, stringifyJSONC, parseYAML } from "confbox";
+import { glob } from "tinyglobby"
 export * from "./types";
 export * from "./utils";
 
@@ -291,8 +291,7 @@ export async function resolveWorkspace(
 
     switch (item.type) {
       case "pnpm": {
-        const parseYAML = await import("yaml").then((r) => r.parse);
-        const content = parseYAML(configString);
+        const content = parseYAML(configString) as any;
         return {
           type: item.type,
           root: rootDir,
@@ -354,8 +353,7 @@ export async function resolveWorkspacePkgs(
 }> {
   const config =
     typeof id === "string" ? await resolveWorkspace(id, options) : id;
-  const globby = await import("globby").then((r) => r.globby);
-  const pkgDirs: string[] = await globby(config.workspaces, {
+  const pkgDirs: string[] = await glob(config.workspaces, {
     cwd: config.root,
     onlyDirectories: true,
     expandDirectories: false,
