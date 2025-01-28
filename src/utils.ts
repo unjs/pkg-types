@@ -23,7 +23,7 @@ export interface FindFileOptions {
    * @default fs.statSync(path).isFile()
    */
   test?: (
-    filePath: string
+    filePath: string,
   ) => boolean | undefined | Promise<boolean | undefined>;
 }
 
@@ -37,10 +37,18 @@ const defaultFindOptions: Required<FindFileOptions> = {
   test: existsFile,
 };
 
+/**
+ * Asynchronously finds a file by name, starting from the specified directory and traversing up (or down if reverse).
+ * @param filename - The name of the file to find.
+ * @param _options - Options to customise the search behaviour.
+ * @returns a promise that resolves to the path of the file found.
+ * @throws Will throw an error if the file cannot be found.
+ */
 export async function findFile(
-  filename: string,
-  _options: FindFileOptions = {}
+  filename: string | string[],
+  _options: FindFileOptions = {},
 ): Promise<string> {
+  const filenames = Array.isArray(filename) ? filename : [filename];
   const options = { ...defaultFindOptions, ..._options };
   const basePath = resolve(options.startingFrom);
   const leadingSlash = basePath[0] === "/";
@@ -59,35 +67,53 @@ export async function findFile(
 
   if (options.reverse) {
     for (let index = root + 1; index <= segments.length; index++) {
-      const filePath = join(...segments.slice(0, index), filename);
-      if (await options.test(filePath)) {
-        return filePath;
+      for (const filename of filenames) {
+        const filePath = join(...segments.slice(0, index), filename);
+        if (await options.test(filePath)) {
+          return filePath;
+        }
       }
     }
   } else {
     for (let index = segments.length; index > root; index--) {
-      const filePath = join(...segments.slice(0, index), filename);
-      if (await options.test(filePath)) {
-        return filePath;
+      for (const filename of filenames) {
+        const filePath = join(...segments.slice(0, index), filename);
+        if (await options.test(filePath)) {
+          return filePath;
+        }
       }
     }
   }
 
   throw new Error(
-    `Cannot find matching ${filename} in ${options.startingFrom} or parent directories`
+    `Cannot find matching ${filename} in ${options.startingFrom} or parent directories`,
   );
 }
 
+/**
+ * Asynchronously finds the next file with the given name, starting in the given directory and moving up.
+ * Alias for findFile without reversing the search.
+ * @param filename - The name of the file to find.
+ * @param _options - Options to customise the search behaviour.
+ * @returns A promise that resolves to the path of the next file found.
+ */
 export function findNearestFile(
-  filename: string,
-  _options: FindFileOptions = {}
+  filename: string | string[],
+  _options: FindFileOptions = {},
 ): Promise<string> {
   return findFile(filename, _options);
 }
 
+/**
+ * Asynchronously finds the furthest file with the given name, starting from the root directory and moving downwards.
+ * This is essentially the reverse of `findNearestFile'.
+ * @param filename - The name of the file to find.
+ * @param _options - Options to customise the search behaviour, with reverse set to true.
+ * @returns A promise that resolves to the path of the farthest file found.
+ */
 export function findFarthestFile(
   filename: string,
-  _options: FindFileOptions = {}
+  _options: FindFileOptions = {},
 ): Promise<string> {
   return findFile(filename, { ..._options, reverse: true });
 }
@@ -97,5 +123,7 @@ export function existsFile(filePath: string) {
     if (statSync(filePath).isFile()) {
       return true;
     }
-  } catch {}
+  } catch {
+    // Ignore
+  }
 }

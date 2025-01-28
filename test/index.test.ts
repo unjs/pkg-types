@@ -9,22 +9,25 @@ import {
   resolvePackageJSON,
   writePackageJSON,
   writeTSConfig,
-  TSConfig,
-  ResolveOptions,
+  type TSConfig,
+  type ResolveOptions,
   resolveLockfile,
   findWorkspaceDir,
   resolveWorkspace,
   resolveWorkspacePkgs,
   resolveWorkspacePkgsGraph,
 } from "../src";
+import { readFile } from "node:fs/promises";
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "fixture");
 
 const rFixture = (...p: string[]) => resolve(fixtureDir, ...p);
 
+const normalizeWinLines = (s: string) => s.replace(/\r\n/g, "\n");
+
 async function expectToReject(p: Promise<any>) {
   return expect(
-    await p.then(() => {}).catch((error: Error) => error.toString())
+    await p.then(() => {}).catch((error: Error) => error.toString()),
   );
 }
 
@@ -32,8 +35,8 @@ function testResolve(
   filename: string,
   resolveFunction: (
     id?: string,
-    options?: ResolveOptions
-  ) => Promise<string | null>
+    options?: ResolveOptions,
+  ) => Promise<string | null>,
 ) {
   it("finds a package.json in root directory", async () => {
     const packagePath = await resolveFunction(rFixture("."));
@@ -45,7 +48,7 @@ function testResolve(
   });
   it("handles non-existent paths", async () => {
     const packagePath = await resolveFunction(
-      rFixture("further", "dir", "file.json")
+      rFixture("further", "dir", "file.json"),
     );
     expect(packagePath).to.equal(rFixture(filename));
   });
@@ -57,7 +60,7 @@ function testResolve(
   it("stops at `node_modules`", async () => {
     (
       await expectToReject(
-        resolveFunction(rFixture("further", "node_modules", "file.json"))
+        resolveFunction(rFixture("further", "node_modules", "file.json")),
       )
     ).to.contain("Cannot find matching");
   });
@@ -75,23 +78,44 @@ describe("package.json", () => {
     expect(package_.name).to.equal("foo");
   });
 
+  it("read package.json (jsonc)", async () => {
+    const package_ = await readPackageJSON(rFixture("jsonc/package.json"));
+    expect(package_.name).to.equal("foo");
+  });
+
   it("write package.json", async () => {
     await writePackageJSON(rFixture("package.json.tmp"), { version: "1.0.0" });
     expect(
-      (await readPackageJSON(rFixture("package.json.tmp"))).version
+      (await readPackageJSON(rFixture("package.json.tmp"))).version,
     ).to.equal("1.0.0");
   });
 
   it("correctly reads a version from absolute path", async () => {
     expect(
-      await readPackageJSON(rFixture(".")).then((p) => p?.version)
+      await readPackageJSON(rFixture(".")).then((p) => p?.version),
     ).to.equal("1.0.0");
   });
 
   it("correctly reads a version from package", async () => {
     expect(await readPackageJSON("pathe").then((p) => p?.version)).to.be.a(
-      "string"
+      "string",
     );
+  });
+
+  it("styles are preserved", async () => {
+    const originalContent = await readFile(
+      rFixture("package.json"),
+      "utf8",
+    ).then(normalizeWinLines);
+    await writePackageJSON(
+      rFixture("package.json") + ".tmp",
+      await readPackageJSON(rFixture("package.json")),
+    );
+    const newContent = await readFile(
+      rFixture("package.json") + ".tmp",
+      "utf8",
+    ).then(normalizeWinLines);
+    expect(newContent).toBe(originalContent);
   });
 });
 
@@ -105,7 +129,7 @@ describe("tsconfig.json", () => {
   it("write tsconfig.json", async () => {
     await writeTSConfig(rFixture("tsconfig.json.tmp"), { include: ["src"] });
     expect(
-      (await readTSConfig(rFixture("tsconfig.json.tmp"))).include
+      (await readTSConfig(rFixture("tsconfig.json.tmp"))).include,
     ).to.deep.equal(["src"]);
   });
 
@@ -115,17 +139,33 @@ describe("tsconfig.json", () => {
     // TODO: type check this file.
     // expectTypeOf(options.maxNodeModuleJsDepth).toEqualTypeOf<number | undefined>()
   });
+
+  it("styles are preserved", async () => {
+    const originalContent = await readFile(
+      rFixture("tsconfig.json"),
+      "utf8",
+    ).then(normalizeWinLines);
+    await writeTSConfig(
+      rFixture("tsconfig.json") + ".tmp",
+      await readTSConfig(rFixture("tsconfig.json")),
+    );
+    const newContent = await readFile(
+      rFixture("tsconfig.json") + ".tmp",
+      "utf8",
+    ).then(normalizeWinLines);
+    expect(newContent).toBe(originalContent.replace(/\s*\/\/\s*.+/g, ""));
+  });
 });
 
 describe("resolveLockfile", () => {
   it("works for subdir", async () => {
     expect(await resolveLockfile(rFixture("./sub"))).to.equal(
-      rFixture("./sub/yarn.lock")
+      rFixture("./sub/yarn.lock"),
     );
   });
   it("works for root dir", async () => {
     expect(await resolveLockfile(rFixture("."))).to.equal(
-      rFixture("../..", "pnpm-lock.yaml")
+      rFixture("../..", "pnpm-lock.yaml"),
     );
   });
 });
@@ -133,12 +173,12 @@ describe("resolveLockfile", () => {
 describe("findWorkspaceDir", () => {
   it("works", async () => {
     expect(await findWorkspaceDir(rFixture("./sub"))).to.equal(
-      rFixture("../..")
+      rFixture("../.."),
     );
     expect(await findWorkspaceDir(rFixture("."))).to.equal(rFixture("../.."));
     expect(await findWorkspaceDir(rFixture(".."))).to.equal(rFixture("../.."));
     expect(await findWorkspaceDir(rFixture("../.."))).to.equal(
-      rFixture("../..")
+      rFixture("../.."),
     );
   });
 });
