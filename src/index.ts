@@ -1,7 +1,11 @@
 import { promises as fsp } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { dirname, resolve, isAbsolute } from "pathe";
-import { type ResolveOptions as _ResolveOptions, resolvePath } from "mlly";
-import { findFile, type FindFileOptions, findNearestFile } from "./utils";
+import {
+  type FindFileOptions,
+  findNearestFile,
+  findFarthestFile,
+} from "./utils";
 import type { PackageJson, TSConfig } from "./types";
 import { parseJSONC, parseJSON, stringifyJSON, stringifyJSONC } from "confbox";
 
@@ -11,7 +15,10 @@ export * from "./utils";
 /**
  * Represents the options for resolving paths with additional file finding capabilities.
  */
-export type ResolveOptions = _ResolveOptions & FindFileOptions;
+export type ResolveOptions = Omit<FindFileOptions, "startingFrom"> & {
+  /** @deprecated: use parent */ url?: string;
+  parent?: string;
+};
 
 /**
  * Options for reading files with optional caching.
@@ -131,10 +138,9 @@ export async function resolvePackageJSON(
   id: string = process.cwd(),
   options: ResolveOptions = {},
 ): Promise<string> {
-  const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
   return findNearestFile("package.json", {
-    startingFrom: resolvedPath,
     ...options,
+    startingFrom: _resolvePath(id, options),
   });
 }
 
@@ -148,10 +154,9 @@ export async function resolveTSConfig(
   id: string = process.cwd(),
   options: ResolveOptions = {},
 ): Promise<string> {
-  const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
   return findNearestFile("tsconfig.json", {
-    startingFrom: resolvedPath,
     ...options,
+    startingFrom: _resolvePath(id, options),
   });
 }
 
@@ -174,16 +179,10 @@ export async function resolveLockfile(
   id: string = process.cwd(),
   options: ResolveOptions = {},
 ): Promise<string> {
-  const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
-  const _options = { startingFrom: resolvedPath, ...options };
-
-  try {
-    return await findNearestFile(lockFiles, _options);
-  } catch {
-    // Ignore
-  }
-
-  throw new Error("No lockfile found from " + id);
+  return findNearestFile(lockFiles, {
+    ...options,
+    startingFrom: _resolvePath(id, options),
+  });
 }
 
 /**
@@ -197,12 +196,13 @@ export async function findWorkspaceDir(
   id: string = process.cwd(),
   options: ResolveOptions = {},
 ): Promise<string> {
-  const resolvedPath = isAbsolute(id) ? id : await resolvePath(id, options);
-  const _options = { startingFrom: resolvedPath, ...options };
+  // Resolve the starting path
+  const startingFrom = _resolvePath(id, options);
+  options = { startingFrom, ...options } as ResolveOptions;
 
-  // Lookup for .git/config
+  // Lookdown for .git/config
   try {
-    const r = await findNearestFile(".git/config", _options);
+    const r = await findFarthestFile(".git/config", options);
     return resolve(r, "../..");
   } catch {
     // Ignore
@@ -210,22 +210,41 @@ export async function findWorkspaceDir(
 
   // Lookdown for lockfile
   try {
-    const r = await resolveLockfile(resolvedPath, {
-      ..._options,
-      reverse: true,
-    });
+    const r = await findFarthestFile(lockFiles, options);
     return dirname(r);
   } catch {
     // Ignore
   }
 
-  // Lookdown for package.json
+  // Lookup for package.json
   try {
-    const r = await findFile(resolvedPath, _options);
+    const r = await findNearestFile("package.json", options);
     return dirname(r);
   } catch {
     // Ignore
   }
 
   throw new Error("Cannot detect workspace root from " + id);
+}
+
+// --- internal ---
+
+function _resolvePath(id: string, opts: ResolveOptions = {}) {
+  if (isAbsolute(id)) {
+    return id;
+  }
+  try {
+    // TODO: Support import.meta.main when available to prefer over cwd()
+    // https://github.com/nodejs/node/issues/49440
+    const resolved = import.meta.resolve(
+      id,
+      opts.parent || opts.url || process.cwd(),
+    );
+    if (resolved && typeof resolved === "string") {
+      return fileURLToPath(resolved);
+    }
+  } catch {
+    // Ignore
+  }
+  return id;
 }
