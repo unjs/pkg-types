@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.0.0
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v1.3.1...v2.0.0)
+
+### 💅 Refactors
+
+- ⚠️  Improve resolving and install size ([#213](https://github.com/unjs/pkg-types/pull/213))
+
+### 📦 Build
+
+- Esm-only ([d6fd8d4](https://github.com/unjs/pkg-types/commit/d6fd8d4))
+
+### 🏡 Chore
+
+- Update deps ([82a166c](https://github.com/unjs/pkg-types/commit/82a166c))
+- Fix tsconfig issue ([eacec26](https://github.com/unjs/pkg-types/commit/eacec26))
+- Update repo ([80afdee](https://github.com/unjs/pkg-types/commit/80afdee))
+- Remove unused mlly dep ([636da7b](https://github.com/unjs/pkg-types/commit/636da7b))
+- Simplify structure ([59822ab](https://github.com/unjs/pkg-types/commit/59822ab))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Improve resolving and install size ([#213](https://github.com/unjs/pkg-types/pull/213))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+
 ## v1.3.1
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v1.3.0...v1.3.1)
