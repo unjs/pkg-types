@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "confbox": "^0.1.8",
-    "mlly": "^1.7.4",
     "pathe": "^2.0.3"
   },
   "devDependencies": {
