@@ -1,16 +1,26 @@
 import { promises as fsp } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve, isAbsolute } from "pathe";
+import { parseJSONC, parseJSON, stringifyJSON, stringifyJSONC } from "confbox";
 import {
   type FindFileOptions,
   findNearestFile,
   findFarthestFile,
-} from "./utils";
-import type { PackageJson, TSConfig } from "./types";
-import { parseJSONC, parseJSON, stringifyJSON, stringifyJSONC } from "confbox";
+} from "./utils.ts";
 
-export * from "./types";
-export * from "./utils";
+import type { PackageJson } from "./packagejson.ts";
+import type { TSConfig } from "./tsconfig.ts";
+
+export type { PackageJson, PackageJsonExports, PackageJsonPerson } from "./packagejson.ts";
+
+export type { TSConfig } from "./tsconfig.ts";
+
+export {
+  type FindFileOptions,
+  findFarthestFile,
+  findFile,
+  findNearestFile
+} from "./utils.ts";
 
 /**
  * Represents the options for resolving paths with additional file finding capabilities.
