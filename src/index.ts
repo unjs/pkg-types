@@ -11,7 +11,11 @@ import {
 import type { PackageJson } from "./packagejson.ts";
 import type { TSConfig } from "./tsconfig.ts";
 
-export type { PackageJson, PackageJsonExports, PackageJsonPerson } from "./packagejson.ts";
+export type {
+  PackageJson,
+  PackageJsonExports,
+  PackageJsonPerson,
+} from "./packagejson.ts";
 
 export type { TSConfig } from "./tsconfig.ts";
 
@@ -19,7 +23,7 @@ export {
   type FindFileOptions,
   findFarthestFile,
   findFile,
-  findNearestFile
+  findNearestFile,
 } from "./utils.ts";
 
 /**
