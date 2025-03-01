@@ -1,20 +1,20 @@
 import { fileURLToPath } from "node:url";
+import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "pathe";
 import { describe, expect, it } from "vitest";
 import { expectTypeOf } from "expect-type";
 import {
+  type TSConfig,
+  type ResolveOptions,
   readPackageJSON,
   readTSConfig,
   resolveTSConfig,
   resolvePackageJSON,
   writePackageJSON,
   writeTSConfig,
-  type TSConfig,
-  type ResolveOptions,
   resolveLockfile,
   findWorkspaceDir,
 } from "../src";
-import { readFile } from "node:fs/promises";
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "fixture");
 
