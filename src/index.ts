@@ -1,7 +1,8 @@
 import { promises as fsp } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { dirname, resolve, isAbsolute } from "pathe";
+import { dirname, resolve } from "pathe";
 import { parseJSONC, parseJSON, stringifyJSON, stringifyJSONC } from "confbox";
+import { resolveModulePath } from "exsolve";
+
 import {
   type FindFileOptions,
   findNearestFile,
@@ -244,21 +245,10 @@ export async function findWorkspaceDir(
 // --- internal ---
 
 function _resolvePath(id: string, opts: ResolveOptions = {}) {
-  if (isAbsolute(id)) {
-    return id;
-  }
-  try {
-    // TODO: Support import.meta.main when available to prefer over cwd()
-    // https://github.com/nodejs/node/issues/49440
-    const resolved = import.meta.resolve(
-      id,
-      opts.parent || opts.url || process.cwd(),
-    );
-    if (resolved && typeof resolved === "string") {
-      return fileURLToPath(resolved);
-    }
-  } catch {
-    // Ignore
-  }
-  return id;
+  return (
+    resolveModulePath(id, {
+      try: true,
+      from: opts.parent || opts.url /* default is cwd */,
+    }) || id
+  );
 }
