@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.0.1
+
+[compare changes](https://github.com/unjs/pkg-types/compare/ab1fe2e8f2c133aa9cb2880fe8fad9a057489a2d...v2.0.1)
+
+### 🩹 Fixes
+
+- Use exsolve for resolving paths ([#215](https://github.com/unjs/pkg-types/pull/215))
+
+### 🏡 Chore
+
+- Update deps ([ea7fe99](https://github.com/unjs/pkg-types/commit/ea7fe99))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+
 ## v2.0.0
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v1.3.1...v2.0.0)
