@@ -10,6 +10,7 @@ import {
 
 import type { PackageJson } from "./packagejson.ts";
 import type { TSConfig } from "./tsconfig.ts";
+import { resolveModulePath } from "exsolve";
 
 export type {
   PackageJson,
@@ -244,21 +245,8 @@ export async function findWorkspaceDir(
 // --- internal ---
 
 function _resolvePath(id: string, opts: ResolveOptions = {}) {
-  if (isAbsolute(id)) {
-    return id;
-  }
-  try {
-    // TODO: Support import.meta.main when available to prefer over cwd()
-    // https://github.com/nodejs/node/issues/49440
-    const resolved = import.meta.resolve(
-      id,
-      opts.parent || opts.url || process.cwd(),
-    );
-    if (resolved && typeof resolved === "string") {
-      return fileURLToPath(resolved);
-    }
-  } catch {
-    // Ignore
-  }
-  return id;
+  return resolveModulePath(id, {
+    try: true,
+    from: opts.parent || opts.url  /* default is cwd */
+  }) || id
 }
