@@ -1,6 +1,8 @@
 import { promises as fsp } from "node:fs";
 import { dirname, resolve } from "pathe";
 import { parseJSONC, parseJSON, stringifyJSON, stringifyJSONC } from "confbox";
+import { resolveModulePath } from "exsolve";
+
 import {
   type FindFileOptions,
   findNearestFile,
@@ -9,7 +11,6 @@ import {
 
 import type { PackageJson } from "./packagejson.ts";
 import type { TSConfig } from "./tsconfig.ts";
-import { resolveModulePath } from "exsolve";
 
 export type {
   PackageJson,
