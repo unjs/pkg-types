@@ -1,6 +1,5 @@
 import { promises as fsp } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { dirname, resolve, isAbsolute } from "pathe";
+import { dirname, resolve } from "pathe";
 import { parseJSONC, parseJSON, stringifyJSON, stringifyJSONC } from "confbox";
 import {
   type FindFileOptions,
