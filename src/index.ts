@@ -245,8 +245,10 @@ export async function findWorkspaceDir(
 // --- internal ---
 
 function _resolvePath(id: string, opts: ResolveOptions = {}) {
-  return resolveModulePath(id, {
-    try: true,
-    from: opts.parent || opts.url  /* default is cwd */
-  }) || id
+  return (
+    resolveModulePath(id, {
+      try: true,
+      from: opts.parent || opts.url /* default is cwd */,
+    }) || id
+  );
 }
