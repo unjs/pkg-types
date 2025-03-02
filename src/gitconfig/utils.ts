@@ -38,19 +38,7 @@ export async function writeGitConfig(path: string, config: GitConfig) {
  * Parses a git config file INI format into a JavaScript object.
  */
 export function parseGitConfig(blob: string): GitConfig {
-  const gitConfig: GitConfig = {};
-
-  for (const [key, value] of Object.entries(parseINI(blob) as object)) {
-    const [_, parentKey, scopeKey] = key.match(/^(\w+)\s+"(.+)"$/) || [];
-    let scope = gitConfig as any;
-    if (parentKey) {
-      gitConfig[parentKey] ??= {};
-      scope = gitConfig[parentKey as keyof GitConfig];
-    }
-    scope[scopeKey || key] = value;
-  }
-
-  return gitConfig;
+  return parseINI(blob.replaceAll(/^\[(\w+) "(.+)"\]$/gm, '[$1.$2]'));
 }
 
 /**
