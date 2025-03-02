@@ -43,7 +43,7 @@ export type {
   GitBranch,
   GitCoreConfig,
   GitRemote,
-  GitConfigUser
+  GitConfigUser,
 } from "./gitconfig/types";
 
 export {
