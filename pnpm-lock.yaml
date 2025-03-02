@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       confbox:
-        specifier: ^0.2.0
-        version: 0.2.0
+        specifier: ^0.2.1
+        version: 0.2.1
       exsolve:
         specifier: ^1.0.1
         version: 1.0.1
@@ -996,8 +996,8 @@ packages:
   confbox@0.1.8:
     resolution: {integrity: sha512-RMtmw0iFkeR4YV+fUOSucriAQNb9g8zFR52MWCtl+cCZOFRNL6zeB395vPzFhEjjn4fMxXudmELnl/KF/WrK6w==}
 
-  confbox@0.2.0:
-    resolution: {integrity: sha512-Jpthqzqb6UnDteg0tAh74z21g2xXcr/bhBk8dLX5TgA7DMM7C6BX6Wrip5qYgPS/vzF5mFLD1ZQhFiTrkt6x1Q==}
+  confbox@0.2.1:
+    resolution: {integrity: sha512-hkT3yDPFbs95mNCy1+7qNKC6Pro+/ibzYxtM2iqEigpf0sVw+bg4Zh9/snjsBcf990vfIsg5+1U7VyiyBb3etg==}
 
   consola@3.4.0:
     resolution: {integrity: sha512-EiPU8G6dQG0GFHNR8ljnZFki/8a+cQwEQ+7wpxdChl02Q8HXlwEZWD5lqAF8vC2sEC3Tehr8hy7vErz88LHyUA==}
@@ -3103,7 +3103,7 @@ snapshots:
 
   confbox@0.1.8: {}
 
-  confbox@0.2.0: {}
+  confbox@0.2.1: {}
 
   consola@3.4.0: {}
 

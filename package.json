@@ -23,7 +23,7 @@
     "test": "vitest run --typecheck --coverage"
   },
   "dependencies": {
-    "confbox": "^0.2.0",
+    "confbox": "^0.2.1",
     "exsolve": "^1.0.1",
     "pathe": "^2.0.3"
   },
