@@ -3,13 +3,14 @@ import type { ResolveOptions as ExsolveResolveOptions } from "exsolve";
 /**
  * Represents the options for resolving paths with additional file finding capabilities.
  */
-export type ResolveOptions = Omit<FindFileOptions, "startingFrom"> & ExsolveResolveOptions & {
-  /** @deprecated: use `from` */
-  url?: string;
+export type ResolveOptions = Omit<FindFileOptions, "startingFrom"> &
+  ExsolveResolveOptions & {
+    /** @deprecated: use `from` */
+    url?: string;
 
-  /** @deprecated: use `from` */
-  parent?: string;
-};
+    /** @deprecated: use `from` */
+    parent?: string;
+  };
 
 /**
  * Options for reading files with optional caching.

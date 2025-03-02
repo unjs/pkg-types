@@ -15,5 +15,5 @@ export function _resolvePath(id: URL | string, opts: ResolveOptions = {}) {
   return resolveModulePath(id, {
     ...opts,
     from: opts.from || opts.parent || opts.url /* default is cwd */,
-  })
+  });
 }
