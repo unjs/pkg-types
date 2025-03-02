@@ -1,0 +1,19 @@
+[core]
+repositoryformatversion = 0
+filemode = true
+bare = false
+logallrefupdates = true
+ignorecase = true
+precomposeunicode = true
+
+[branch "main"]
+remote = origin
+merge = refs/heads/main
+
+[branch "develop"]
+remote = origin
+merge = refs/heads/develop
+
+[remote "origin"]
+url = https://github.com/username/repo.git
+fetch = +refs/heads/*:refs/remotes/origin/*

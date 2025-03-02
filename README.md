@@ -125,6 +125,10 @@ import { findWorkspaceDir } from "pkg-types";
 const workspaceDir = await findWorkspaceDir(".");
 ```
 
+### `findGitConfig`
+
+[TODO]
+
 ## Types
 
 **Note:** In order to make types working, you need to install `typescript` as a devDependency.
@@ -132,7 +136,7 @@ const workspaceDir = await findWorkspaceDir(".");
 You can directly use typed interfaces:
 
 ```ts
-import type { TSConfig, PackageJSON } from "pkg-types";
+import type { TSConfig, PackageJSON, GitConfig } from "pkg-types";
 ```
 
 You can also use define utils for type support for using in plain `.js` files and auto-complete in IDE.
@@ -147,6 +151,12 @@ const pkg = definePackageJSON({})
 import type { defineTSConfig } from 'pkg-types'
 
 const pkg = defineTSConfig({})
+```
+
+```js
+import type { defineGitConfig } from 'pkg-types'
+
+const gitConfig = defineGitConfig({})
 ```
 
 ## Alternatives
