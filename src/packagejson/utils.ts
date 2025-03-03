@@ -143,8 +143,12 @@ export async function findWorkspaceDir(
     } = {},
 ): Promise<string> {
   const startingFrom = _resolvePath(id, options);
-  const tests =
-    options.order || (Object.keys(workspaceTests) as WorkspaceTestName[]);
+  const tests: WorkspaceTestName[] = options.order || [
+    "workspaceFile",
+    "gitConfig",
+    "lockFile",
+    "packageJson",
+  ];
   for (const testName of tests) {
     const test = workspaceTests[testName];
     if (options[testName] === false || !test) {
