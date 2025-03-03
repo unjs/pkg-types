@@ -152,7 +152,7 @@ export async function findWorkspaceDir(
     }
     const direction =
       options[testName] ||
-      (testName === "packageJson" ? "closest" : "furthest");
+      (testName === "gitConfig" ? "closest" : "furthest");
     const detected = await test({
       ...options,
       startingFrom,
