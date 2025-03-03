@@ -36,7 +36,7 @@ export async function findFile(
 
   // Test input itself first
   if (filenames.includes(segments.at(-1)!) && (await options.test(basePath))) {
-    // return basePath;
+    return basePath;
   }
 
   // Restore leading slash
