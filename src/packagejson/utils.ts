@@ -8,7 +8,7 @@ import type {
   FindFileOptions,
 } from "../resolve/types";
 import type { PackageJson } from "./types";
-import { findNearestFile, findFarthestFile, findFile } from "../resolve/utils";
+import { findNearestFile, findFile } from "../resolve/utils";
 import { _resolvePath } from "../resolve/internal";
 
 const lockFiles = [
@@ -139,16 +139,12 @@ export async function findWorkspaceDir(
   id: string = process.cwd(),
   options: ResolveOptions &
     Partial<Record<WorkspaceTestName, boolean | "closest" | "furthest">> & {
-      order?: WorkspaceTestName[];
+      tests?: WorkspaceTestName[];
     } = {},
 ): Promise<string> {
   const startingFrom = _resolvePath(id, options);
-  const tests: WorkspaceTestName[] = options.order || [
-    "workspaceFile",
-    "gitConfig",
-    "lockFile",
-    "packageJson",
-  ];
+  // prettier-ignore
+  const tests: WorkspaceTestName[] = options.tests || [ "workspaceFile", "gitConfig", "lockFile", "packageJson" ];
   for (const testName of tests) {
     const test = workspaceTests[testName];
     if (options[testName] === false || !test) {
