@@ -103,7 +103,7 @@ const filename = await resolveFile("README.md", {
 
 ### `resolveLockFile`
 
-Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`) or throws an error.
+Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`, `bun.lockb`, `bun.lock`) or throws an error.
 
 ```js
 import { resolveLockFile } from "pkg-types";
@@ -114,9 +114,10 @@ const lockfile = await resolveLockFile(".");
 
 Try to detect workspace dir by in order:
 
-1. Nearest `.git` directory
-2. Farthest lockfile
-3. Farthest `package.json` file
+1. Farthest workspace file (`pnpm-workspace.yaml`, `lerna.json`, `turbo.json`, `rush.json`)
+2. Closest `.git/config` file
+3. Farthest lockfile
+4. Farthest `package.json` file
 
 If fails, throws an error.
 
