@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.1.0
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v2.0.1...v2.1.0)
+
+### 🚀 Enhancements
+
+- Git config utils ([#217](https://github.com/unjs/pkg-types/pull/217))
+- **findWorkspaceDir:** Detect workspace files ([#219](https://github.com/unjs/pkg-types/pull/219))
+- **findWorkspaceDir:** Configurable strategy ([#220](https://github.com/unjs/pkg-types/pull/220))
+
+### 🔥 Performance
+
+- **findFile:** Test input itself if matching filename ([#221](https://github.com/unjs/pkg-types/pull/221))
+
+### 🩹 Fixes
+
+- Avoid fallback if starting point cannot be resolved ([#216](https://github.com/unjs/pkg-types/pull/216))
+- **findWorkspaceDir:** Update default strategy ([#222](https://github.com/unjs/pkg-types/pull/222))
+
+### 🏡 Chore
+
+- **release:** V2.0.1 ([7805296](https://github.com/unjs/pkg-types/commit/7805296))
+- Update confbox to v2 ([6fff4ac](https://github.com/unjs/pkg-types/commit/6fff4ac))
+- Update confbox ([9bfa19d](https://github.com/unjs/pkg-types/commit/9bfa19d))
+- Update git example ([95317bc](https://github.com/unjs/pkg-types/commit/95317bc))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+
 ## v2.0.1
 
 [compare changes](https://github.com/unjs/pkg-types/compare/ab1fe2e8f2c133aa9cb2880fe8fad9a057489a2d...v2.0.1)
