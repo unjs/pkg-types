@@ -34,6 +34,11 @@ export async function findFile(
   const leadingSlash = basePath[0] === "/";
   const segments = basePath.split("/").filter(Boolean);
 
+  // Test input itself first
+  if (filenames.includes(segments.at(-1)!) && (await options.test(basePath))) {
+    // return basePath;
+  }
+
   // Restore leading slash
   if (leadingSlash) {
     segments[0] = "/" + segments[0];
