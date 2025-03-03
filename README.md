@@ -115,7 +115,7 @@ const lockfile = await resolveLockFile(".");
 Try to detect workspace dir by in order:
 
 1. Farthest workspace file (`pnpm-workspace.yaml`, `lerna.json`, `turbo.json`, `rush.json`)
-2. Closest `.git/config`
+2. Closest `.git/config` file
 3. Farthest lockfile
 4. Farthest `package.json` file
 
