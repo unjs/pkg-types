@@ -2,9 +2,13 @@ import { promises as fsp } from "node:fs";
 import { dirname, resolve } from "pathe";
 import { parseJSONC, parseJSON, stringifyJSON } from "confbox";
 
-import type { ResolveOptions, ReadOptions } from "../resolve/types";
+import type {
+  ResolveOptions,
+  ReadOptions,
+  FindFileOptions,
+} from "../resolve/types";
 import type { PackageJson } from "./types";
-import { findNearestFile, findFarthestFile } from "../resolve/utils";
+import { findNearestFile, findFile } from "../resolve/utils";
 import { _resolvePath } from "../resolve/internal";
 
 const lockFiles = [
@@ -107,52 +111,57 @@ export async function resolveLockfile(
   });
 }
 
+type WorkspaceTestName =
+  | "workspaceFile"
+  | "gitConfig"
+  | "lockFile"
+  | "packageJson";
+type WorkspaceTestFn = (opts: FindFileOptions) => Promise<string>;
+
+const workspaceTests: Record<WorkspaceTestName, WorkspaceTestFn> = {
+  workspaceFile: (opts) =>
+    findFile(workspaceFiles, opts).then((r) => dirname(r)),
+  gitConfig: (opts) =>
+    findFile(".git/config", opts).then((r) => resolve(r, "../..")),
+  lockFile: (opts) => findFile(lockFiles, opts).then((r) => dirname(r)),
+  packageJson: (opts) => findFile("package.json", opts).then((r) => dirname(r)),
+} as const;
+
 /**
- * Detects the workspace directory based on common project markers (`.git`, lockfiles, `package.json`).
+ * Detects the workspace directory based on common project markers .
  * Throws an error if the workspace root cannot be detected.
+ *
  * @param id - The base path to search, defaults to the current working directory.
  * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
  * @returns a promise resolving to the path of the detected workspace directory.
  */
 export async function findWorkspaceDir(
   id: string = process.cwd(),
-  options: ResolveOptions = {},
+  options: ResolveOptions &
+    Partial<Record<WorkspaceTestName, boolean | "closest" | "furthest">> & {
+      tests?: WorkspaceTestName[];
+    } = {},
 ): Promise<string> {
-  // Resolve the starting path
   const startingFrom = _resolvePath(id, options);
-  options = { startingFrom, ...options } as ResolveOptions;
-
-  // Lookdown for known workspace files
-  try {
-    const r = await findFarthestFile(workspaceFiles, options);
-    return dirname(r);
-  } catch {
-    // Ignore
+  // prettier-ignore
+  const tests: WorkspaceTestName[] = options.tests || [ "workspaceFile", "gitConfig", "lockFile", "packageJson" ];
+  for (const testName of tests) {
+    const test = workspaceTests[testName];
+    if (options[testName] === false || !test) {
+      continue;
+    }
+    const direction =
+      options[testName] ||
+      (testName === "packageJson" ? "closest" : "furthest");
+    const detected = await test({
+      ...options,
+      startingFrom,
+      reverse: direction === "furthest",
+    }).catch(() => {});
+    if (detected) {
+      return detected;
+    }
   }
 
-  // Lookdown for .git/config
-  try {
-    const r = await findFarthestFile(".git/config", options);
-    return resolve(r, "../..");
-  } catch {
-    // Ignore
-  }
-
-  // Lookdown for lockfile
-  try {
-    const r = await findFarthestFile(lockFiles, options);
-    return dirname(r);
-  } catch {
-    // Ignore
-  }
-
-  // Lookup for package.json
-  try {
-    const r = await findNearestFile("package.json", options);
-    return dirname(r);
-  } catch {
-    // Ignore
-  }
-
-  throw new Error("Cannot detect workspace root from " + id);
+  throw new Error(`Cannot detect workspace root from ${id}`);
 }
