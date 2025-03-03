@@ -142,7 +142,7 @@ Finds and reads closest `.git/config` file into a JS object.
 ```js
 import { resolveGitConfig } from "pkg-types";
 
-const gitConfig = await readGitConfig(".")
+const gitConfigObj = await readGitConfig(".")
 ```
 
 ### `writeGitConfig`
@@ -152,7 +152,7 @@ Stringifies git config object into INI text format and writes it to a file.
 ```js
 import { writeGitConfig } from "pkg-types";
 
-const gitConfig = await writeGitConfig(".git/config", gitConfig)
+await writeGitConfig(".git/config", gitConfigObj)
 ```
 
 ### `parseGitConfig`
@@ -162,7 +162,7 @@ Parses a git config file in INI text format into a JavaScript object.
 ```js
 import { parseGitConfig } from "pkg-types";
 
-const gitConfig = parseGitConfig(".")
+const gitConfigObj = parseGitConfig(gitConfigINI)
 ```
 
 ### `stringifyGitConfig`
@@ -172,7 +172,7 @@ Stringifies a git config object into a git config file INI text format.
 ```js
 import { parseGitConfig } from "pkg-types";
 
-const stringifyGitConfig = stringifyGitConfig(".")
+const gitConfigINI = stringifyGitConfig(gitConfigObj)
 ```
 
 ## Types
