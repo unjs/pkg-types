@@ -16,6 +16,13 @@ const lockFiles = [
   "bun.lock",
 ];
 
+const workspaceFiles = [
+  "pnpm-workspace.yaml",
+  "lerna.json",
+  "turbo.json",
+  "rush.json",
+];
+
 const FileCache = /* #__PURE__ */ new Map<string, Record<string, any>>();
 
 /**
@@ -114,6 +121,14 @@ export async function findWorkspaceDir(
   // Resolve the starting path
   const startingFrom = _resolvePath(id, options);
   options = { startingFrom, ...options } as ResolveOptions;
+
+  // Lookdown for known workspace files
+  try {
+    const r = await findFarthestFile(workspaceFiles, options);
+    return dirname(r);
+  } catch {
+    // Ignore
+  }
 
   // Lookdown for .git/config
   try {
