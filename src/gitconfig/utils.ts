@@ -19,7 +19,7 @@ export async function resolveGitConfig(dir: string): Promise<string> {
 }
 
 /**
- * Asynchronously finds and reads closest `.git/config` file.
+ * Asynchronously finds and reads closest `.git/config` file as a JS object.
  */
 export async function readGitConfig(dir: string) {
   const path = await resolveGitConfig(dir);
@@ -28,7 +28,7 @@ export async function readGitConfig(dir: string) {
 }
 
 /**
- * Asynchronously writes git config to a file.
+ * Stringifies GitConfig into INI text format and asynchronously writes git config to a file.
  */
 export async function writeGitConfig(path: string, config: GitConfig) {
   await writeFile(path, stringifyGitConfig(config));

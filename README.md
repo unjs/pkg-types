@@ -125,9 +125,56 @@ import { findWorkspaceDir } from "pkg-types";
 const workspaceDir = await findWorkspaceDir(".");
 ```
 
-### `findGitConfig`
+### `resolveGitConfig`
 
-[TODO]
+Asynchronously finds closest `.git/config` file.
+
+```js
+import { resolveGitConfig } from "pkg-types";
+
+const gitConfig = await resolveGitConfig(".")
+```
+
+### `readGitConfig`
+
+Asynchronously finds closest `.git/config` file as a js object.
+
+```js
+import { resolveGitConfig } from "pkg-types";
+
+const gitConfig = await readGitConfig(".")
+```
+
+### `writeGitConfig`
+
+Stringifies GitConfig into INI text format and asynchronously writes git config to a file.
+
+```js
+import { resolveGitConfig } from "pkg-types";
+
+const gitConfig = await readGitConfig(".")
+```
+
+### `parseGitConfig`
+
+parse git config INI format into a JS object.
+
+```js
+import { parseGitConfig } from "pkg-types";
+
+const gitConfig = parseGitConfig(".")
+```
+
+### `stringifyGitConfig`
+
+stringify git JS config object into INI text format.
+
+```js
+import { parseGitConfig } from "pkg-types";
+
+const stringifyGitConfig = stringifyGitConfig(".")
+```
+
 
 ## Types
 
