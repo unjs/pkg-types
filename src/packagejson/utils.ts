@@ -2,7 +2,11 @@ import { promises as fsp } from "node:fs";
 import { dirname, resolve } from "pathe";
 import { parseJSONC, parseJSON, stringifyJSON } from "confbox";
 
-import type { ResolveOptions, ReadOptions, FindFileOptions } from "../resolve/types";
+import type {
+  ResolveOptions,
+  ReadOptions,
+  FindFileOptions,
+} from "../resolve/types";
 import type { PackageJson } from "./types";
 import { findNearestFile, findFarthestFile, findFile } from "../resolve/utils";
 import { _resolvePath } from "../resolve/internal";
@@ -107,15 +111,21 @@ export async function resolveLockfile(
   });
 }
 
-type WorkspaceTestName = 'workspaceFile' | 'gitConfig' | 'lockFile' | 'packageJson';
-type WorkspaceTestFn = (opts: FindFileOptions) => Promise<string>
+type WorkspaceTestName =
+  | "workspaceFile"
+  | "gitConfig"
+  | "lockFile"
+  | "packageJson";
+type WorkspaceTestFn = (opts: FindFileOptions) => Promise<string>;
 
 const workspaceTests: Record<WorkspaceTestName, WorkspaceTestFn> = {
-  workspaceFile: (opts) => findFile(workspaceFiles, opts).then(r => dirname(r)),
-  gitConfig: (opts) => findFile(".git/config", opts).then(r => resolve(r, "../..")),
-  lockFile: (opts) => findFile(lockFiles, opts).then(r => dirname(r)),
-  packageJson: (opts) =>  findFile("package.json", opts).then(r => dirname(r)),
-} as const
+  workspaceFile: (opts) =>
+    findFile(workspaceFiles, opts).then((r) => dirname(r)),
+  gitConfig: (opts) =>
+    findFile(".git/config", opts).then((r) => resolve(r, "../..")),
+  lockFile: (opts) => findFile(lockFiles, opts).then((r) => dirname(r)),
+  packageJson: (opts) => findFile("package.json", opts).then((r) => dirname(r)),
+} as const;
 
 /**
  * Detects the workspace directory based on common project markers .
@@ -127,25 +137,29 @@ const workspaceTests: Record<WorkspaceTestName, WorkspaceTestFn> = {
  */
 export async function findWorkspaceDir(
   id: string = process.cwd(),
-  options: ResolveOptions & Partial<Record<WorkspaceTestName, boolean | 'closest' | 'furthest'>> & {
-    tests?: WorkspaceTestName[]
-  } = {},
+  options: ResolveOptions &
+    Partial<Record<WorkspaceTestName, boolean | "closest" | "furthest">> & {
+      tests?: WorkspaceTestName[];
+    } = {},
 ): Promise<string> {
   const startingFrom = _resolvePath(id, options);
-  const tests = options.tests || Object.keys(workspaceTests) as WorkspaceTestName[]
+  const tests =
+    options.tests || (Object.keys(workspaceTests) as WorkspaceTestName[]);
   for (const testName of tests) {
-    const test = workspaceTests[testName]
+    const test = workspaceTests[testName];
     if (options[testName] === false || !test) {
-      continue
+      continue;
     }
-    const direction = options[testName] || (testName === 'packageJson' ? 'closest' : 'furthest')
+    const direction =
+      options[testName] ||
+      (testName === "packageJson" ? "closest" : "furthest");
     const detected = await test({
       ...options,
       startingFrom,
-      reverse: direction === 'furthest',
-    }).catch(() => {})
+      reverse: direction === "furthest",
+    }).catch(() => {});
     if (detected) {
-      return detected
+      return detected;
     }
   }
 
