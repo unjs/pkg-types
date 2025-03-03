@@ -125,7 +125,7 @@ export async function findWorkspaceDir(
   // Lookdown for known workspace files
   try {
     const r = await findFarthestFile(workspaceFiles, options);
-    return dirname(r)
+    return dirname(r);
   } catch {
     // Ignore
   }
