@@ -35,3 +35,22 @@ export {
   resolveLockfile,
   findWorkspaceDir,
 } from "./packagejson/utils";
+
+// --- git config ---
+
+export type {
+  GitConfig,
+  GitBranch,
+  GitCoreConfig,
+  GitRemote,
+  GitConfigUser,
+} from "./gitconfig/types";
+
+export {
+  defineGitConfig,
+  readGitConfig,
+  writeGitConfig,
+  resolveGitConfig,
+  parseGitConfig,
+  stringifyGitConfig,
+} from "./gitconfig/utils";

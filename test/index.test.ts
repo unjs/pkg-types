@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
-import { readFile } from "node:fs/promises";
+import { cp, readFile, rm } from "node:fs/promises";
 import { dirname, resolve } from "pathe";
-import { describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { expectTypeOf } from "expect-type";
 import {
   type TSConfig,
@@ -14,6 +14,11 @@ import {
   writeTSConfig,
   resolveLockfile,
   findWorkspaceDir,
+  // gitconfig
+  resolveGitConfig,
+  readGitConfig,
+  writeGitConfig,
+  parseGitConfig,
 } from "../src";
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "fixture");
@@ -177,5 +182,66 @@ describe("findWorkspaceDir", () => {
     expect(await findWorkspaceDir(rFixture("../.."))).to.equal(
       rFixture("../.."),
     );
+  });
+});
+
+describe(".git/config", () => {
+  beforeAll(async () => {
+    await rm(rFixture(".git"), { force: true, recursive: true });
+    await cp(rFixture("_git"), rFixture(".git"), {
+      recursive: true,
+    });
+  });
+
+  afterAll(async () => {
+    await rm(rFixture(".git"), { force: true, recursive: true });
+  });
+
+  it("resolveGitConfig", async () => {
+    expect(await resolveGitConfig(rFixture("."))).to.equal(
+      rFixture(".git/config"),
+    );
+  });
+
+  it("readGitConfig", async () => {
+    expect(await readGitConfig(rFixture("."))).toMatchObject({
+      core: {
+        bare: false,
+        filemode: true,
+        ignorecase: true,
+        logallrefupdates: true,
+        precomposeunicode: true,
+        repositoryformatversion: "0",
+      },
+      branch: {
+        develop: {
+          merge: "refs/heads/develop",
+          remote: "origin",
+        },
+        main: {
+          merge: "refs/heads/main",
+          remote: "origin",
+        },
+      },
+      remote: {
+        origin: {
+          fetch: "+refs/heads/*:refs/remotes/origin/*",
+          url: "https://github.com/username/repo.git",
+        },
+      },
+    });
+  });
+
+  it("writeGitConfig", async () => {
+    const fixtureConfigINI = await readFile(rFixture(".git/config"), "utf8");
+
+    await writeGitConfig(
+      rFixture(".git/config.tmp"),
+      parseGitConfig(fixtureConfigINI),
+    );
+
+    const newConfigINI = await readFile(rFixture(".git/config.tmp"), "utf8");
+
+    expect(newConfigINI.trim()).toBe(fixtureConfigINI.trim());
   });
 });

@@ -125,6 +125,56 @@ import { findWorkspaceDir } from "pkg-types";
 const workspaceDir = await findWorkspaceDir(".");
 ```
 
+### `resolveGitConfig`
+
+Finds closest `.git/config` file.
+
+```js
+import { resolveGitConfig } from "pkg-types";
+
+const gitConfig = await resolveGitConfig(".")
+```
+
+### `readGitConfig`
+
+Finds and reads closest `.git/config` file into a JS object.
+
+```js
+import { resolveGitConfig } from "pkg-types";
+
+const gitConfig = await readGitConfig(".")
+```
+
+### `writeGitConfig`
+
+Stringifies git config object into INI text format and writes it to a file.
+
+```js
+import { writeGitConfig } from "pkg-types";
+
+const gitConfig = await writeGitConfig(".git/config", gitConfig)
+```
+
+### `parseGitConfig`
+
+Parses a git config file in INI text format into a JavaScript object.
+
+```js
+import { parseGitConfig } from "pkg-types";
+
+const gitConfig = parseGitConfig(".")
+```
+
+### `stringifyGitConfig`
+
+Stringifies a git config object into a git config file INI text format.
+
+```js
+import { parseGitConfig } from "pkg-types";
+
+const stringifyGitConfig = stringifyGitConfig(".")
+```
+
 ## Types
 
 **Note:** In order to make types working, you need to install `typescript` as a devDependency.
@@ -132,7 +182,7 @@ const workspaceDir = await findWorkspaceDir(".");
 You can directly use typed interfaces:
 
 ```ts
-import type { TSConfig, PackageJSON } from "pkg-types";
+import type { TSConfig, PackageJSON, GitConfig } from "pkg-types";
 ```
 
 You can also use define utils for type support for using in plain `.js` files and auto-complete in IDE.
@@ -147,6 +197,12 @@ const pkg = definePackageJSON({})
 import type { defineTSConfig } from 'pkg-types'
 
 const pkg = defineTSConfig({})
+```
+
+```js
+import type { defineGitConfig } from 'pkg-types'
+
+const gitConfig = defineGitConfig({})
 ```
 
 ## Alternatives
