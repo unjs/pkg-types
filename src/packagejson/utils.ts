@@ -139,12 +139,12 @@ export async function findWorkspaceDir(
   id: string = process.cwd(),
   options: ResolveOptions &
     Partial<Record<WorkspaceTestName, boolean | "closest" | "furthest">> & {
-      tests?: WorkspaceTestName[];
+      order?: WorkspaceTestName[];
     } = {},
 ): Promise<string> {
   const startingFrom = _resolvePath(id, options);
   const tests =
-    options.tests || (Object.keys(workspaceTests) as WorkspaceTestName[]);
+    options.order || (Object.keys(workspaceTests) as WorkspaceTestName[]);
   for (const testName of tests) {
     const test = workspaceTests[testName];
     if (options[testName] === false || !test) {
