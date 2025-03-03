@@ -127,7 +127,7 @@ const workspaceDir = await findWorkspaceDir(".");
 
 ### `resolveGitConfig`
 
-Asynchronously finds closest `.git/config` file.
+Finds closest `.git/config` file.
 
 ```js
 import { resolveGitConfig } from "pkg-types";
@@ -137,7 +137,7 @@ const gitConfig = await resolveGitConfig(".")
 
 ### `readGitConfig`
 
-Asynchronously finds closest `.git/config` file as a js object.
+Finds and reads closest `.git/config` file into a JS object.
 
 ```js
 import { resolveGitConfig } from "pkg-types";
@@ -147,17 +147,17 @@ const gitConfig = await readGitConfig(".")
 
 ### `writeGitConfig`
 
-Stringifies GitConfig into INI text format and asynchronously writes git config to a file.
+Stringifies git config object into INI text format and writes it to a file.
 
 ```js
-import { resolveGitConfig } from "pkg-types";
+import { writeGitConfig } from "pkg-types";
 
-const gitConfig = await readGitConfig(".")
+const gitConfig = await writeGitConfig(".git/config", gitConfig)
 ```
 
 ### `parseGitConfig`
 
-parse git config INI format into a JS object.
+Parses a git config file in INI text format into a JavaScript object.
 
 ```js
 import { parseGitConfig } from "pkg-types";
@@ -167,14 +167,13 @@ const gitConfig = parseGitConfig(".")
 
 ### `stringifyGitConfig`
 
-stringify git JS config object into INI text format.
+Stringifies a git config object into a git config file INI text format.
 
 ```js
 import { parseGitConfig } from "pkg-types";
 
 const stringifyGitConfig = stringifyGitConfig(".")
 ```
-
 
 ## Types
 
