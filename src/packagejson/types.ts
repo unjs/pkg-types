@@ -80,6 +80,13 @@ export interface PackageJson {
   contributors?: PackageJsonPerson[];
 
   /**
+   * An object containing a URL that provides up-to-date information
+   * about ways to help fund development of your package,
+   * a string URL, or an array of objects and string URLs
+   */
+  funding: PackageJsonFunding | PackageJsonFunding[];
+
+  /**
    * The optional `files` field is an array of file patterns that describes the entries to be included when your package is installed as a dependency. File patterns follow a similar syntax to `.gitignore`, but reversed: including a file, directory, or glob pattern (`*`, `**\/*`, and such) will make it so that file is included in the tarball when it’s packed. Omitting the field will make it default to `["*"]`, which means it will include all files.
    */
   files?: string[];
@@ -310,6 +317,8 @@ export type PackageJsonPerson =
       email?: string;
       url?: string;
     };
+
+export type PackageJsonFunding = string | { url: string; type?: string };
 
 type PackageJsonExportKey =
   | "."
