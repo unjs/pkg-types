@@ -141,7 +141,7 @@ const gitConfig = await resolveGitConfig(".")
 Finds and reads closest `.git/config` file into a JS object.
 
 ```js
-import { resolveGitConfig } from "pkg-types";
+import { readGitConfig } from "pkg-types";
 
 const gitConfigObj = await readGitConfig(".")
 ```
@@ -171,7 +171,7 @@ const gitConfigObj = parseGitConfig(gitConfigINI)
 Stringifies a git config object into a git config file INI text format.
 
 ```js
-import { parseGitConfig } from "pkg-types";
+import { stringifyGitConfig } from "pkg-types";
 
 const gitConfigINI = stringifyGitConfig(gitConfigObj)
 ```
