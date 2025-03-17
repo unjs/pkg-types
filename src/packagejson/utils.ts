@@ -76,7 +76,7 @@ export async function writePackageJSON(
   path: string,
   pkg: PackageJson,
 ): Promise<void> {
-  await fsp.writeFile(path, stringifyJSON(pkg));
+  await fsp.writeFile(path, stringifyJSON(pkg, { indent: 2 }));
 }
 
 /**

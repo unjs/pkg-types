@@ -92,6 +92,12 @@ describe("package.json", () => {
     ).to.equal("1.0.0");
   });
 
+  it("pretty prints package.json when writing", async () => {
+    await writePackageJSON(rFixture("package.json.tmp"), { version: "1.0.0" });
+    const contents = await readFile(rFixture("package.json.tmp"), "utf8");
+    expect(contents).to.equal(JSON.stringify({ version: "1.0.0" }, undefined, 2));
+  });
+
   it("correctly reads a version from absolute path", async () => {
     expect(
       await readPackageJSON(rFixture(".")).then((p) => p?.version),
