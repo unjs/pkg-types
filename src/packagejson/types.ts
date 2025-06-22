@@ -328,7 +328,22 @@ type PackageJsonNpmLifeCycleScripts =
  */
 type PackageJsonPnpmLifeCycleScripts = "pnpm:devPreinstall";
 
+type PackageJsonCommonScripts =
+  | "bench"
+  | "build"
+  | "clean"
+  | "coverage"
+  | "deploy"
+  | "dev"
+  | "format"
+  | "lint"
+  | "preview"
+  | "release"
+  | "typecheck"
+  | "watch";
+
 type PackageJsonScriptName =
+  | PackageJsonCommonScripts
   | PackageJsonNpmLifeCycleScripts
   | PackageJsonPnpmLifeCycleScripts
   | (string & {});
