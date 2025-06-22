@@ -312,16 +312,18 @@ type PackageJsonScriptWithPreAndPost<S extends string> =
  */
 type PackageJsonNpmLifeCycleScripts =
   | "dependencies"
-  | PackageJsonScriptWithPreAndPost<"install">
-  | PackageJsonScriptWithPreAndPost<"pack">
-  | PackageJsonScriptWithPreAndPost<"prepare">
   | "prepublishOnly"
-  | PackageJsonScriptWithPreAndPost<"publish">
-  | PackageJsonScriptWithPreAndPost<"restart">
-  | PackageJsonScriptWithPreAndPost<"start">
-  | PackageJsonScriptWithPreAndPost<"stop">
-  | PackageJsonScriptWithPreAndPost<"test">
-  | PackageJsonScriptWithPreAndPost<"version">;
+  | PackageJsonScriptWithPreAndPost<
+      | "install"
+      | "pack"
+      | "prepare"
+      | "publish"
+      | "restart"
+      | "start"
+      | "stop"
+      | "test"
+      | "version"
+    >;
 
 /**
  * See: https://pnpm.io/scripts#lifecycle-scripts
