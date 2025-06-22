@@ -62,7 +62,7 @@ export interface PackageJson {
   /**
    * The `scripts` field is a dictionary containing script commands that are run at various times in the lifecycle of your package.
    */
-  scripts?: Record<string, string>;
+  scripts?: PackageJsonScripts;
 
   /**
    * If you set `"private": true` in your package.json, then npm will refuse to publish it.
@@ -299,6 +299,43 @@ export interface PackageJson {
 
   [key: string]: any;
 }
+
+/**
+ * See: https://docs.npmjs.com/cli/v11/using-npm/scripts#pre--post-scripts
+ */
+type PackageJsonScriptWithPreAndPost<S extends string> =
+  | S
+  | `${"pre" | "post"}${S}`;
+
+/**
+ * See: https://docs.npmjs.com/cli/v11/using-npm/scripts#life-cycle-operation-order
+ */
+type PackageJsonNpmLifeCycleScripts =
+  | "dependencies"
+  | PackageJsonScriptWithPreAndPost<"install">
+  | PackageJsonScriptWithPreAndPost<"pack">
+  | PackageJsonScriptWithPreAndPost<"prepare">
+  | "prepublishOnly"
+  | PackageJsonScriptWithPreAndPost<"publish">
+  | PackageJsonScriptWithPreAndPost<"restart">
+  | PackageJsonScriptWithPreAndPost<"start">
+  | PackageJsonScriptWithPreAndPost<"stop">
+  | PackageJsonScriptWithPreAndPost<"test">
+  | PackageJsonScriptWithPreAndPost<"version">;
+
+/**
+ * See: https://pnpm.io/scripts#lifecycle-scripts
+ */
+type PackageJsonPnpmLifeCycleScripts = "pnpm:devPreinstall";
+
+type PackageJsonScriptName =
+  | PackageJsonNpmLifeCycleScripts
+  | PackageJsonPnpmLifeCycleScripts
+  | (string & {});
+
+export type PackageJsonScripts = {
+  [P in PackageJsonScriptName]?: string;
+};
 
 /**
  * A “person” is an object with a “name” field and optionally “url” and “email”. Or you can shorten that all into a single string, and npm will parse it for you.
