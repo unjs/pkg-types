@@ -42,10 +42,4 @@
     "vitest": "^3.0.7"
   },
   "packageManager": "pnpm@10.5.2",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "esbuild"
-    ]
-  }
 }
