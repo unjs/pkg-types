@@ -51,5 +51,12 @@ test("types", () => {
         "./feature": ["./features/feature.mjs", "./features/feature.js"],
       },
     },
+    { scripts: {} },
+    {
+      scripts: {
+        start: "node ./start.js",
+        "custom:script:ci": "node ./ci.js",
+      },
+    },
   ]);
 });
