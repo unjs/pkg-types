@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.1.1
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v2.1.0...v2.1.1)
+
+### 📖 Documentation
+
+- Fix git examples ([#225](https://github.com/unjs/pkg-types/pull/225))
+
+### 🌊 Types
+
+- **packagejson:** Autocompletion for script names ([#229](https://github.com/unjs/pkg-types/pull/229))
+- **packagejson:** Add `funding` field ([#224](https://github.com/unjs/pkg-types/pull/224))
+- `funding` field is optional ([a82b636](https://github.com/unjs/pkg-types/commit/a82b636))
+
+### 🏡 Chore
+
+- Update deps ([616704d](https://github.com/unjs/pkg-types/commit/616704d))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+- Kevin Deng <sxzz@sxzz.moe>
+- Igal Klebanov <igalklebanov@gmail.com>
+- Farnabaz <farnabaz@gmail.com>
+
 ## v2.1.0
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v2.0.1...v2.1.0)
