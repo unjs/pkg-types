@@ -25,6 +25,8 @@ const workspaceFiles = [
   "lerna.json",
   "turbo.json",
   "rush.json",
+  "deno.json",
+  "deno.jsonc",
 ];
 
 const FileCache = /* #__PURE__ */ new Map<string, Record<string, any>>();
