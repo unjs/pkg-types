@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.2.0
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v2.1.1...v2.2.0)
+
+### 🚀 Enhancements
+
+- **findWorkspaceDir:** Add support for Deno workspace detection ([#231](https://github.com/unjs/pkg-types/pull/231))
+
+### 🏡 Chore
+
+- Update deps ([19e6cd5](https://github.com/unjs/pkg-types/commit/19e6cd5))
+
+### ❤️ Contributors
+
+- Gene ._. ([@outslept](https://github.com/outslept))
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+
 ## v2.1.1
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v2.1.0...v2.1.1)
