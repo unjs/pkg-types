@@ -8,7 +8,7 @@
 
 <!-- /automd -->
 
-Node.js utilities and TypeScript definitions for `package.json` and `tsconfig.json`.
+Node.js utilities and TypeScript definitions for `package.json`, `tsconfig.json`, and other configuration files.
 
 ## Install
 
@@ -38,7 +38,9 @@ deno install pkg-types
 
 ## Usage
 
-### `readPackageJSON`
+### Package Configuration
+
+#### `readPackageJSON`
 
 ```js
 import { readPackageJSON } from "pkg-types";
@@ -47,7 +49,21 @@ const localPackageJson = await readPackageJSON();
 const packageJson = await readPackageJSON("/fully/resolved/path/to/folder");
 ```
 
-### `writePackageJSON`
+#### `readPackageJSON5`
+
+```js
+import { readPackageJSON5 } from "pkg-types";
+const packageJson5 = await readPackageJSON5("/path/to/package.json5");
+```
+
+#### `readPackageYAML`
+
+```js
+import { readPackageYAML } from "pkg-types";
+const packageYaml = await readPackageYAML("/path/to/package.yaml");
+```
+
+#### `writePackageJSON`
 
 ```js
 import { writePackageJSON } from "pkg-types";
@@ -55,7 +71,23 @@ import { writePackageJSON } from "pkg-types";
 await writePackageJSON("path/to/package.json", pkg);
 ```
 
-### `resolvePackageJSON`
+#### `writePackageJSON5`
+
+```js
+import { writePackageJSON5 } from "pkg-types";
+
+await writePackageJSON5("path/to/package.json5", pkg);
+```
+
+#### `writePackageYAML`
+
+```js
+import { writePackageYAML } from "pkg-types";
+
+await writePackageYAML("path/to/package.yaml", pkg);
+```
+
+#### `resolvePackageJSON`
 
 ```js
 import { resolvePackageJSON } from "pkg-types";
@@ -64,7 +96,23 @@ const filename = await resolvePackageJSON();
 const packageJson = await resolvePackageJSON("/fully/resolved/path/to/folder");
 ```
 
-### `readTSConfig`
+#### `resolvePackageJSON5`
+
+```js
+import { resolvePackageJSON5 } from "pkg-types";
+const filename = await resolvePackageJSON5("/path/to/search");
+```
+
+#### `resolvePackageYAML`
+
+```js
+import { resolvePackageYAML } from "pkg-types";
+const filename = await resolvePackageYAML("/path/to/search");
+```
+
+### TypeScript Configuration
+
+#### `readTSConfig`
 
 ```js
 import { readTSConfig } from "pkg-types";
@@ -73,7 +121,7 @@ const tsconfig = await readTSConfig();
 const tsconfig2 = await readTSConfig("/fully/resolved/path/to/folder");
 ```
 
-### `writeTSConfig`
+#### `writeTSConfig`
 
 ```js
 import { writeTSConfig } from "pkg-types";
@@ -81,7 +129,7 @@ import { writeTSConfig } from "pkg-types";
 await writeTSConfig("path/to/tsconfig.json", tsconfig);
 ```
 
-### `resolveTSConfig`
+#### `resolveTSConfig`
 
 ```js
 import { resolveTSConfig } from "pkg-types";
@@ -90,7 +138,9 @@ const filename = await resolveTSConfig();
 const tsconfig = await resolveTSConfig("/fully/resolved/path/to/folder");
 ```
 
-### `resolveFile`
+### File Resolution
+
+#### `resolveFile`
 
 ```js
 import { resolveFile } from "pkg-types";
@@ -101,7 +151,7 @@ const filename = await resolveFile("README.md", {
 });
 ```
 
-### `resolveLockFile`
+#### `resolveLockFile`
 
 Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`, `bun.lockb`, `bun.lock`) or throws an error.
 
@@ -110,7 +160,7 @@ import { resolveLockFile } from "pkg-types";
 const lockfile = await resolveLockFile(".");
 ```
 
-### `findWorkspaceDir`
+#### `findWorkspaceDir`
 
 Try to detect workspace dir by in order:
 
@@ -126,7 +176,9 @@ import { findWorkspaceDir } from "pkg-types";
 const workspaceDir = await findWorkspaceDir(".");
 ```
 
-### `resolveGitConfig`
+### Git Configuration
+
+#### `resolveGitConfig`
 
 Finds closest `.git/config` file.
 
@@ -136,7 +188,7 @@ import { resolveGitConfig } from "pkg-types";
 const gitConfig = await resolveGitConfig(".")
 ```
 
-### `readGitConfig`
+#### `readGitConfig`
 
 Finds and reads closest `.git/config` file into a JS object.
 
@@ -146,7 +198,7 @@ import { readGitConfig } from "pkg-types";
 const gitConfigObj = await readGitConfig(".")
 ```
 
-### `writeGitConfig`
+#### `writeGitConfig`
 
 Stringifies git config object into INI text format and writes it to a file.
 
@@ -156,7 +208,7 @@ import { writeGitConfig } from "pkg-types";
 await writeGitConfig(".git/config", gitConfigObj)
 ```
 
-### `parseGitConfig`
+#### `parseGitConfig`
 
 Parses a git config file in INI text format into a JavaScript object.
 
@@ -166,7 +218,7 @@ import { parseGitConfig } from "pkg-types";
 const gitConfigObj = parseGitConfig(gitConfigINI)
 ```
 
-### `stringifyGitConfig`
+#### `stringifyGitConfig`
 
 Stringifies a git config object into a git config file INI text format.
 

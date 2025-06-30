@@ -19,6 +19,12 @@ import {
   readGitConfig,
   writeGitConfig,
   parseGitConfig,
+  readPackageJSON5,
+  readPackageYAML,
+  resolvePackageJSON5,
+  resolvePackageYAML,
+  writePackageJSON5,
+  writePackageYAML,
 } from "../src";
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "fixture");
@@ -118,6 +124,52 @@ describe("package.json", () => {
       "utf8",
     ).then(normalizeWinLines);
     expect(newContent).toBe(originalContent);
+  });
+});
+
+describe("package.json5", () => {
+  it("finds a package.json5 in fixture directory", async () => {
+    const packagePath = await resolvePackageJSON5(rFixture("."));
+    expect(packagePath).to.equal(rFixture("package.json5"));
+  });
+
+  it("read package.json5", async () => {
+    const package_ = await readPackageJSON5(rFixture("package.json5"));
+    expect(package_.name).to.equal("foo");
+    expect(package_.version).to.equal("1.0.0");
+  });
+
+  it("write package.json5", async () => {
+    await writePackageJSON5(rFixture("package.json5.tmp"), {
+      name: "foo",
+      version: "1.0.0",
+    });
+    expect(
+      (await readPackageJSON5(rFixture("package.json5.tmp"))).name,
+    ).to.equal("foo");
+  });
+});
+
+describe("package.yaml", () => {
+  it("finds a package.yaml in fixture directory", async () => {
+    const packagePath = await resolvePackageYAML(rFixture("."));
+    expect(packagePath).to.equal(rFixture("package.yaml"));
+  });
+
+  it("read package.yaml", async () => {
+    const package_ = await readPackageYAML(rFixture("package.yaml"));
+    expect(package_.name).to.equal("foo");
+    expect(package_.version).to.equal("1.0.0");
+  });
+
+  it("write package.yaml", async () => {
+    await writePackageYAML(rFixture("package.yaml.tmp"), {
+      name: "foo",
+      version: "1.0.0",
+    });
+    expect((await readPackageYAML(rFixture("package.yaml.tmp"))).name).to.equal(
+      "foo",
+    );
   });
 });
 
