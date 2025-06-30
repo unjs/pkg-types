@@ -185,9 +185,7 @@ describe("findWorkspaceDir", () => {
   });
 
   it("detects Deno workspace", async () => {
-    expect(await findWorkspaceDir(rFixture("deno"))).to.equal(
-      rFixture("deno"),
-    );
+    expect(await findWorkspaceDir(rFixture("deno"))).to.equal(rFixture("deno"));
     expect(await findWorkspaceDir(rFixture("deno/packages/foo"))).to.equal(
       rFixture("deno"),
     );
