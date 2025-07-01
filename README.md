@@ -40,6 +40,40 @@ deno install pkg-types
 
 ### Package Configuration
 
+#### `readPackage`
+
+Reads any package file format (package.json, package.json5, or package.yaml) with automatic format detection.
+
+```js
+import { readPackage } from "pkg-types";
+const localPackage = await readPackage();
+// or
+const package = await readPackage("/fully/resolved/path/to/folder");
+```
+
+#### `writePackage`
+
+Writes package data with format detection based on file extension.
+
+```js
+import { writePackage } from "pkg-types";
+
+await writePackage("path/to/package.json", pkg);
+await writePackage("path/to/package.json5", pkg);
+await writePackage("path/to/package.yaml", pkg);
+```
+
+#### `findPackage`
+
+Finds the nearest package file (package.json, package.json5, or package.yaml).
+
+```js
+import { findPackage } from "pkg-types";
+const filename = await findPackage();
+// or
+const filename = await findPackage("/fully/resolved/path/to/folder");
+```
+
 #### `readPackageJSON`
 
 ```js
@@ -47,20 +81,6 @@ import { readPackageJSON } from "pkg-types";
 const localPackageJson = await readPackageJSON();
 // or
 const packageJson = await readPackageJSON("/fully/resolved/path/to/folder");
-```
-
-#### `readPackageJSON5`
-
-```js
-import { readPackageJSON5 } from "pkg-types";
-const packageJson5 = await readPackageJSON5("/path/to/package.json5");
-```
-
-#### `readPackageYAML`
-
-```js
-import { readPackageYAML } from "pkg-types";
-const packageYaml = await readPackageYAML("/path/to/package.yaml");
 ```
 
 #### `writePackageJSON`
@@ -71,22 +91,6 @@ import { writePackageJSON } from "pkg-types";
 await writePackageJSON("path/to/package.json", pkg);
 ```
 
-#### `writePackageJSON5`
-
-```js
-import { writePackageJSON5 } from "pkg-types";
-
-await writePackageJSON5("path/to/package.json5", pkg);
-```
-
-#### `writePackageYAML`
-
-```js
-import { writePackageYAML } from "pkg-types";
-
-await writePackageYAML("path/to/package.yaml", pkg);
-```
-
 #### `resolvePackageJSON`
 
 ```js
@@ -94,20 +98,6 @@ import { resolvePackageJSON } from "pkg-types";
 const filename = await resolvePackageJSON();
 // or
 const packageJson = await resolvePackageJSON("/fully/resolved/path/to/folder");
-```
-
-#### `resolvePackageJSON5`
-
-```js
-import { resolvePackageJSON5 } from "pkg-types";
-const filename = await resolvePackageJSON5("/path/to/search");
-```
-
-#### `resolvePackageYAML`
-
-```js
-import { resolvePackageYAML } from "pkg-types";
-const filename = await resolvePackageYAML("/path/to/search");
 ```
 
 ### TypeScript Configuration

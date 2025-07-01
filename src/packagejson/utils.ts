@@ -51,6 +51,81 @@ export function definePackageJSON(pkg: PackageJson): PackageJson {
 }
 
 /**
+ * Finds the nearest package file (package.json, package.json5, or package.yaml).
+ * @param id - The base path for the search, defaults to the current working directory.
+ * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
+ * @returns A promise resolving to the path of the nearest package file.
+ */
+export async function findPackage(
+  id: string = process.cwd(),
+  options: ResolveOptions = {},
+): Promise<string> {
+  return findNearestFile(packageFiles, {
+    ...options,
+    startingFrom: _resolvePath(id, options),
+  });
+}
+
+/**
+ * Reads any package file format (package.json, package.json5, or package.yaml).
+ * @param id - The path identifier for the package file, defaults to the current working directory.
+ * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
+ * @returns a promise resolving to the parsed package object.
+ */
+export async function readPackage(
+  id?: string,
+  options: ResolveOptions & ReadOptions = {},
+): Promise<PackageJson> {
+  const resolvedPath = await findPackage(id, options);
+  const cache =
+    options.cache && typeof options.cache !== "boolean"
+      ? options.cache
+      : FileCache;
+  if (options.cache && cache.has(resolvedPath)) {
+    return cache.get(resolvedPath)!;
+  }
+  const blob = await fsp.readFile(resolvedPath, "utf8");
+  let parsed: PackageJson;
+
+  if (resolvedPath.endsWith(".json5")) {
+    parsed = parseJSON5(blob) as PackageJson;
+  } else if (resolvedPath.endsWith(".yaml")) {
+    parsed = parseYAML(blob) as PackageJson;
+  } else {
+    try {
+      parsed = parseJSON(blob) as PackageJson;
+    } catch {
+      parsed = parseJSONC(blob) as PackageJson;
+    }
+  }
+
+  cache.set(resolvedPath, parsed);
+  return parsed;
+}
+
+/**
+ * Writes data to a package file with format detection based on file extension.
+ * @param path - The path to the file where the package data is written.
+ * @param pkg - The package object to write. See {@link PackageJson}.
+ */
+export async function writePackage(
+  path: string,
+  pkg: PackageJson,
+): Promise<void> {
+  let content: string;
+
+  if (path.endsWith(".json5")) {
+    content = stringifyJSON5(pkg);
+  } else if (path.endsWith(".yaml")) {
+    content = stringifyYAML(pkg);
+  } else {
+    content = stringifyJSON(pkg);
+  }
+
+  await fsp.writeFile(path, content);
+}
+
+/**
  * Asynchronously reads a `package.json` file.
  * @param id - The path identifier for the package.json, defaults to the current working directory.
  * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
@@ -80,54 +155,6 @@ export async function readPackageJSON(
 }
 
 /**
- * Asynchronously reads a `package.json5` file.
- * @param id - The path identifier for the package.json5, defaults to the current working directory.
- * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
- * @returns a promise resolving to the parsed `package.json5` object.
- */
-export async function readPackageJSON5(
-  id?: string,
-  options: ResolveOptions & ReadOptions = {},
-): Promise<PackageJson> {
-  const resolvedPath = await resolvePackageJSON5(id, options);
-  const cache =
-    options.cache && typeof options.cache !== "boolean"
-      ? options.cache
-      : FileCache;
-  if (options.cache && cache.has(resolvedPath)) {
-    return cache.get(resolvedPath)!;
-  }
-  const blob = await fsp.readFile(resolvedPath, "utf8");
-  const parsed = parseJSON5(blob) as PackageJson;
-  cache.set(resolvedPath, parsed);
-  return parsed;
-}
-
-/**
- * Asynchronously reads a `package.yaml` file.
- * @param id - The path identifier for the package.yaml, defaults to the current working directory.
- * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
- * @returns a promise resolving to the parsed `package.yaml` object.
- */
-export async function readPackageYAML(
-  id?: string,
-  options: ResolveOptions & ReadOptions = {},
-): Promise<PackageJson> {
-  const resolvedPath = await resolvePackageYAML(id, options);
-  const cache =
-    options.cache && typeof options.cache !== "boolean"
-      ? options.cache
-      : FileCache;
-  if (options.cache && cache.has(resolvedPath)) {
-    return cache.get(resolvedPath)!;
-  }
-  const blob = await fsp.readFile(resolvedPath, "utf8");
-  const parsed = parseYAML(blob) as PackageJson;
-  cache.set(resolvedPath, parsed);
-  return parsed;
-}
-
-/**
  * Asynchronously writes data to a `package.json` file.
  * @param path - The path to the file where the `package.json` is written.
  * @param pkg - The `package.json` object to write. See {@link PackageJson}.
@@ -137,30 +164,6 @@ export async function writePackageJSON(
   pkg: PackageJson,
 ): Promise<void> {
   await fsp.writeFile(path, stringifyJSON(pkg));
-}
-
-/**
- * Asynchronously writes data to a `package.json5` file.
- * @param path - The path to the file where the `package.json5` is written.
- * @param pkg - The package configuration object to write. See {@link PackageJson}.
- */
-export async function writePackageJSON5(
-  path: string,
-  pkg: PackageJson,
-): Promise<void> {
-  await fsp.writeFile(path, stringifyJSON5(pkg));
-}
-
-/**
- * Asynchronously writes data to a `package.yaml` file.
- * @param path - The path to the file where the `package.yaml` is written.
- * @param pkg - The package configuration object to write. See {@link PackageJson}.
- */
-export async function writePackageYAML(
-  path: string,
-  pkg: PackageJson,
-): Promise<void> {
-  await fsp.writeFile(path, stringifyYAML(pkg));
 }
 
 /**
@@ -174,38 +177,6 @@ export async function resolvePackageJSON(
   options: ResolveOptions = {},
 ): Promise<string> {
   return findNearestFile("package.json", {
-    ...options,
-    startingFrom: _resolvePath(id, options),
-  });
-}
-
-/**
- * Resolves the path to the nearest `package.json5` file from a given directory.
- * @param id - The base path for the search, defaults to the current working directory.
- * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
- * @returns A promise resolving to the path of the nearest `package.json5` file.
- */
-export async function resolvePackageJSON5(
-  id: string = process.cwd(),
-  options: ResolveOptions = {},
-): Promise<string> {
-  return findNearestFile("package.json5", {
-    ...options,
-    startingFrom: _resolvePath(id, options),
-  });
-}
-
-/**
- * Resolves the path to the nearest `package.yaml` file from a given directory.
- * @param id - The base path for the search, defaults to the current working directory.
- * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
- * @returns A promise resolving to the path of the nearest `package.yaml` file.
- */
-export async function resolvePackageYAML(
-  id: string = process.cwd(),
-  options: ResolveOptions = {},
-): Promise<string> {
-  return findNearestFile("package.yaml", {
     ...options,
     startingFrom: _resolvePath(id, options),
   });
