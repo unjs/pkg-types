@@ -70,7 +70,7 @@ export async function findPackage(
  * Reads any package file format (package.json, package.json5, or package.yaml).
  * @param id - The path identifier for the package file, defaults to the current working directory.
  * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
- * @returns a promise resolving to the parsed package object.
+ * @returns a promise resolving to the parsed `package.json` object.
  */
 export async function readPackage(
   id?: string,
