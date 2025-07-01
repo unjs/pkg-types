@@ -136,6 +136,11 @@ describe("unified package functions", () => {
     expect(package_.name).to.equal("foo");
   });
 
+  it("reads package.json with comments (JSONC)", async () => {
+    const package_ = await readPackage(rFixture("jsonc/package.json"));
+    expect(package_.name).to.equal("foo");
+  });
+
   it("reads package.json5", async () => {
     const package_ = await readPackage(rFixture("package.json5"));
     expect(package_.name).to.equal("foo");
