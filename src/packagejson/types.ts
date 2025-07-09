@@ -193,7 +193,7 @@ export interface PackageJson {
   workspaces?: string[];
 
   /**
-   * The field is is used to specify different TypeScript declaration files for
+   * The field is used to specify different TypeScript declaration files for
    * different versions of TypeScript, allowing for version-specific type definitions.
    */
   typesVersions?: Record<string, Record<string, string[]>>;
