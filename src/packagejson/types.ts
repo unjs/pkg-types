@@ -190,7 +190,21 @@ export interface PackageJson {
    * This field is an array of glob patterns or an object with specific configurations for managing
    * multiple packages in a single repository.
    */
-  workspaces?: string[];
+  workspaces?: string[] | {
+    /**
+    * Workspace package paths. Glob patterns are supported.
+    */
+    packages?: string[];
+
+   /**
+    * Packages to block from hoisting to the workspace root.
+    * Uses glob patterns to match module paths in the dependency tree.
+    *
+    * Docs:
+    * - https://classic.yarnpkg.com/blog/2018/02/15/nohoist/
+    */
+    nohoist?: string[];
+  };
 
   /**
    * The field is is used to specify different TypeScript declaration files for
