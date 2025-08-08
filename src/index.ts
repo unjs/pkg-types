@@ -34,6 +34,9 @@ export {
   resolvePackageJSON,
   resolveLockfile,
   findWorkspaceDir,
+  addPackageJSONDependency,
+  removePackageJSONDependency,
+  updatePackageJSON
 } from "./packagejson/utils";
 
 // --- git config ---
