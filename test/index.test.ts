@@ -257,7 +257,7 @@ describe(".git/config", () => {
   });
 });
 
-describe('addPackageJsonDependency', () => {
+describe("addPackageJsonDependency", () => {
   let package_: PackageJson;
 
   beforeEach(async () => {
@@ -267,58 +267,68 @@ describe('addPackageJsonDependency', () => {
   it("can add a production dependency", async () => {
     addPackageJSONDependency(package_, "new-package", "^1.0.0", "prod");
     expect(package_).toEqual({
-      "name": "foo",
-      "version": "1.0.0",
-      "dependencies" :{
+      name: "foo",
+      version: "1.0.0",
+      dependencies: {
         "new-package": "^1.0.0",
-      }
+      },
     });
   });
 
   it("can add a development dependency", async () => {
     addPackageJSONDependency(package_, "new-dev-package", "^1.0.0", "dev");
     expect(package_).toEqual({
-      "name": "foo",
-      "version": "1.0.0",
-      "devDependencies" :{
+      name: "foo",
+      version: "1.0.0",
+      devDependencies: {
         "new-dev-package": "^1.0.0",
-      }
+      },
     });
   });
 
   it("can add an optional dependency", async () => {
-    addPackageJSONDependency(package_, "new-optional-package", "^1.0.0", "optional");
+    addPackageJSONDependency(
+      package_,
+      "new-optional-package",
+      "^1.0.0",
+      "optional",
+    );
     expect(package_).toEqual({
-      "name": "foo",
-      "version": "1.0.0",
-      "optionalDependencies" :{
+      name: "foo",
+      version: "1.0.0",
+      optionalDependencies: {
         "new-optional-package": "^1.0.0",
-      }
+      },
     });
   });
 
   it("can add a peer dependency", async () => {
     addPackageJSONDependency(package_, "new-peer-package", "^1.0.0", "peer");
     expect(package_).toEqual({
-      "name": "foo",
-      "version": "1.0.0",
-      "peerDependencies" :{
+      name: "foo",
+      version: "1.0.0",
+      peerDependencies: {
         "new-peer-package": "^1.0.0",
-      }
+      },
     });
   });
 
   it("can add an optional peer dependency", async () => {
-    addPackageJSONDependency(package_, "new-optional-peer-package", "^1.0.0", "optionalPeer");
+    addPackageJSONDependency(
+      package_,
+      "new-optional-peer-package",
+      "^1.0.0",
+      "optionalPeer",
+    );
     expect(package_).toEqual({
-      "name": "foo",
-      "version": "1.0.0",
-      "peerDependencies" :{
+      name: "foo",
+      version: "1.0.0",
+      peerDependencies: {
         "new-optional-peer-package": "^1.0.0",
       },
-      "peerDependenciesMeta": {
-        "new-optional-peer-package": { optional: true }
-      }
+      peerDependenciesMeta: {
+        "new-optional-peer-package": { optional: true },
+      },
     });
   });
 
@@ -326,17 +336,17 @@ describe('addPackageJsonDependency', () => {
     addPackageJSONDependency(package_, "z-package", "^1.0.0", "prod");
     addPackageJSONDependency(package_, "a-package", "^1.0.0", "prod");
     expect(package_).toEqual({
-      "name": "foo",
-      "version": "1.0.0",
-      "dependencies" :{
+      name: "foo",
+      version: "1.0.0",
+      dependencies: {
         "a-package": "^1.0.0",
         "z-package": "^1.0.0",
-      }
+      },
     });
   });
 });
 
-describe('removePackageJsonDependency', () => {
+describe("removePackageJsonDependency", () => {
   let package_: PackageJson;
 
   beforeEach(async () => {
@@ -347,8 +357,8 @@ describe('removePackageJsonDependency', () => {
     package_.dependencies = { "new-package": "^1.0.0" };
     removePackageJSONDependency(package_, "new-package", "prod");
     expect(package_).toEqual({
-      "name": "foo",
-      "version": "1.0.0",
+      name: "foo",
+      version: "1.0.0",
     });
   });
 
@@ -356,8 +366,8 @@ describe('removePackageJsonDependency', () => {
     package_.devDependencies = { "new-dev-package": "^1.0.0" };
     removePackageJSONDependency(package_, "new-dev-package", "dev");
     expect(package_).toEqual({
-      "name": "foo",
-      "version": "1.0.0",
+      name: "foo",
+      version: "1.0.0",
     });
   });
 
@@ -365,8 +375,8 @@ describe('removePackageJsonDependency', () => {
     package_.optionalDependencies = { "new-optional-package": "^1.0.0" };
     removePackageJSONDependency(package_, "new-optional-package", "optional");
     expect(package_).toEqual({
-      "name": "foo",
-      "version": "1.0.0",
+      name: "foo",
+      version: "1.0.0",
     });
   });
 
@@ -374,27 +384,35 @@ describe('removePackageJsonDependency', () => {
     package_.peerDependencies = { "new-peer-package": "^1.0.0" };
     removePackageJSONDependency(package_, "new-peer-package", "peer");
     expect(package_).toEqual({
-      "name": "foo",
-      "version": "1.0.0",
+      name: "foo",
+      version: "1.0.0",
     });
   });
 
   it("can remove an optional peer dependency", async () => {
-    package_.peerDependenciesMeta = { "new-optional-peer-package": { optional: true } };
+    package_.peerDependenciesMeta = {
+      "new-optional-peer-package": { optional: true },
+    };
     package_.peerDependencies = { "new-optional-peer-package": "^1.0.0" };
-    removePackageJSONDependency(package_, "new-optional-peer-package", "optionalPeer");
+    removePackageJSONDependency(
+      package_,
+      "new-optional-peer-package",
+      "optionalPeer",
+    );
     expect(package_).toEqual({
-      "name": "foo",
-      "version": "1.0.0",
+      name: "foo",
+      version: "1.0.0",
     });
   });
 
   it("does not throw when removing non-existent dependencies", async () => {
-    expect(() => removePackageJSONDependency(package_, 'non-existent')).not.toThrow();
+    expect(() =>
+      removePackageJSONDependency(package_, "non-existent"),
+    ).not.toThrow();
   });
 });
 
-describe('updatePackageJSON', () => {
+describe("updatePackageJSON", () => {
   let packagePath: string;
 
   beforeEach(async () => {
@@ -407,22 +425,20 @@ describe('updatePackageJSON', () => {
       name: "test",
       version: "0.1.0",
       scripts: {
-        build: "tsc"
-      }
+        build: "tsc",
+      },
     });
     await updatePackageJSON(packagePath, {
       scripts: {
-        test: "vitest"
-      }
+        test: "vitest",
+      },
     });
-    expect(
-      JSON.parse(await readFile(packagePath, 'utf8'))
-    ).toEqual({
+    expect(JSON.parse(await readFile(packagePath, "utf8"))).toEqual({
       name: "test",
       version: "0.1.0",
       scripts: {
-        test: "vitest"
-      }
+        test: "vitest",
+      },
     });
   });
 });

@@ -36,7 +36,7 @@ export {
   findWorkspaceDir,
   addPackageJSONDependency,
   removePackageJSONDependency,
-  updatePackageJSON
+  updatePackageJSON,
 } from "./packagejson/utils";
 
 // --- git config ---
