@@ -18,6 +18,7 @@ const lockFiles = [
   "npm-shrinkwrap.json",
   "bun.lockb",
   "bun.lock",
+  "deno.lock",
 ];
 
 const workspaceFiles = [
