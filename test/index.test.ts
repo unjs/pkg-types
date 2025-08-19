@@ -125,7 +125,7 @@ describe("package.json", () => {
   });
 });
 
-describe("unified package functions", () => {
+describe("package.{json,jsonc,json5}", () => {
   it("finds any package file", async () => {
     const packagePath = await findPackage(rFixture("."));
     expect(packagePath).to.equal(rFixture("package.json"));
