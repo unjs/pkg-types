@@ -283,15 +283,30 @@ export async function updatePackage(
 }
 
 export function sortPackage(pkg: PackageJson): PackageJson {
-  const sorted: PackageJson = {
-    ...pkg,
-  };
+  const sorted: PackageJson = {};
+
+  for (const key of defaultFieldOrder) {
+    if (Object.hasOwn(pkg, key)) {
+      sorted[key] = pkg[key];
+    }
+  }
+
+  const remainingKeys = Object.keys(pkg)
+    .filter((key) => !defaultFieldOrder.includes(key))
+    .sort();
+
+  for (const key of remainingKeys) {
+    sorted[key] = pkg[key];
+  }
+
+  // Sort specific nested objects
   for (const key of [...dependencyKeys, "scripts"]) {
     if (Object.hasOwn(sorted, key) && isObject(sorted[key])) {
       const value = sorted[key];
       sorted[key] = sortObject(value);
     }
   }
+
   return sorted;
 }
 
@@ -320,3 +335,46 @@ function sortObject(obj: Record<string, unknown>): Record<string, unknown> {
     Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)),
   );
 }
+
+const defaultFieldOrder = [
+  "$schema",
+  "name",
+  "version",
+  "private",
+  "description",
+  "keywords",
+  "homepage",
+  "bugs",
+  "repository",
+  "funding",
+  "license",
+  "author",
+  "sideEffects",
+  "type",
+  "imports",
+  "exports",
+  "main",
+  "module",
+  "browser",
+  "types",
+  "typesVersions",
+  "typings",
+  "bin",
+  "man",
+  "files",
+  "workspaces",
+  "scripts",
+  "resolutions",
+  "overrides",
+  "dependencies",
+  "devDependencies",
+  "dependenciesMeta",
+  "peerDependencies",
+  "peerDependenciesMeta",
+  "optionalDependencies",
+  "bundledDependencies",
+  "bundleDependencies",
+  "packageManager",
+  "engines",
+  "publishConfig",
+];

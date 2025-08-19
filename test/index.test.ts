@@ -34,6 +34,7 @@ import {
   findPackage,
   readPackage,
   writePackage,
+  sortPackage,
 } from "../src";
 import { tmpdir } from "node:os";
 
@@ -484,5 +485,43 @@ describe("normalizePackage", () => {
       name: "foo",
       version: "1.0.0",
     });
+  });
+});
+
+describe("sortPackage", () => {
+  it("should sort top-level fields", () => {
+    const input: PackageJson = {
+      dependencies: { bar: "^1.0.0" },
+      description: "A test package",
+      name: "foo",
+      scripts: { build: "echo build" },
+      version: "1.0.0",
+    };
+    const sortedPackage = sortPackage(input);
+    expect(Object.keys(sortedPackage)).toEqual([
+      "name",
+      "version",
+      "description",
+      "scripts",
+      "dependencies",
+    ]);
+  });
+
+  it("should sort extra keys after known fields", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
+      description: "A test package",
+      customField: "customValue",
+      dependencies: { bar: "^1.0.0" },
+    };
+    const sortedPackage = sortPackage(input);
+    expect(Object.keys(sortedPackage)).toEqual([
+      "name",
+      "version",
+      "description",
+      "dependencies",
+      "customField",
+    ]);
   });
 });
