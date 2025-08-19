@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.3.0
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v2.2.0...v2.3.0)
+
+### 🚀 Enhancements
+
+- **packagejson:** Object format support for `workspaces` field ([#236](https://github.com/unjs/pkg-types/pull/236))
+- Add `deno.lock` to known lockfiles ([#244](https://github.com/unjs/pkg-types/pull/244))
+- Support `package.json5` and `package.yaml` ([#234](https://github.com/unjs/pkg-types/pull/234))
+- `updatePackage`, `sortPackage` and `normalizePackage` utils ([#240](https://github.com/unjs/pkg-types/pull/240))
+
+### 🏡 Chore
+
+- Fix typo in jsdocs ([#237](https://github.com/unjs/pkg-types/pull/237))
+- Update lockfile ([76ea1d4](https://github.com/unjs/pkg-types/commit/76ea1d4))
+
+### ❤️ Contributors
+
+- James Garbutt ([@43081j](https://github.com/43081j))
+- Eugene ([@outslept](https://github.com/outslept))
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+- Igal Klebanov <igalklebanov@gmail.com>
+
 ## v2.2.0
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v2.1.1...v2.2.0)
