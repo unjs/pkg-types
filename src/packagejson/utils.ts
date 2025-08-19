@@ -1,6 +1,14 @@
 import { promises as fsp } from "node:fs";
 import { dirname, resolve } from "pathe";
-import { parseJSONC, parseJSON, stringifyJSON } from "confbox";
+import {
+  parseJSONC,
+  parseJSON,
+  stringifyJSON,
+  parseJSON5,
+  stringifyJSON5,
+  parseYAML,
+  stringifyYAML,
+} from "confbox";
 
 import type {
   ResolveOptions,
@@ -21,6 +29,8 @@ const lockFiles = [
   "deno.lock",
 ];
 
+const packageFiles = ["package.json", "package.json5", "package.yaml"];
+
 const workspaceFiles = [
   "pnpm-workspace.yaml",
   "lerna.json",
@@ -39,6 +49,81 @@ const FileCache = /* #__PURE__ */ new Map<string, Record<string, any>>();
  */
 export function definePackageJSON(pkg: PackageJson): PackageJson {
   return pkg;
+}
+
+/**
+ * Finds the nearest package file (package.json, package.json5, or package.yaml).
+ * @param id - The base path for the search, defaults to the current working directory.
+ * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
+ * @returns A promise resolving to the path of the nearest package file.
+ */
+export async function findPackage(
+  id: string = process.cwd(),
+  options: ResolveOptions = {},
+): Promise<string> {
+  return findNearestFile(packageFiles, {
+    ...options,
+    startingFrom: _resolvePath(id, options),
+  });
+}
+
+/**
+ * Reads any package file format (package.json, package.json5, or package.yaml).
+ * @param id - The path identifier for the package file, defaults to the current working directory.
+ * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
+ * @returns a promise resolving to the parsed `package.json` object.
+ */
+export async function readPackage(
+  id?: string,
+  options: ResolveOptions & ReadOptions = {},
+): Promise<PackageJson> {
+  const resolvedPath = await findPackage(id, options);
+  const cache =
+    options.cache && typeof options.cache !== "boolean"
+      ? options.cache
+      : FileCache;
+  if (options.cache && cache.has(resolvedPath)) {
+    return cache.get(resolvedPath)!;
+  }
+  const blob = await fsp.readFile(resolvedPath, "utf8");
+  let parsed: PackageJson;
+
+  if (resolvedPath.endsWith(".json5")) {
+    parsed = parseJSON5(blob) as PackageJson;
+  } else if (resolvedPath.endsWith(".yaml")) {
+    parsed = parseYAML(blob) as PackageJson;
+  } else {
+    try {
+      parsed = parseJSON(blob) as PackageJson;
+    } catch {
+      parsed = parseJSONC(blob) as PackageJson;
+    }
+  }
+
+  cache.set(resolvedPath, parsed);
+  return parsed;
+}
+
+/**
+ * Writes data to a package file with format detection based on file extension.
+ * @param path - The path to the file where the package data is written.
+ * @param pkg - The package object to write. See {@link PackageJson}.
+ */
+export async function writePackage(
+  path: string,
+  pkg: PackageJson,
+): Promise<void> {
+  let content: string;
+
+  if (path.endsWith(".json5")) {
+    content = stringifyJSON5(pkg);
+  } else if (path.endsWith(".yaml")) {
+    content = stringifyYAML(pkg);
+  } else {
+    content = stringifyJSON(pkg);
+  }
+
+  await fsp.writeFile(path, content);
 }
 
 /**
@@ -127,7 +212,7 @@ const workspaceTests: Record<WorkspaceTestName, WorkspaceTestFn> = {
   gitConfig: (opts) =>
     findFile(".git/config", opts).then((r) => resolve(r, "../..")),
   lockFile: (opts) => findFile(lockFiles, opts).then((r) => dirname(r)),
-  packageJson: (opts) => findFile("package.json", opts).then((r) => dirname(r)),
+  packageJson: (opts) => findFile(packageFiles, opts).then((r) => dirname(r)),
 } as const;
 
 /**

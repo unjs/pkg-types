@@ -19,6 +19,10 @@ import {
   readGitConfig,
   writeGitConfig,
   parseGitConfig,
+  // unified package functions
+  findPackage,
+  readPackage,
+  writePackage,
 } from "../src";
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "fixture");
@@ -118,6 +122,62 @@ describe("package.json", () => {
       "utf8",
     ).then(normalizeWinLines);
     expect(newContent).toBe(originalContent);
+  });
+});
+
+describe("package.{json,jsonc,json5}", () => {
+  it("finds any package file", async () => {
+    const packagePath = await findPackage(rFixture("."));
+    expect(packagePath).to.equal(rFixture("package.json"));
+  });
+
+  it("reads package.json", async () => {
+    const package_ = await readPackage(rFixture("package.json"));
+    expect(package_.name).to.equal("foo");
+  });
+
+  it("reads package.json with comments (JSONC)", async () => {
+    const package_ = await readPackage(rFixture("jsonc/package.json"));
+    expect(package_.name).to.equal("foo");
+  });
+
+  it("reads package.json5", async () => {
+    const package_ = await readPackage(rFixture("package.json5"));
+    expect(package_.name).to.equal("foo");
+    expect(package_.version).to.equal("1.0.0");
+  });
+
+  it("reads package.yaml", async () => {
+    const package_ = await readPackage(rFixture("package.yaml"));
+    expect(package_.name).to.equal("foo");
+    expect(package_.version).to.equal("1.0.0");
+  });
+
+  it("writes package.json", async () => {
+    await writePackage(rFixture("package.json.tmp"), { version: "1.0.0" });
+    expect((await readPackage(rFixture("package.json.tmp"))).version).to.equal(
+      "1.0.0",
+    );
+  });
+
+  it("writes package.json5", async () => {
+    await writePackage(rFixture("package.json5.tmp"), {
+      name: "foo",
+      version: "1.0.0",
+    });
+    expect((await readPackage(rFixture("package.json5.tmp"))).name).to.equal(
+      "foo",
+    );
+  });
+
+  it("writes package.yaml", async () => {
+    await writePackage(rFixture("package.yaml.tmp"), {
+      name: "foo",
+      version: "1.0.0",
+    });
+    expect((await readPackage(rFixture("package.yaml.tmp"))).name).to.equal(
+      "foo",
+    );
   });
 });
 
