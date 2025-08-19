@@ -34,8 +34,6 @@ export {
   resolvePackageJSON,
   resolveLockfile,
   findWorkspaceDir,
-  addPackageJSONDependency,
-  removePackageJSONDependency,
   updatePackageJSON,
   normalizePackageJSON,
   findPackage,

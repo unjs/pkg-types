@@ -253,72 +253,6 @@ export async function findWorkspaceDir(
   throw new Error(`Cannot detect workspace root from ${id}`);
 }
 
-export type PackageJsonDependencyType =
-  | "dev"
-  | "optional"
-  | "peer"
-  | "prod"
-  | "optionalPeer";
-const dependencyTypes: Record<PackageJsonDependencyType, keyof PackageJson> = {
-  dev: "devDependencies",
-  optional: "optionalDependencies",
-  peer: "peerDependencies",
-  prod: "dependencies",
-  optionalPeer: "peerDependencies",
-};
-
-export function addPackageJSONDependency(
-  pkg: PackageJson,
-  name: string,
-  version: string,
-  type?: PackageJsonDependencyType,
-): void {
-  const collectionName = dependencyTypes[type ?? "prod"];
-  const collection = pkg[collectionName] || {};
-  collection[name] = version;
-  const sorted = Object.fromEntries(
-    Object.entries(collection).sort(([a], [b]) => a.localeCompare(b)),
-  );
-
-  if (type === "optionalPeer") {
-    const peerMeta = pkg.peerDependenciesMeta || {};
-    peerMeta[name] = { optional: true };
-    pkg.peerDependenciesMeta = peerMeta;
-  }
-
-  pkg[collectionName] = sorted;
-}
-
-export function removePackageJSONDependency(
-  pkg: PackageJson,
-  name: string,
-  type?: PackageJsonDependencyType,
-): void {
-  const collectionName = dependencyTypes[type ?? "prod"];
-  const collection = pkg[collectionName];
-
-  if (
-    (type === "peer" || type === "optionalPeer") &&
-    pkg.peerDependenciesMeta &&
-    name in pkg.peerDependenciesMeta
-  ) {
-    const peerMeta = pkg.peerDependenciesMeta;
-    delete peerMeta[name];
-    if (Object.keys(peerMeta).length === 0) {
-      delete pkg.peerDependenciesMeta;
-    }
-  }
-
-  if (!collection || !(name in collection)) {
-    return;
-  }
-
-  delete collection[name];
-  if (Object.keys(collection).length === 0) {
-    delete pkg[collectionName];
-  }
-}
-
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -361,20 +295,31 @@ export async function updatePackageJSON(
   await writePackageJSON(resolvedPath, pkg);
 }
 
+export function sortPackageJSON(pkg: PackageJson): PackageJson {
+  const sorted: PackageJson = {
+    ...pkg,
+  };
+  for (const key of sortedObjectKeys) {
+    if (Object.hasOwn(sorted, key) && isObject(sorted[key])) {
+      const value = sorted[key];
+      sorted[key] = sortObject(value);
+    }
+  }
+  return sorted;
+}
+
 export function normalizePackageJSON(pkg: PackageJson): PackageJson {
   const normalised: PackageJson = {
     ...pkg,
   };
-  for (const key of sortedObjectKeys) {
-    if (key in normalised) {
+  for (const key of dependencyKeys) {
+    if (Object.hasOwn(normalised, key)) {
       const value = normalised[key];
-      if (isObject(value)) {
-        normalised[key] = sortObject(normalised[key]);
-      } else {
+      if (!isObject(value)) {
         // It isn't an object and should be
         delete normalised[key];
       }
     }
   }
-  return normalised;
+  return sortPackageJSON(normalised);
 }
