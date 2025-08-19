@@ -37,6 +37,9 @@ export {
   addPackageJSONDependency,
   removePackageJSONDependency,
   updatePackageJSON,
+  findPackage,
+  readPackage,
+  writePackage,
 } from "./packagejson/utils";
 
 // --- git config ---
