@@ -507,6 +507,14 @@ describe("sortPackage", () => {
     ]);
   });
 
+  it("should sort nested keys", () => {
+    const input: PackageJson = {
+      dependencies: { b: "1", a: "1", c: "1" },
+    };
+    const sortedPackage = sortPackage(input);
+    expect(Object.keys(sortedPackage.dependencies!)).toEqual(["a", "b", "c"]);
+  });
+
   it("should retain order of unknown keys", () => {
     const input: PackageJson = {
       customField0: "customValue",

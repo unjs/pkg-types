@@ -253,13 +253,6 @@ export async function findWorkspaceDir(
   throw new Error(`Cannot detect workspace root from ${id}`);
 }
 
-const dependencyKeys = [
-  "dependencies",
-  "devDependencies",
-  "optionalDependencies",
-  "peerDependencies",
-];
-
 export async function updatePackage(
   id: string,
   callback: (pkg: PackageJson) => Promise<void> | void,
@@ -284,30 +277,30 @@ export async function updatePackage(
 
 export function sortPackage(pkg: PackageJson): PackageJson {
   const sorted: PackageJson = {};
+
+  // Sort known keys and retain order of unknown keys
   const originalKeys = Object.keys(pkg);
   const knownKeysPresent = defaultFieldOrder.filter((key) =>
     Object.hasOwn(pkg, key),
   );
-
   for (const key of originalKeys) {
-    if (defaultFieldOrder.includes(key)) {
-      const currentIndex = knownKeysPresent.indexOf(key);
-
-      for (let i = 0; i <= currentIndex; i++) {
-        const knownKey = knownKeysPresent[i];
-        if (!Object.hasOwn(sorted, knownKey)) {
-          sorted[knownKey] = pkg[knownKey];
-        }
-      }
-    } else {
+    const currentIndex = knownKeysPresent.indexOf(key);
+    if (currentIndex === -1) {
       sorted[key] = pkg[key];
+      continue;
+    }
+    for (let i = 0; i <= currentIndex; i++) {
+      const knownKey = knownKeysPresent[i];
+      if (!Object.hasOwn(sorted, knownKey)) {
+        sorted[knownKey] = pkg[knownKey];
+      }
     }
   }
 
-  // Sort specific nested objects
+  // Sort specific nested keys
   for (const key of [...dependencyKeys, "scripts"]) {
-    if (Object.hasOwn(sorted, key) && isObject(sorted[key])) {
-      const value = sorted[key];
+    const value = sorted[key];
+    if (isObject(value)) {
       sorted[key] = sortObject(value);
     }
   }
@@ -316,17 +309,19 @@ export function sortPackage(pkg: PackageJson): PackageJson {
 }
 
 export function normalizePackage(pkg: PackageJson): PackageJson {
-  const normalised: PackageJson = { ...pkg };
+  // Sort the package.json fields
+  const normalized: PackageJson = sortPackage(pkg);
+  // Remove dependency fields if they are not an object
   for (const key of dependencyKeys) {
-    if (Object.hasOwn(normalised, key)) {
-      const value = normalised[key];
-      if (!isObject(value)) {
-        // It isn't an object and should be
-        delete normalised[key];
-      }
+    if (!Object.hasOwn(normalized, key)) {
+      continue;
+    }
+    const value = normalized[key];
+    if (!isObject(value)) {
+      delete normalized[key];
     }
   }
-  return sortPackage(normalised);
+  return normalized;
 }
 
 // --- internal ---
@@ -340,6 +335,13 @@ function sortObject(obj: Record<string, unknown>): Record<string, unknown> {
     Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)),
   );
 }
+
+const dependencyKeys = [
+  "dependencies",
+  "devDependencies",
+  "optionalDependencies",
+  "peerDependencies",
+];
 
 const defaultFieldOrder = [
   "$schema",
