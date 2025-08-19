@@ -266,11 +266,12 @@ export async function updatePackage(
     get(target, prop) {
       if (
         typeof prop === "string" &&
-        dependencyKeys.includes(prop) &&
+        objectKeys.has(prop) &&
         !Object.hasOwn(target, prop)
       ) {
         target[prop] = {};
       }
+      return Reflect.get(target, prop);
     },
   });
   const updated = (await callback(proxy)) || pkg;
@@ -344,6 +345,21 @@ const dependencyKeys = [
   "optionalDependencies",
   "peerDependencies",
 ];
+
+const objectKeys = new Set([
+  "typesVersions",
+  "scripts",
+  "resolutions",
+  "overrides",
+  "dependencies",
+  "devDependencies",
+  "dependenciesMeta",
+  "peerDependencies",
+  "peerDependenciesMeta",
+  "optionalDependencies",
+  "engines",
+  "publishConfig"
+])
 
 const defaultFieldOrder = [
   "$schema",

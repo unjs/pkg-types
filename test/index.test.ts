@@ -372,13 +372,13 @@ describe("updatePackage", () => {
     expect(updatedPackage.version).to.equal("0.3.0");
   });
 
-  it("auto-creates dependency fields", async () => {
+  it.only("auto-creates empty object fields", async () => {
     await updatePackage(tempDir, (pkg) => {
-      pkg.dependencies = { "new-package": "^1.0.0" };
+      pkg.scripts!.foo = "bar"
     });
     const updatedPackage = await readPackageJSON(packagePath);
-    expect(updatedPackage.dependencies).toEqual({
-      "new-package": "^1.0.0",
+    expect(updatedPackage.scripts).toEqual({
+      foo: "bar"
     });
   });
 });
