@@ -255,7 +255,7 @@ export async function findWorkspaceDir(
 
 export async function updatePackage(
   id: string,
-  callback: (pkg: PackageJson) => Promise<void> | void,
+  callback: (pkg: PackageJson) => PackageJson | void | Promise<PackageJson | void>,
   options: ResolveOptions & ReadOptions = {},
 ): Promise<void> {
   const resolvedPath = await findPackage(id, options);
@@ -271,8 +271,8 @@ export async function updatePackage(
       }
     },
   });
-  await callback(proxy);
-  await writePackage(resolvedPath, pkg);
+  const updated = await callback(proxy) || pkg;
+  await writePackage(resolvedPath, updated);
 }
 
 export function sortPackage(pkg: PackageJson): PackageJson {
