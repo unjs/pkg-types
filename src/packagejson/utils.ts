@@ -26,6 +26,7 @@ const lockFiles = [
   "npm-shrinkwrap.json",
   "bun.lockb",
   "bun.lock",
+  "deno.lock",
 ];
 
 const packageFiles = ["package.json", "package.json5", "package.yaml"];
