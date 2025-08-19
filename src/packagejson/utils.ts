@@ -253,31 +253,21 @@ export async function findWorkspaceDir(
   throw new Error(`Cannot detect workspace root from ${id}`);
 }
 
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function sortObject(obj: Record<string, unknown>): Record<string, unknown> {
-  return Object.fromEntries(
-    Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)),
-  );
-}
-
 const dependencyKeys = [
   "dependencies",
   "devDependencies",
   "optionalDependencies",
   "peerDependencies",
-];
-const sortedObjectKeys = [...dependencyKeys, "scripts"];
+]
 
-export async function updatePackageJSON(
+
+export async function updatePackage(
   id: string,
   callback: (pkg: PackageJson) => Promise<void> | void,
   options: ResolveOptions & ReadOptions = {},
 ): Promise<void> {
-  const resolvedPath = await resolvePackageJSON(id, options);
-  const pkg = await readPackageJSON(id, options);
+  const resolvedPath = await findPackage(id, options);
+  const pkg = await readPackage(id, options);
   const proxy = new Proxy(pkg, {
     get(target, prop) {
       if (
@@ -289,17 +279,15 @@ export async function updatePackageJSON(
       }
     },
   });
-
   await callback(proxy);
-
-  await writePackageJSON(resolvedPath, pkg);
+  await writePackage(resolvedPath, pkg);
 }
 
-export function sortPackageJSON(pkg: PackageJson): PackageJson {
+export function sortPackage(pkg: PackageJson): PackageJson {
   const sorted: PackageJson = {
     ...pkg,
   };
-  for (const key of sortedObjectKeys) {
+  for (const key of [...dependencyKeys, "scripts"]) {
     if (Object.hasOwn(sorted, key) && isObject(sorted[key])) {
       const value = sorted[key];
       sorted[key] = sortObject(value);
@@ -308,10 +296,8 @@ export function sortPackageJSON(pkg: PackageJson): PackageJson {
   return sorted;
 }
 
-export function normalizePackageJSON(pkg: PackageJson): PackageJson {
-  const normalised: PackageJson = {
-    ...pkg,
-  };
+export function normalizePackage(pkg: PackageJson): PackageJson {
+  const normalised: PackageJson = { ...pkg };
   for (const key of dependencyKeys) {
     if (Object.hasOwn(normalised, key)) {
       const value = normalised[key];
@@ -321,5 +307,17 @@ export function normalizePackageJSON(pkg: PackageJson): PackageJson {
       }
     }
   }
-  return sortPackageJSON(normalised);
+  return sortPackage(normalised);
+}
+
+// --- internal ---
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function sortObject(obj: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)),
+  );
 }

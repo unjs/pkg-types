@@ -20,8 +20,8 @@ import {
   resolveTSConfig,
   resolvePackageJSON,
   writePackageJSON,
-  updatePackageJSON,
-  normalizePackageJSON,
+  updatePackage,
+  normalizePackage,
   writeTSConfig,
   resolveLockfile,
   findWorkspaceDir,
@@ -341,7 +341,7 @@ describe(".git/config", () => {
   });
 });
 
-describe("updatePackageJSON", () => {
+describe("updatePackage", () => {
   let packagePath: string;
   let tempDir: string;
 
@@ -356,7 +356,7 @@ describe("updatePackageJSON", () => {
   });
 
   it("applies sync callbacks", async () => {
-    await updatePackageJSON(tempDir, (pkg) => {
+    await updatePackage(tempDir, (pkg) => {
       pkg.version = "0.2.0";
     });
     const updatedPackage = await readPackageJSON(packagePath);
@@ -364,7 +364,7 @@ describe("updatePackageJSON", () => {
   });
 
   it("applies async callbacks", async () => {
-    await updatePackageJSON(tempDir, async (pkg) => {
+    await updatePackage(tempDir, async (pkg) => {
       pkg.version = "0.3.0";
     });
     const updatedPackage = await readPackageJSON(packagePath);
@@ -372,7 +372,7 @@ describe("updatePackageJSON", () => {
   });
 
   it("auto-creates dependency fields", async () => {
-    await updatePackageJSON(tempDir, (pkg) => {
+    await updatePackage(tempDir, (pkg) => {
       pkg.dependencies = { "new-package": "^1.0.0" };
     });
     const updatedPackage = await readPackageJSON(packagePath);
@@ -382,14 +382,14 @@ describe("updatePackageJSON", () => {
   });
 });
 
-describe("normalizePackageJSON", () => {
+describe("normalizePackage", () => {
   it("returns package object", () => {
     const input: PackageJson = {
       name: "foo",
       version: "1.0.0",
       description: "A test package",
     };
-    const package_ = normalizePackageJSON(input);
+    const package_ = normalizePackage(input);
     expect(package_).toEqual(input);
   });
 
@@ -402,7 +402,7 @@ describe("normalizePackageJSON", () => {
         "a-package": "^1.0.0",
       },
     };
-    const package_ = normalizePackageJSON(input);
+    const package_ = normalizePackage(input);
     expect(package_.dependencies).toEqual({
       "a-package": "^1.0.0",
       "z-package": "^1.0.0",
@@ -418,7 +418,7 @@ describe("normalizePackageJSON", () => {
         "a-dev-package": "^1.0.0",
       },
     };
-    const package_ = normalizePackageJSON(input);
+    const package_ = normalizePackage(input);
     expect(package_.devDependencies).toEqual({
       "a-dev-package": "^1.0.0",
       "z-dev-package": "^1.0.0",
@@ -434,7 +434,7 @@ describe("normalizePackageJSON", () => {
         "a-optional-package": "^1.0.0",
       },
     };
-    const package_ = normalizePackageJSON(input);
+    const package_ = normalizePackage(input);
     expect(package_.optionalDependencies).toEqual({
       "a-optional-package": "^1.0.0",
       "z-optional-package": "^1.0.0",
@@ -450,7 +450,7 @@ describe("normalizePackageJSON", () => {
         "a-peer-package": "^1.0.0",
       },
     };
-    const package_ = normalizePackageJSON(input);
+    const package_ = normalizePackage(input);
     expect(package_.peerDependencies).toEqual({
       "a-peer-package": "^1.0.0",
       "z-peer-package": "^1.0.0",
@@ -466,7 +466,7 @@ describe("normalizePackageJSON", () => {
         "a-script": "echo a",
       },
     };
-    const package_ = normalizePackageJSON(input);
+    const package_ = normalizePackage(input);
     expect(package_.scripts).toEqual({
       "a-script": "echo a",
       "z-script": "echo z",
@@ -479,7 +479,7 @@ describe("normalizePackageJSON", () => {
       version: "1.0.0",
       dependencies: 303 as never,
     };
-    const package_ = normalizePackageJSON(input);
+    const package_ = normalizePackage(input);
     expect(package_).toEqual({
       name: "foo",
       version: "1.0.0",
