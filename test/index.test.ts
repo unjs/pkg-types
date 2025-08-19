@@ -1,16 +1,27 @@
 import { fileURLToPath } from "node:url";
-import { cp, readFile, rm } from "node:fs/promises";
-import { dirname, resolve } from "pathe";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { cp, mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
+import { dirname, join, resolve } from "pathe";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from "vitest";
 import { expectTypeOf } from "expect-type";
 import {
   type TSConfig,
   type ResolveOptions,
+  type PackageJson,
   readPackageJSON,
   readTSConfig,
   resolveTSConfig,
   resolvePackageJSON,
   writePackageJSON,
+  updatePackage,
+  normalizePackage,
   writeTSConfig,
   resolveLockfile,
   findWorkspaceDir,
@@ -23,13 +34,21 @@ import {
   findPackage,
   readPackage,
   writePackage,
+  sortPackage,
 } from "../src";
+import { tmpdir } from "node:os";
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "fixture");
 
 const rFixture = (...p: string[]) => resolve(fixtureDir, ...p);
 
 const normalizeWinLines = (s: string) => s.replace(/\r\n/g, "\n");
+
+const createTempFixtureDir = async (): Promise<string> => {
+  const path = await mkdtemp(join(tmpdir(), "pkg-types"));
+  await mkdir(path, { recursive: true });
+  return path;
+};
 
 async function expectToReject(p: Promise<any>) {
   return expect(
@@ -77,6 +96,16 @@ function testResolve(
 }
 
 describe("package.json", () => {
+  let tempDir: string;
+
+  beforeEach(async () => {
+    tempDir = await createTempFixtureDir();
+  });
+
+  afterEach(async () => {
+    await rm(tempDir, { force: true, recursive: true });
+  });
+
   testResolve("package.json", resolvePackageJSON);
 
   it("read package.json", async () => {
@@ -90,9 +119,9 @@ describe("package.json", () => {
   });
 
   it("write package.json", async () => {
-    await writePackageJSON(rFixture("package.json.tmp"), { version: "1.0.0" });
+    await writePackageJSON(join(tempDir, "package.json"), { version: "1.0.0" });
     expect(
-      (await readPackageJSON(rFixture("package.json.tmp"))).version,
+      (await readPackageJSON(join(tempDir, "package.json"))).version,
     ).to.equal("1.0.0");
   });
 
@@ -103,9 +132,9 @@ describe("package.json", () => {
   });
 
   it("correctly reads a version from package", async () => {
-    expect(await readPackageJSON("pathe").then((p) => p?.version)).to.be.a(
-      "string",
-    );
+    const package_ = await readPackageJSON("pathe");
+    expect(package_.name).to.equal("pathe");
+    expect(package_.version).to.be.a("string");
   });
 
   it("styles are preserved", async () => {
@@ -310,5 +339,199 @@ describe(".git/config", () => {
     const newConfigINI = await readFile(rFixture(".git/config.tmp"), "utf8");
 
     expect(newConfigINI.trim()).toBe(fixtureConfigINI.trim());
+  });
+});
+
+describe("updatePackage", () => {
+  let packagePath: string;
+  let tempDir: string;
+
+  beforeEach(async () => {
+    tempDir = await createTempFixtureDir();
+    packagePath = join(tempDir, "package.json");
+    await writePackageJSON(packagePath, { name: "test", version: "0.1.0" });
+  });
+
+  afterEach(async () => {
+    await rm(tempDir, { force: true, recursive: true });
+  });
+
+  it("applies sync callbacks", async () => {
+    await updatePackage(tempDir, (pkg) => {
+      pkg.version = "0.2.0";
+    });
+    const updatedPackage = await readPackageJSON(packagePath);
+    expect(updatedPackage.version).to.equal("0.2.0");
+  });
+
+  it("applies async callbacks", async () => {
+    await updatePackage(tempDir, async (pkg) => {
+      pkg.version = "0.3.0";
+    });
+    const updatedPackage = await readPackageJSON(packagePath);
+    expect(updatedPackage.version).to.equal("0.3.0");
+  });
+
+  it("auto-creates empty object fields", async () => {
+    await updatePackage(tempDir, (pkg) => {
+      pkg.scripts!.foo = "bar";
+    });
+    const updatedPackage = await readPackageJSON(packagePath);
+    expect(updatedPackage.scripts).toEqual({
+      foo: "bar",
+    });
+  });
+});
+
+describe("normalizePackage", () => {
+  it("returns package object", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
+      description: "A test package",
+    };
+    const package_ = normalizePackage(input);
+    expect(package_).toEqual(input);
+  });
+
+  it("sorts dependencies", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
+      dependencies: {
+        "z-package": "^1.0.0",
+        "a-package": "^1.0.0",
+      },
+    };
+    const package_ = normalizePackage(input);
+    expect(package_.dependencies).toEqual({
+      "a-package": "^1.0.0",
+      "z-package": "^1.0.0",
+    });
+  });
+
+  it("sorts devDependencies", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
+      devDependencies: {
+        "z-dev-package": "^1.0.0",
+        "a-dev-package": "^1.0.0",
+      },
+    };
+    const package_ = normalizePackage(input);
+    expect(package_.devDependencies).toEqual({
+      "a-dev-package": "^1.0.0",
+      "z-dev-package": "^1.0.0",
+    });
+  });
+
+  it("sorts optionalDependencies", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
+      optionalDependencies: {
+        "z-optional-package": "^1.0.0",
+        "a-optional-package": "^1.0.0",
+      },
+    };
+    const package_ = normalizePackage(input);
+    expect(package_.optionalDependencies).toEqual({
+      "a-optional-package": "^1.0.0",
+      "z-optional-package": "^1.0.0",
+    });
+  });
+
+  it("sorts peerDependencies", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
+      peerDependencies: {
+        "z-peer-package": "^1.0.0",
+        "a-peer-package": "^1.0.0",
+      },
+    };
+    const package_ = normalizePackage(input);
+    expect(package_.peerDependencies).toEqual({
+      "a-peer-package": "^1.0.0",
+      "z-peer-package": "^1.0.0",
+    });
+  });
+
+  it("sorts scripts", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
+      scripts: {
+        "z-script": "echo z",
+        "a-script": "echo a",
+      },
+    };
+    const package_ = normalizePackage(input);
+    expect(package_.scripts).toEqual({
+      "a-script": "echo a",
+      "z-script": "echo z",
+    });
+  });
+
+  it("removes invalid dependency objects", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
+      dependencies: 303 as never,
+    };
+    const package_ = normalizePackage(input);
+    expect(package_).toEqual({
+      name: "foo",
+      version: "1.0.0",
+    });
+  });
+});
+
+describe("sortPackage", () => {
+  it("should sort top-level fields", () => {
+    const input: PackageJson = {
+      dependencies: { bar: "^1.0.0" },
+      description: "A test package",
+      name: "foo",
+      scripts: { build: "echo build" },
+      version: "1.0.0",
+    };
+    const sortedPackage = sortPackage(input);
+    expect(Object.keys(sortedPackage)).toEqual([
+      "name",
+      "version",
+      "description",
+      "scripts",
+      "dependencies",
+    ]);
+  });
+
+  it("should sort nested keys", () => {
+    const input: PackageJson = {
+      dependencies: { b: "1", a: "1", c: "1" },
+    };
+    const sortedPackage = sortPackage(input);
+    expect(Object.keys(sortedPackage.dependencies!)).toEqual(["a", "b", "c"]);
+  });
+
+  it("should retain order of unknown keys", () => {
+    const input: PackageJson = {
+      customField0: "customValue",
+      version: "1.0.0",
+      name: "foo",
+      description: "A test package",
+      customField1: "customValue",
+      dependencies: { bar: "^1.0.0" },
+    };
+    const sortedPackage = sortPackage(input);
+    expect(Object.keys(sortedPackage)).toEqual([
+      "customField0",
+      "name",
+      "version",
+      "description",
+      "customField1",
+      "dependencies",
+    ]);
   });
 });

@@ -252,3 +252,154 @@ export async function findWorkspaceDir(
 
   throw new Error(`Cannot detect workspace root from ${id}`);
 }
+
+export async function updatePackage(
+  id: string,
+  callback: (
+    pkg: PackageJson,
+  ) => PackageJson | void | Promise<PackageJson | void>,
+  options: ResolveOptions & ReadOptions = {},
+): Promise<void> {
+  const resolvedPath = await findPackage(id, options);
+  const pkg = await readPackage(id, options);
+  const proxy = new Proxy(pkg, {
+    get(target, prop) {
+      if (
+        typeof prop === "string" &&
+        objectKeys.has(prop) &&
+        !Object.hasOwn(target, prop)
+      ) {
+        target[prop] = {};
+      }
+      return Reflect.get(target, prop);
+    },
+  });
+  const updated = (await callback(proxy)) || pkg;
+  await writePackage(resolvedPath, updated);
+}
+
+export function sortPackage(pkg: PackageJson): PackageJson {
+  const sorted: PackageJson = {};
+
+  // Sort known keys and retain order of unknown keys
+  const originalKeys = Object.keys(pkg);
+  const knownKeysPresent = defaultFieldOrder.filter((key) =>
+    Object.hasOwn(pkg, key),
+  );
+  for (const key of originalKeys) {
+    const currentIndex = knownKeysPresent.indexOf(key);
+    if (currentIndex === -1) {
+      sorted[key] = pkg[key];
+      continue;
+    }
+    for (let i = 0; i <= currentIndex; i++) {
+      const knownKey = knownKeysPresent[i];
+      if (!Object.hasOwn(sorted, knownKey)) {
+        sorted[knownKey] = pkg[knownKey];
+      }
+    }
+  }
+
+  // Sort specific nested keys
+  for (const key of [...dependencyKeys, "scripts"]) {
+    const value = sorted[key];
+    if (isObject(value)) {
+      sorted[key] = sortObject(value);
+    }
+  }
+
+  return sorted;
+}
+
+export function normalizePackage(pkg: PackageJson): PackageJson {
+  // Sort the package.json fields
+  const normalized: PackageJson = sortPackage(pkg);
+  // Remove dependency fields if they are not an object
+  for (const key of dependencyKeys) {
+    if (!Object.hasOwn(normalized, key)) {
+      continue;
+    }
+    const value = normalized[key];
+    if (!isObject(value)) {
+      delete normalized[key];
+    }
+  }
+  return normalized;
+}
+
+// --- internal ---
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function sortObject(obj: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)),
+  );
+}
+
+const dependencyKeys = [
+  "dependencies",
+  "devDependencies",
+  "optionalDependencies",
+  "peerDependencies",
+];
+
+const objectKeys = new Set([
+  "typesVersions",
+  "scripts",
+  "resolutions",
+  "overrides",
+  "dependencies",
+  "devDependencies",
+  "dependenciesMeta",
+  "peerDependencies",
+  "peerDependenciesMeta",
+  "optionalDependencies",
+  "engines",
+  "publishConfig",
+]);
+
+const defaultFieldOrder = [
+  "$schema",
+  "name",
+  "version",
+  "private",
+  "description",
+  "keywords",
+  "homepage",
+  "bugs",
+  "repository",
+  "funding",
+  "license",
+  "author",
+  "sideEffects",
+  "type",
+  "imports",
+  "exports",
+  "main",
+  "module",
+  "browser",
+  "types",
+  "typesVersions",
+  "typings",
+  "bin",
+  "man",
+  "files",
+  "workspaces",
+  "scripts",
+  "resolutions",
+  "overrides",
+  "dependencies",
+  "devDependencies",
+  "dependenciesMeta",
+  "peerDependencies",
+  "peerDependenciesMeta",
+  "optionalDependencies",
+  "bundledDependencies",
+  "bundleDependencies",
+  "packageManager",
+  "engines",
+  "publishConfig",
+];
