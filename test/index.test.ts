@@ -23,6 +23,7 @@ import {
   removePackageJSONDependency,
   writePackageJSON,
   updatePackageJSON,
+  normalizePackageJSON,
   writeTSConfig,
   resolveLockfile,
   findWorkspaceDir,
@@ -517,182 +518,134 @@ describe("updatePackageJSON", () => {
     await rm(tempDir, { force: true, recursive: true });
   });
 
-  it("overwrites non-dependency fields", async () => {
-    await writePackageJSON(packagePath, {
-      name: "test",
-      version: "0.1.0",
-      scripts: {
-        build: "tsc",
-      },
+  it("applies sync callbacks", async () => {
+    await updatePackageJSON(tempDir, (pkg) => {
+      pkg.version = "0.2.0";
     });
-    await updatePackageJSON(
-      {
-        scripts: {
-          test: "vitest",
-        },
-      },
-      tempDir,
-    );
-    expect(await readPackageJSON(tempDir)).toEqual({
-      name: "test",
-      version: "0.1.0",
-      scripts: {
-        test: "vitest",
-      },
-    });
+    const updatedPackage = await readPackageJSON(packagePath);
+    expect(updatedPackage.version).to.equal("0.2.0");
   });
 
-  it("merges dependencies", async () => {
-    await writePackageJSON(packagePath, {
-      name: "test",
-      version: "0.1.0",
+  it("applies async callbacks", async () => {
+    await updatePackageJSON(tempDir, async (pkg) => {
+      pkg.version = "0.3.0";
+    });
+    const updatedPackage = await readPackageJSON(packagePath);
+    expect(updatedPackage.version).to.equal("0.3.0");
+  });
+
+  it("auto-creates dependency fields", async () => {
+    await updatePackageJSON(tempDir, (pkg) => {
+      pkg.dependencies = { "new-package": "^1.0.0" };
+    });
+    const updatedPackage = await readPackageJSON(packagePath);
+    expect(updatedPackage.dependencies).toEqual({
+      "new-package": "^1.0.0",
+    });
+  });
+});
+
+describe("normalizePackageJSON", () => {
+  it("returns package object", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
+      description: "A test package",
+    };
+    const package_ = normalizePackageJSON(input);
+    expect(package_).toEqual(input);
+  });
+
+  it("sorts dependencies", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
       dependencies: {
-        "existing-package": "^1.0.0",
-      },
-    });
-    await updatePackageJSON(
-      {
-        dependencies: {
-          "new-package": "^2.0.0",
-        },
-      },
-      tempDir,
-    );
-    expect(await readPackageJSON(tempDir)).toEqual({
-      name: "test",
-      version: "0.1.0",
-      dependencies: {
-        "existing-package": "^1.0.0",
-        "new-package": "^2.0.0",
-      },
-    });
-  });
-
-  it("merges peer dependencies", async () => {
-    await writePackageJSON(packagePath, {
-      name: "test",
-      version: "0.1.0",
-      peerDependencies: {
-        "existing-peer-package": "^1.0.0",
-      },
-    });
-    await updatePackageJSON(
-      {
-        peerDependencies: {
-          "new-peer-package": "^2.0.0",
-        },
-      },
-      tempDir,
-    );
-    expect(await readPackageJSON(tempDir)).toEqual({
-      name: "test",
-      version: "0.1.0",
-      peerDependencies: {
-        "existing-peer-package": "^1.0.0",
-        "new-peer-package": "^2.0.0",
-      },
-    });
-  });
-
-  it("adds optional peer dependencies", async () => {
-    await writePackageJSON(packagePath, {
-      name: "test",
-      version: "0.1.0",
-      peerDependencies: {
-        "existing-peer-package": "^1.0.0",
-      },
-      peerDependenciesMeta: {
-        "existing-peer-package": { optional: true },
-      },
-    });
-    await updatePackageJSON(
-      {
-        peerDependencies: {
-          "new-optional-peer-package": "^2.0.0",
-        },
-        peerDependenciesMeta: {
-          "new-optional-peer-package": { optional: true },
-        },
-      },
-      tempDir,
-    );
-    expect(await readPackageJSON(tempDir)).toEqual({
-      name: "test",
-      version: "0.1.0",
-      peerDependencies: {
-        "existing-peer-package": "^1.0.0",
-        "new-optional-peer-package": "^2.0.0",
-      },
-      peerDependenciesMeta: {
-        "existing-peer-package": { optional: true },
-        "new-optional-peer-package": { optional: true },
-      },
-    });
-  });
-
-  it("can clear peer meta", async () => {
-    await writePackageJSON(packagePath, {
-      name: "test",
-      version: "0.1.0",
-      peerDependencies: {
-        "existing-peer-package": "^1.0.0",
-      },
-      peerDependenciesMeta: {
-        "existing-peer-package": { optional: true },
-      },
-    });
-    await updatePackageJSON(
-      {
-        peerDependenciesMeta: undefined,
-      },
-      tempDir,
-    );
-    expect(await readPackageJSON(tempDir)).toEqual({
-      name: "test",
-      version: "0.1.0",
-      peerDependencies: {
-        "existing-peer-package": "^1.0.0",
-      },
-    });
-  });
-
-  it("sorts peer meta", async () => {
-    await writePackageJSON(packagePath, {
-      name: "test",
-      version: "0.1.0",
-      peerDependencies: {
-        "b-package": "^1.0.0",
+        "z-package": "^1.0.0",
         "a-package": "^1.0.0",
       },
-      peerDependenciesMeta: {
-        "b-package": { optional: true },
-        "a-package": { optional: true },
-      },
+    };
+    const package_ = normalizePackageJSON(input);
+    expect(package_.dependencies).toEqual({
+      "a-package": "^1.0.0",
+      "z-package": "^1.0.0",
     });
-    await updatePackageJSON(
-      {
-        peerDependencies: {
-          "c-package": "^1.0.0",
-        },
-        peerDependenciesMeta: {
-          "c-package": { optional: true },
-        },
+  });
+
+  it("sorts devDependencies", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
+      devDependencies: {
+        "z-dev-package": "^1.0.0",
+        "a-dev-package": "^1.0.0",
       },
-      tempDir,
-    );
-    expect(await readPackageJSON(tempDir)).toEqual({
-      name: "test",
-      version: "0.1.0",
+    };
+    const package_ = normalizePackageJSON(input);
+    expect(package_.devDependencies).toEqual({
+      "a-dev-package": "^1.0.0",
+      "z-dev-package": "^1.0.0",
+    });
+  });
+
+  it("sorts optionalDependencies", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
+      optionalDependencies: {
+        "z-optional-package": "^1.0.0",
+        "a-optional-package": "^1.0.0",
+      },
+    };
+    const package_ = normalizePackageJSON(input);
+    expect(package_.optionalDependencies).toEqual({
+      "a-optional-package": "^1.0.0",
+      "z-optional-package": "^1.0.0",
+    });
+  });
+
+  it("sorts peerDependencies", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
       peerDependencies: {
-        "a-package": "^1.0.0",
-        "b-package": "^1.0.0",
-        "c-package": "^1.0.0",
+        "z-peer-package": "^1.0.0",
+        "a-peer-package": "^1.0.0",
       },
-      peerDependenciesMeta: {
-        "a-package": { optional: true },
-        "b-package": { optional: true },
-        "c-package": { optional: true },
+    };
+    const package_ = normalizePackageJSON(input);
+    expect(package_.peerDependencies).toEqual({
+      "a-peer-package": "^1.0.0",
+      "z-peer-package": "^1.0.0",
+    });
+  });
+
+  it("sorts scripts", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
+      scripts: {
+        "z-script": "echo z",
+        "a-script": "echo a",
       },
+    };
+    const package_ = normalizePackageJSON(input);
+    expect(package_.scripts).toEqual({
+      "a-script": "echo a",
+      "z-script": "echo z",
+    });
+  });
+
+  it("removes invalid dependency objects", () => {
+    const input: PackageJson = {
+      name: "foo",
+      version: "1.0.0",
+      dependencies: 303 as never,
+    };
+    const package_ = normalizePackageJSON(input);
+    expect(package_).toEqual({
+      name: "foo",
+      version: "1.0.0",
     });
   });
 });

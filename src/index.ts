@@ -37,6 +37,7 @@ export {
   addPackageJSONDependency,
   removePackageJSONDependency,
   updatePackageJSON,
+  normalizePackageJSON,
   findPackage,
   readPackage,
   writePackage,

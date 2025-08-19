@@ -266,13 +266,6 @@ const dependencyTypes: Record<PackageJsonDependencyType, keyof PackageJson> = {
   prod: "dependencies",
   optionalPeer: "peerDependencies",
 };
-const dependencyFieldToType = Object.fromEntries(
-  Object.entries(dependencyTypes).map(([type, field]) => [field, type]),
-) as Record<keyof PackageJson, PackageJsonDependencyType>;
-const deeplyMergedPackageFields = new Set([
-  ...Object.keys(dependencyFieldToType),
-  "peerDependenciesMeta",
-]);
 
 export function addPackageJSONDependency(
   pkg: PackageJson,
@@ -336,35 +329,52 @@ function sortObject(obj: Record<string, unknown>): Record<string, unknown> {
   );
 }
 
-function applyObjectUpdate(
-  target: Record<string, unknown>,
-  source: Record<string, unknown>,
-): void {
-  for (const [key, value] of Object.entries(source)) {
-    if (isObject(value) && deeplyMergedPackageFields.has(key)) {
-      const targetValue = isObject(target[key]) ? target[key] : {};
-      const targetValueCopy = { ...targetValue };
-      applyObjectUpdate(targetValueCopy, value);
-      target[key] = sortObject(targetValueCopy);
-    } else {
-      if (value === undefined) {
-        delete target[key];
-      } else {
-        target[key] = value;
-      }
-    }
-  }
-}
+const dependencyKeys = [
+  "dependencies",
+  "devDependencies",
+  "optionalDependencies",
+  "peerDependencies",
+];
+const sortedObjectKeys = [...dependencyKeys, "scripts"];
 
 export async function updatePackageJSON(
-  update: PackageJson,
-  id?: string,
+  id: string,
+  callback: (pkg: PackageJson) => Promise<void> | void,
   options: ResolveOptions & ReadOptions = {},
 ): Promise<void> {
   const resolvedPath = await resolvePackageJSON(id, options);
   const pkg = await readPackageJSON(id, options);
+  const proxy = new Proxy(pkg, {
+    get(target, prop) {
+      if (
+        typeof prop === "string" &&
+        dependencyKeys.includes(prop) &&
+        !Object.hasOwn(target, prop)
+      ) {
+        target[prop] = {};
+      }
+    },
+  });
 
-  applyObjectUpdate(pkg, update);
+  await callback(proxy);
 
   await writePackageJSON(resolvedPath, pkg);
+}
+
+export function normalizePackageJSON(pkg: PackageJson): PackageJson {
+  const normalised: PackageJson = {
+    ...pkg,
+  };
+  for (const key of sortedObjectKeys) {
+    if (key in normalised) {
+      const value = normalised[key];
+      if (isObject(value)) {
+        normalised[key] = sortObject(normalised[key]);
+      } else {
+        // It isn't an object and should be
+        delete normalised[key];
+      }
+    }
+  }
+  return normalised;
 }
