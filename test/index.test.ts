@@ -1,7 +1,15 @@
 import { fileURLToPath } from "node:url";
-import { cp, readFile, rm } from "node:fs/promises";
-import { dirname, resolve } from "pathe";
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { cp, mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
+import { dirname, join, resolve } from "pathe";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from "vitest";
 import { expectTypeOf } from "expect-type";
 import {
   type TSConfig,
@@ -24,12 +32,19 @@ import {
   writeGitConfig,
   parseGitConfig,
 } from "../src";
+import { tmpdir } from "node:os";
 
 const fixtureDir = resolve(dirname(fileURLToPath(import.meta.url)), "fixture");
 
 const rFixture = (...p: string[]) => resolve(fixtureDir, ...p);
 
 const normalizeWinLines = (s: string) => s.replace(/\r\n/g, "\n");
+
+const createTempFixtureDir = async (): Promise<string> => {
+  const path = await mkdtemp(join(tmpdir(), "pkg-types"));
+  await mkdir(path, { recursive: true });
+  return path;
+};
 
 async function expectToReject(p: Promise<any>) {
   return expect(
@@ -77,6 +92,16 @@ function testResolve(
 }
 
 describe("package.json", () => {
+  let tempDir: string;
+
+  beforeEach(async () => {
+    tempDir = await createTempFixtureDir();
+  });
+
+  afterEach(async () => {
+    await rm(tempDir, { force: true, recursive: true });
+  });
+
   testResolve("package.json", resolvePackageJSON);
 
   it("read package.json", async () => {
@@ -90,9 +115,9 @@ describe("package.json", () => {
   });
 
   it("write package.json", async () => {
-    await writePackageJSON(rFixture("package.json.tmp"), { version: "1.0.0" });
+    await writePackageJSON(join(tempDir, "package.json"), { version: "1.0.0" });
     expect(
-      (await readPackageJSON(rFixture("package.json.tmp"))).version,
+      (await readPackageJSON(join(tempDir, "package.json"))).version,
     ).to.equal("1.0.0");
   });
 
@@ -103,9 +128,9 @@ describe("package.json", () => {
   });
 
   it("correctly reads a version from package", async () => {
-    expect(await readPackageJSON("pathe").then((p) => p?.version)).to.be.a(
-      "string",
-    );
+    const package_ = await readPackageJSON("pathe");
+    expect(package_.name).to.equal("pathe");
+    expect(package_.version).to.be.a("string");
   });
 
   it("styles are preserved", async () => {
@@ -261,7 +286,10 @@ describe("addPackageJsonDependency", () => {
   let package_: PackageJson;
 
   beforeEach(async () => {
-    package_ = await readPackageJSON(rFixture("package.json"));
+    package_ = {
+      name: "foo",
+      version: "1.0.0",
+    };
   });
 
   it("can add a production dependency", async () => {
@@ -350,7 +378,10 @@ describe("removePackageJsonDependency", () => {
   let package_: PackageJson;
 
   beforeEach(async () => {
-    package_ = await readPackageJSON(rFixture("package.json"));
+    package_ = {
+      name: "foo",
+      version: "1.0.0",
+    };
   });
 
   it("can remove a production dependency", async () => {
@@ -414,13 +445,19 @@ describe("removePackageJsonDependency", () => {
 
 describe("updatePackageJSON", () => {
   let packagePath: string;
+  let tempDir: string;
 
   beforeEach(async () => {
-    packagePath = rFixture("package.json.tmp");
+    tempDir = await createTempFixtureDir();
+    packagePath = join(tempDir, "package.json");
     await writePackageJSON(packagePath, { name: "test", version: "0.1.0" });
   });
 
-  it("shallow merges non-dependency fields", async () => {
+  afterEach(async () => {
+    await rm(tempDir, { force: true, recursive: true });
+  });
+
+  it("overwrites non-dependency fields", async () => {
     await writePackageJSON(packagePath, {
       name: "test",
       version: "0.1.0",
@@ -428,16 +465,173 @@ describe("updatePackageJSON", () => {
         build: "tsc",
       },
     });
-    await updatePackageJSON(packagePath, {
-      scripts: {
-        test: "vitest",
+    await updatePackageJSON(
+      {
+        scripts: {
+          test: "vitest",
+        },
       },
-    });
-    expect(JSON.parse(await readFile(packagePath, "utf8"))).toEqual({
+      tempDir,
+    );
+    expect(await readPackageJSON(tempDir)).toEqual({
       name: "test",
       version: "0.1.0",
       scripts: {
         test: "vitest",
+      },
+    });
+  });
+
+  it("merges dependencies", async () => {
+    await writePackageJSON(packagePath, {
+      name: "test",
+      version: "0.1.0",
+      dependencies: {
+        "existing-package": "^1.0.0",
+      },
+    });
+    await updatePackageJSON(
+      {
+        dependencies: {
+          "new-package": "^2.0.0",
+        },
+      },
+      tempDir,
+    );
+    expect(await readPackageJSON(tempDir)).toEqual({
+      name: "test",
+      version: "0.1.0",
+      dependencies: {
+        "existing-package": "^1.0.0",
+        "new-package": "^2.0.0",
+      },
+    });
+  });
+
+  it("merges peer dependencies", async () => {
+    await writePackageJSON(packagePath, {
+      name: "test",
+      version: "0.1.0",
+      peerDependencies: {
+        "existing-peer-package": "^1.0.0",
+      },
+    });
+    await updatePackageJSON(
+      {
+        peerDependencies: {
+          "new-peer-package": "^2.0.0",
+        },
+      },
+      tempDir,
+    );
+    expect(await readPackageJSON(tempDir)).toEqual({
+      name: "test",
+      version: "0.1.0",
+      peerDependencies: {
+        "existing-peer-package": "^1.0.0",
+        "new-peer-package": "^2.0.0",
+      },
+    });
+  });
+
+  it("adds optional peer dependencies", async () => {
+    await writePackageJSON(packagePath, {
+      name: "test",
+      version: "0.1.0",
+      peerDependencies: {
+        "existing-peer-package": "^1.0.0",
+      },
+      peerDependenciesMeta: {
+        "existing-peer-package": { optional: true },
+      },
+    });
+    await updatePackageJSON(
+      {
+        peerDependencies: {
+          "new-optional-peer-package": "^2.0.0",
+        },
+        peerDependenciesMeta: {
+          "new-optional-peer-package": { optional: true },
+        },
+      },
+      tempDir,
+    );
+    expect(await readPackageJSON(tempDir)).toEqual({
+      name: "test",
+      version: "0.1.0",
+      peerDependencies: {
+        "existing-peer-package": "^1.0.0",
+        "new-optional-peer-package": "^2.0.0",
+      },
+      peerDependenciesMeta: {
+        "existing-peer-package": { optional: true },
+        "new-optional-peer-package": { optional: true },
+      },
+    });
+  });
+
+  it("can clear peer meta", async () => {
+    await writePackageJSON(packagePath, {
+      name: "test",
+      version: "0.1.0",
+      peerDependencies: {
+        "existing-peer-package": "^1.0.0",
+      },
+      peerDependenciesMeta: {
+        "existing-peer-package": { optional: true },
+      },
+    });
+    await updatePackageJSON(
+      {
+        peerDependenciesMeta: undefined,
+      },
+      tempDir,
+    );
+    expect(await readPackageJSON(tempDir)).toEqual({
+      name: "test",
+      version: "0.1.0",
+      peerDependencies: {
+        "existing-peer-package": "^1.0.0",
+      },
+    });
+  });
+
+  it("sorts peer meta", async () => {
+    await writePackageJSON(packagePath, {
+      name: "test",
+      version: "0.1.0",
+      peerDependencies: {
+        "b-package": "^1.0.0",
+        "a-package": "^1.0.0",
+      },
+      peerDependenciesMeta: {
+        "b-package": { optional: true },
+        "a-package": { optional: true },
+      },
+    });
+    await updatePackageJSON(
+      {
+        peerDependencies: {
+          "c-package": "^1.0.0",
+        },
+        peerDependenciesMeta: {
+          "c-package": { optional: true },
+        },
+      },
+      tempDir,
+    );
+    expect(await readPackageJSON(tempDir)).toEqual({
+      name: "test",
+      version: "0.1.0",
+      peerDependencies: {
+        "a-package": "^1.0.0",
+        "b-package": "^1.0.0",
+        "c-package": "^1.0.0",
+      },
+      peerDependenciesMeta: {
+        "a-package": { optional: true },
+        "b-package": { optional: true },
+        "c-package": { optional: true },
       },
     });
   });

@@ -183,6 +183,10 @@ const dependencyTypes: Record<PackageJsonDependencyType, keyof PackageJson> = {
 const dependencyFieldToType = Object.fromEntries(
   Object.entries(dependencyTypes).map(([type, field]) => [field, type]),
 ) as Record<keyof PackageJson, PackageJsonDependencyType>;
+const deeplyMergedPackageFields = new Set([
+  ...Object.keys(dependencyFieldToType),
+  "peerDependenciesMeta",
+]);
 
 export function addPackageJSONDependency(
   pkg: PackageJson,
@@ -236,63 +240,45 @@ export function removePackageJSONDependency(
   }
 }
 
-function getOptionalPeerDependencies(pkg: PackageJson): Map<string, boolean> {
-  const result = new Map<string, boolean>();
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
-  if (
-    !pkg.peerDependenciesMeta ||
-    typeof pkg.peerDependenciesMeta !== "object" ||
-    pkg.peerDependenciesMeta === null
-  ) {
-    return result;
-  }
+function sortObject(obj: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)),
+  );
+}
 
-  for (const [key, value] of Object.entries(pkg.peerDependenciesMeta)) {
-    if (typeof value === "object" && value !== null) {
-      result.set(key, (value as { optional?: boolean }).optional === true);
+function applyObjectUpdate(
+  target: Record<string, unknown>,
+  source: Record<string, unknown>,
+): void {
+  for (const [key, value] of Object.entries(source)) {
+    if (isObject(value) && deeplyMergedPackageFields.has(key)) {
+      const targetValue = isObject(target[key]) ? target[key] : {};
+      const targetValueCopy = { ...targetValue };
+      applyObjectUpdate(targetValueCopy, value);
+      target[key] = sortObject(targetValueCopy);
+    } else {
+      if (value === undefined) {
+        delete target[key];
+      } else {
+        target[key] = value;
+      }
     }
   }
-  return result;
 }
 
 export async function updatePackageJSON(
-  path: string,
   update: PackageJson,
+  id?: string,
   options: ResolveOptions & ReadOptions = {},
 ): Promise<void> {
-  const pkg = await readPackageJSON(path, options);
-  const pkgOptionalPeers = getOptionalPeerDependencies(pkg);
-  const updateOptionalPeers = getOptionalPeerDependencies(update);
+  const resolvedPath = await resolvePackageJSON(id, options);
+  const pkg = await readPackageJSON(id, options);
 
-  for (const [key, value] of Object.entries(update)) {
-    if (Object.hasOwn(dependencyFieldToType, key)) {
-      let dependencyType: PackageJsonDependencyType;
-      if (key === "peerDependencies") {
-        if (updateOptionalPeers.has(key)) {
-          dependencyType =
-            updateOptionalPeers.get(key) === true ? "optionalPeer" : "peer";
-        } else {
-          dependencyType =
-            pkgOptionalPeers.get(key) === true ? "optionalPeer" : "peer";
-        }
-      } else {
-        dependencyType = dependencyFieldToType[key];
-      }
-      for (const [depName, depVersion] of Object.entries(value)) {
-        if (depVersion === undefined) {
-          removePackageJSONDependency(pkg, depName, dependencyType);
-        } else {
-          addPackageJSONDependency(pkg, depName, dependencyType);
-        }
-      }
-    } else {
-      if (value === undefined) {
-        delete pkg[key];
-      } else {
-        pkg[key] = value;
-      }
-    }
-  }
+  applyObjectUpdate(pkg, update);
 
-  await writePackageJSON(path, pkg);
+  await writePackageJSON(resolvedPath, pkg);
 }
