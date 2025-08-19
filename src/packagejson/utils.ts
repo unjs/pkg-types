@@ -258,8 +258,7 @@ const dependencyKeys = [
   "devDependencies",
   "optionalDependencies",
   "peerDependencies",
-]
-
+];
 
 export async function updatePackage(
   id: string,
