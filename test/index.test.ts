@@ -374,11 +374,11 @@ describe("updatePackage", () => {
 
   it.only("auto-creates empty object fields", async () => {
     await updatePackage(tempDir, (pkg) => {
-      pkg.scripts!.foo = "bar"
+      pkg.scripts!.foo = "bar";
     });
     const updatedPackage = await readPackageJSON(packagePath);
     expect(updatedPackage.scripts).toEqual({
-      foo: "bar"
+      foo: "bar",
     });
   });
 });

@@ -358,8 +358,8 @@ const objectKeys = new Set([
   "peerDependenciesMeta",
   "optionalDependencies",
   "engines",
-  "publishConfig"
-])
+  "publishConfig",
+]);
 
 const defaultFieldOrder = [
   "$schema",
