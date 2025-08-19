@@ -372,7 +372,7 @@ describe("updatePackage", () => {
     expect(updatedPackage.version).to.equal("0.3.0");
   });
 
-  it.only("auto-creates empty object fields", async () => {
+  it("auto-creates empty object fields", async () => {
     await updatePackage(tempDir, (pkg) => {
       pkg.scripts!.foo = "bar";
     });
