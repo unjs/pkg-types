@@ -103,7 +103,7 @@ const filename = await resolveFile("README.md", {
 
 ### `resolveLockFile`
 
-Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`, `bun.lockb`, `bun.lock`) or throws an error.
+Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`, `bun.lockb`, `bun.lock`, `deno.lock`) or throws an error.
 
 ```js
 import { resolveLockFile } from "pkg-types";
