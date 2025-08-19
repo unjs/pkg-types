@@ -507,21 +507,23 @@ describe("sortPackage", () => {
     ]);
   });
 
-  it("should sort extra keys after known fields", () => {
+  it("should retain order of unknown keys", () => {
     const input: PackageJson = {
-      name: "foo",
+      customField0: "customValue",
       version: "1.0.0",
+      name: "foo",
       description: "A test package",
-      customField: "customValue",
+      customField1: "customValue",
       dependencies: { bar: "^1.0.0" },
     };
     const sortedPackage = sortPackage(input);
     expect(Object.keys(sortedPackage)).toEqual([
+      "customField0",
       "name",
       "version",
       "description",
+      "customField1",
       "dependencies",
-      "customField",
     ]);
   });
 });

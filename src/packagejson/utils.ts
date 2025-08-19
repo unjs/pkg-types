@@ -284,19 +284,24 @@ export async function updatePackage(
 
 export function sortPackage(pkg: PackageJson): PackageJson {
   const sorted: PackageJson = {};
+  const originalKeys = Object.keys(pkg);
+  const knownKeysPresent = defaultFieldOrder.filter((key) =>
+    Object.hasOwn(pkg, key),
+  );
 
-  for (const key of defaultFieldOrder) {
-    if (Object.hasOwn(pkg, key)) {
+  for (const key of originalKeys) {
+    if (defaultFieldOrder.includes(key)) {
+      const currentIndex = knownKeysPresent.indexOf(key);
+
+      for (let i = 0; i <= currentIndex; i++) {
+        const knownKey = knownKeysPresent[i];
+        if (!Object.hasOwn(sorted, knownKey)) {
+          sorted[knownKey] = pkg[knownKey];
+        }
+      }
+    } else {
       sorted[key] = pkg[key];
     }
-  }
-
-  const remainingKeys = Object.keys(pkg)
-    .filter((key) => !defaultFieldOrder.includes(key))
-    .sort();
-
-  for (const key of remainingKeys) {
-    sorted[key] = pkg[key];
   }
 
   // Sort specific nested objects
