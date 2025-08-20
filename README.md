@@ -163,14 +163,14 @@ const tsconfig = await resolveTSConfig("/fully/resolved/path/to/folder");
 
 ### File Resolution
 
-#### `resolveFile`
+#### `findFile`
 
 ```js
-import { resolveFile } from "pkg-types";
-const filename = await resolveFile("README.md", {
+import { findFile } from "pkg-types";
+const filename = await findFile("README.md", {
   startingFrom: id,
   rootPattern: /^node_modules$/,
-  matcher: (filename) => filename.endsWith(".md"),
+  test: (filename) => filename.endsWith(".md"),
 });
 ```
 
