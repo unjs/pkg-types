@@ -75,4 +75,7 @@ export {
   readWorkspaceConfig,
   readWorkspacePackages,
   readWorkspaceGraph,
+  resolveWorkspace,
+  resolveWorkspacePackages,
+  resolveWorkspaceGraph,
 } from "./workspace/utils";
