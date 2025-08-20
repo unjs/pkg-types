@@ -264,19 +264,19 @@ import type { TSConfig, PackageJson, GitConfig } from "pkg-types";
 You can also use define utils for type support when using in plain `.js` files and auto-complete in IDE.
 
 ```js
-import type { definePackageJSON } from 'pkg-types'
+import { definePackageJSON } from 'pkg-types'
 
 const pkg = definePackageJSON({})
 ```
 
 ```js
-import type { defineTSConfig } from 'pkg-types'
+import { defineTSConfig } from 'pkg-types'
 
 const pkg = defineTSConfig({})
 ```
 
 ```js
-import type { defineGitConfig } from 'pkg-types'
+import { defineGitConfig } from 'pkg-types'
 
 const gitConfig = defineGitConfig({})
 ```
