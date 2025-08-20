@@ -174,6 +174,24 @@ const filename = await findFile("README.md", {
 });
 ```
 
+#### `findNearestFile`
+
+Asynchronously finds the next file with the given name, starting in the given directory and moving up.
+
+```js
+import { findNearestFile } from "pkg-types";
+const filename = await findNearestFile("package.json");
+```
+
+#### `findFarthestFile`
+
+Asynchronously finds the furthest file with the given name, starting from the root directory and moving downwards.
+
+```js
+import { findFarthestFile } from "pkg-types";
+const filename = await findFarthestFile("package.json");
+```
+
 #### `resolveLockfile`
 
 Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`, `bun.lockb`, `bun.lock`, `deno.lock`) or throws an error.
@@ -261,24 +279,53 @@ You can directly use typed interfaces:
 import type { TSConfig, PackageJson, GitConfig } from "pkg-types";
 ```
 
-You can also use define utils for type support when using in plain `.js` files and auto-complete in IDE.
+### Define Utilities
+
+You can use define utilities for type support and auto-completion when working in plain `.js` files. These functions simply return the input object but provide TypeScript type hints.
+
+#### `definePackageJSON`
+
+Provides type safety and auto-completion for package.json objects.
 
 ```js
 import { definePackageJSON } from 'pkg-types'
 
-const pkg = definePackageJSON({})
+const pkg = definePackageJSON({
+  name: "my-package",
+  version: "1.0.0",
+  // TypeScript will provide auto-completion here
+})
 ```
+
+#### `defineTSConfig`
+
+Provides type safety and auto-completion for tsconfig.json objects.
 
 ```js
 import { defineTSConfig } from 'pkg-types'
 
-const pkg = defineTSConfig({})
+const tsconfig = defineTSConfig({
+  compilerOptions: {
+    target: "ES2020",
+    // TypeScript will provide auto-completion here
+  }
+})
 ```
+
+#### `defineGitConfig`
+
+Provides type safety and auto-completion for git config objects.
 
 ```js
 import { defineGitConfig } from 'pkg-types'
 
-const gitConfig = defineGitConfig({})
+const gitConfig = defineGitConfig({
+  user: {
+    name: "John Doe",
+    email: "john@example.com"
+  }
+  // TypeScript will provide auto-completion here
+})
 ```
 
 ## Alternatives
