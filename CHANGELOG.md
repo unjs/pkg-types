@@ -2,6 +2,145 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.3.0
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v2.2.0...v2.3.0)
+
+### 🚀 Enhancements
+
+- **packagejson:** Object format support for `workspaces` field ([#236](https://github.com/unjs/pkg-types/pull/236))
+- Add `deno.lock` to known lockfiles ([#244](https://github.com/unjs/pkg-types/pull/244))
+- Support `package.json5` and `package.yaml` ([#234](https://github.com/unjs/pkg-types/pull/234))
+- `updatePackage`, `sortPackage` and `normalizePackage` utils ([#240](https://github.com/unjs/pkg-types/pull/240))
+
+### 🏡 Chore
+
+- Fix typo in jsdocs ([#237](https://github.com/unjs/pkg-types/pull/237))
+- Update lockfile ([76ea1d4](https://github.com/unjs/pkg-types/commit/76ea1d4))
+
+### ❤️ Contributors
+
+- James Garbutt ([@43081j](https://github.com/43081j))
+- Eugene ([@outslept](https://github.com/outslept))
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+- Igal Klebanov <igalklebanov@gmail.com>
+
+## v2.2.0
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v2.1.1...v2.2.0)
+
+### 🚀 Enhancements
+
+- **findWorkspaceDir:** Add support for Deno workspace detection ([#231](https://github.com/unjs/pkg-types/pull/231))
+
+### 🏡 Chore
+
+- Update deps ([19e6cd5](https://github.com/unjs/pkg-types/commit/19e6cd5))
+
+### ❤️ Contributors
+
+- Gene ._. ([@outslept](https://github.com/outslept))
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+
+## v2.1.1
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v2.1.0...v2.1.1)
+
+### 📖 Documentation
+
+- Fix git examples ([#225](https://github.com/unjs/pkg-types/pull/225))
+
+### 🌊 Types
+
+- **packagejson:** Autocompletion for script names ([#229](https://github.com/unjs/pkg-types/pull/229))
+- **packagejson:** Add `funding` field ([#224](https://github.com/unjs/pkg-types/pull/224))
+- `funding` field is optional ([a82b636](https://github.com/unjs/pkg-types/commit/a82b636))
+
+### 🏡 Chore
+
+- Update deps ([616704d](https://github.com/unjs/pkg-types/commit/616704d))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+- Kevin Deng <sxzz@sxzz.moe>
+- Igal Klebanov <igalklebanov@gmail.com>
+- Farnabaz <farnabaz@gmail.com>
+
+## v2.1.0
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v2.0.1...v2.1.0)
+
+### 🚀 Enhancements
+
+- Git config utils ([#217](https://github.com/unjs/pkg-types/pull/217))
+- **findWorkspaceDir:** Detect workspace files ([#219](https://github.com/unjs/pkg-types/pull/219))
+- **findWorkspaceDir:** Configurable strategy ([#220](https://github.com/unjs/pkg-types/pull/220))
+
+### 🔥 Performance
+
+- **findFile:** Test input itself if matching filename ([#221](https://github.com/unjs/pkg-types/pull/221))
+
+### 🩹 Fixes
+
+- Avoid fallback if starting point cannot be resolved ([#216](https://github.com/unjs/pkg-types/pull/216))
+- **findWorkspaceDir:** Update default strategy ([#222](https://github.com/unjs/pkg-types/pull/222))
+
+### 🏡 Chore
+
+- **release:** V2.0.1 ([7805296](https://github.com/unjs/pkg-types/commit/7805296))
+- Update confbox to v2 ([6fff4ac](https://github.com/unjs/pkg-types/commit/6fff4ac))
+- Update confbox ([9bfa19d](https://github.com/unjs/pkg-types/commit/9bfa19d))
+- Update git example ([95317bc](https://github.com/unjs/pkg-types/commit/95317bc))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+
+## v2.0.1
+
+[compare changes](https://github.com/unjs/pkg-types/compare/ab1fe2e8f2c133aa9cb2880fe8fad9a057489a2d...v2.0.1)
+
+### 🩹 Fixes
+
+- Use exsolve for resolving paths ([#215](https://github.com/unjs/pkg-types/pull/215))
+
+### 🏡 Chore
+
+- Update deps ([ea7fe99](https://github.com/unjs/pkg-types/commit/ea7fe99))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+
+## v2.0.0
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v1.3.1...v2.0.0)
+
+### 💅 Refactors
+
+- ⚠️  Improve resolving and install size ([#213](https://github.com/unjs/pkg-types/pull/213))
+
+### 📦 Build
+
+- Esm-only ([d6fd8d4](https://github.com/unjs/pkg-types/commit/d6fd8d4))
+
+### 🏡 Chore
+
+- Update deps ([82a166c](https://github.com/unjs/pkg-types/commit/82a166c))
+- Fix tsconfig issue ([eacec26](https://github.com/unjs/pkg-types/commit/eacec26))
+- Update repo ([80afdee](https://github.com/unjs/pkg-types/commit/80afdee))
+- Remove unused mlly dep ([636da7b](https://github.com/unjs/pkg-types/commit/636da7b))
+- Simplify structure ([59822ab](https://github.com/unjs/pkg-types/commit/59822ab))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Improve resolving and install size ([#213](https://github.com/unjs/pkg-types/pull/213))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+
 ## v1.3.1
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v1.3.0...v1.3.1)

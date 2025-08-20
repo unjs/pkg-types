@@ -8,7 +8,7 @@
 
 <!-- /automd -->
 
-Node.js utilities and TypeScript definitions for `package.json` and `tsconfig.json`.
+Node.js utilities and TypeScript definitions for `package.json`, `tsconfig.json`, and other configuration files.
 
 ## Install
 
@@ -38,7 +38,43 @@ deno install pkg-types
 
 ## Usage
 
-### `readPackageJSON`
+### Package Configuration
+
+#### `readPackage`
+
+Reads any package file format (package.json, package.json5, or package.yaml) with automatic format detection.
+
+```js
+import { readPackage } from "pkg-types";
+const localPackage = await readPackage();
+// or
+const package = await readPackage("/fully/resolved/path/to/folder");
+```
+
+#### `writePackage`
+
+Writes package data with format detection based on file extension.
+
+```js
+import { writePackage } from "pkg-types";
+
+await writePackage("path/to/package.json", pkg);
+await writePackage("path/to/package.json5", pkg);
+await writePackage("path/to/package.yaml", pkg);
+```
+
+#### `findPackage`
+
+Finds the nearest package file (package.json, package.json5, or package.yaml).
+
+```js
+import { findPackage } from "pkg-types";
+const filename = await findPackage();
+// or
+const filename = await findPackage("/fully/resolved/path/to/folder");
+```
+
+#### `readPackageJSON`
 
 ```js
 import { readPackageJSON } from "pkg-types";
@@ -47,7 +83,7 @@ const localPackageJson = await readPackageJSON();
 const packageJson = await readPackageJSON("/fully/resolved/path/to/folder");
 ```
 
-### `writePackageJSON`
+#### `writePackageJSON`
 
 ```js
 import { writePackageJSON } from "pkg-types";
@@ -55,7 +91,7 @@ import { writePackageJSON } from "pkg-types";
 await writePackageJSON("path/to/package.json", pkg);
 ```
 
-### `resolvePackageJSON`
+#### `resolvePackageJSON`
 
 ```js
 import { resolvePackageJSON } from "pkg-types";
@@ -64,7 +100,9 @@ const filename = await resolvePackageJSON();
 const packageJson = await resolvePackageJSON("/fully/resolved/path/to/folder");
 ```
 
-### `readTSConfig`
+### TypeScript Configuration
+
+#### `readTSConfig`
 
 ```js
 import { readTSConfig } from "pkg-types";
@@ -73,7 +111,7 @@ const tsconfig = await readTSConfig();
 const tsconfig2 = await readTSConfig("/fully/resolved/path/to/folder");
 ```
 
-### `writeTSConfig`
+#### `writeTSConfig`
 
 ```js
 import { writeTSConfig } from "pkg-types";
@@ -81,7 +119,7 @@ import { writeTSConfig } from "pkg-types";
 await writeTSConfig("path/to/tsconfig.json", tsconfig);
 ```
 
-### `resolveTSConfig`
+#### `resolveTSConfig`
 
 ```js
 import { resolveTSConfig } from "pkg-types";
@@ -90,7 +128,9 @@ const filename = await resolveTSConfig();
 const tsconfig = await resolveTSConfig("/fully/resolved/path/to/folder");
 ```
 
-### `resolveFile`
+### File Resolution
+
+#### `resolveFile`
 
 ```js
 import { resolveFile } from "pkg-types";
@@ -101,22 +141,23 @@ const filename = await resolveFile("README.md", {
 });
 ```
 
-### `resolveLockFile`
+#### `resolveLockFile`
 
-Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`) or throws an error.
+Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`, `bun.lockb`, `bun.lock`, `deno.lock`) or throws an error.
 
 ```js
 import { resolveLockFile } from "pkg-types";
 const lockfile = await resolveLockFile(".");
 ```
 
-### `findWorkspaceDir`
+#### `findWorkspaceDir`
 
 Try to detect workspace dir by in order:
 
-1. Nearest `.git` directory
-2. Farthest lockfile
-3. Farthest `package.json` file
+1. Farthest workspace file (`pnpm-workspace.yaml`, `lerna.json`, `turbo.json`, `rush.json`, `deno.json`, `deno.jsonc`)
+2. Closest `.git/config` file
+3. Farthest lockfile
+4. Farthest `package.json` file
 
 If fails, throws an error.
 
@@ -125,40 +166,56 @@ import { findWorkspaceDir } from "pkg-types";
 const workspaceDir = await findWorkspaceDir(".");
 ```
 
-### `resolveWorkspace`
+### Git Configuration
 
-Find monorepo workspace config (support: `pnpm`, `yarn`, `npm`, `lerna`), will return `root` path, `type` of monorepo manager, `workspaces` config.
+#### `resolveGitConfig`
 
-If fails, throws an error.
+Finds closest `.git/config` file.
 
 ```js
-import { resolveWorkspace } from 'pkg-types'
-const {
-  root,
-  type,
-  workspaces,
-} = await resolveWorkspace('.')
+import { resolveGitConfig } from "pkg-types";
+
+const gitConfig = await resolveGitConfig(".")
 ```
 
-### `resolveWorkspacePkgs`
+#### `readGitConfig`
 
-Find monorepo workspace packages and read each package `package.json`
+Finds and reads closest `.git/config` file into a JS object.
 
 ```js
-import { resolveWorkspacePkgs } from 'pkg-types'
-const { type, root, packages } = await resolveWorkspacePkgs('.')
-console.log(root) // { dir: 'fully/resolved/root/path', packageJson: { ... } }
-console.log(packages) // [ { dir: 'fully/resolved/foo/path', packageJson: { ... } } ]
+import { readGitConfig } from "pkg-types";
+
+const gitConfigObj = await readGitConfig(".")
 ```
 
-### `resolveWorkspacePkgsGraph`
+#### `writeGitConfig`
 
-Find monorepo workspace packages graph sort by `devDependency` and `dependency`
+Stringifies git config object into INI text format and writes it to a file.
 
 ```js
-import { resolveWorkspacePkgsGraph } from 'pkg-types'
-const pkgsGraph = await resolveWorkspacePkgsGraph('.')
-console.log(pkgsGraph) // [['foo'], ['bar']]
+import { writeGitConfig } from "pkg-types";
+
+await writeGitConfig(".git/config", gitConfigObj)
+```
+
+#### `parseGitConfig`
+
+Parses a git config file in INI text format into a JavaScript object.
+
+```js
+import { parseGitConfig } from "pkg-types";
+
+const gitConfigObj = parseGitConfig(gitConfigINI)
+```
+
+#### `stringifyGitConfig`
+
+Stringifies a git config object into a git config file INI text format.
+
+```js
+import { stringifyGitConfig } from "pkg-types";
+
+const gitConfigINI = stringifyGitConfig(gitConfigObj)
 ```
 
 ## Types
@@ -168,7 +225,7 @@ console.log(pkgsGraph) // [['foo'], ['bar']]
 You can directly use typed interfaces:
 
 ```ts
-import type { TSConfig, PackageJSON } from "pkg-types";
+import type { TSConfig, PackageJSON, GitConfig } from "pkg-types";
 ```
 
 You can also use define utils for type support for using in plain `.js` files and auto-complete in IDE.
@@ -183,6 +240,12 @@ const pkg = definePackageJSON({})
 import type { defineTSConfig } from 'pkg-types'
 
 const pkg = defineTSConfig({})
+```
+
+```js
+import type { defineGitConfig } from 'pkg-types'
+
+const gitConfig = defineGitConfig({})
 ```
 
 ## Alternatives

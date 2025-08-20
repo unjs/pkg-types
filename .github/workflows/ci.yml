@@ -15,11 +15,11 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
     steps:
-      - uses: actions/checkout@v4
-      - run: corepack enable
+      - uses: actions/checkout@v5
+      - run: npm i -fg corepack && corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: "pnpm"
       - run: pnpm install
       - run: pnpm lint
