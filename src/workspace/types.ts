@@ -7,7 +7,6 @@ export type WorkspaceType =
   | "nx"
   | "rush"
   | "turbo"
-  | "moon"
   | "deno";
 
 export interface WorkspaceConfig {
