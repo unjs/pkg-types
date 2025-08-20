@@ -7,7 +7,11 @@ import type {
 import { promises as fsp } from "node:fs";
 import { glob } from "tinyglobby";
 import { dirname, join, relative } from "pathe";
-import { findWorkspaceDir, findPackage, readPackage } from "../packagejson/utils";
+import {
+  findWorkspaceDir,
+  findPackage,
+  readPackage,
+} from "../packagejson/utils";
 import { findFile } from "../resolve/utils";
 import { _resolvePath } from "../resolve/internal";
 import {
@@ -46,12 +50,15 @@ export async function readWorkspaceConfig(
 
   const workspaces = Array.isArray(pkg.workspaces)
     ? pkg.workspaces
-    : Array.isArray(pkg.workspaces?.packages)
+    : (Array.isArray(pkg.workspaces?.packages)
       ? pkg.workspaces!.packages || []
       : []);
 
   let type: WorkspaceConfig["type"] = "npm";
-  if (typeof pkg.packageManager === "string" && pkg.packageManager.startsWith("yarn@")) {
+  if (
+    typeof pkg.packageManager === "string" &&
+    pkg.packageManager.startsWith("yarn@")
+  ) {
     type = "yarn";
   } else {
     try {
@@ -146,7 +153,9 @@ export async function resolveWorkspace(
 ): Promise<WorkspaceConfig> {
   const startingFrom = _resolvePath(id, options);
 
-  const pnpmPath = await findFile("pnpm-workspace.yaml", { startingFrom }).catch(() => undefined);
+  const pnpmPath = await findFile("pnpm-workspace.yaml", {
+    startingFrom,
+  }).catch(() => undefined);
   if (pnpmPath) {
     const rootDir = dirname(pnpmPath);
     const pnpm = await readPNPMWorkspace(rootDir);
@@ -177,10 +186,16 @@ export async function resolveWorkspace(
         : []);
 
     let type: WorkspaceConfig["type"] = "npm";
-    if (typeof pkg.packageManager === "string" && pkg.packageManager.startsWith("yarn@")) {
+    if (
+      typeof pkg.packageManager === "string" &&
+      pkg.packageManager.startsWith("yarn@")
+    ) {
       type = "yarn";
     } else {
-      const yarn = await fsp.stat(join(rootDir, "yarn.lock")).then((s) => s.isFile()).catch(() => false);
+      const yarn = await fsp
+        .stat(join(rootDir, "yarn.lock"))
+        .then((s) => s.isFile())
+        .catch(() => false);
       if (yarn) {
         type = "yarn";
       }
@@ -197,7 +212,6 @@ export async function resolveWorkspace(
 
   throw new Error(`Cannot resolve workspace from ${id}`);
 }
-
 
 /**
  * Resolves a workspace configuration and reads all workspace packages.
@@ -247,7 +261,7 @@ export async function resolveWorkspacePackages(
  * @param id - A base path or a pre-resolved workspace configuration.
  * @param options - Options to modify the search and reading behaviour. See {@link ResolveOptions}.
  * @returns a promise resolving to a workspace graph.
-*/
+ */
 export async function resolveWorkspaceGraph(
   id?: string | WorkspaceConfig,
   options: ResolveOptions & ReadOptions = {},
@@ -261,5 +275,10 @@ export async function resolveWorkspaceGraph(
 // --- internal ---
 
 function isWorkspaceConfig(input: any): input is WorkspaceConfig {
-  return !!input && typeof input === "object" && typeof input.rootDir === "string" && Array.isArray(input.packages);
+  return (
+    !!input &&
+    typeof input === "object" &&
+    typeof input.rootDir === "string" &&
+    Array.isArray(input.packages)
+  );
 }
