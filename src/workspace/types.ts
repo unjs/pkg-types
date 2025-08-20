@@ -4,6 +4,7 @@ export type WorkspaceType =
   | "npm"
   | "pnpm"
   | "yarn"
+  | "bun"
   | "lerna"
   | "nx"
   | "rush"

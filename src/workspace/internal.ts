@@ -1,6 +1,6 @@
 import { promises as fsp } from "node:fs";
-import { join, resolve as resolvePath } from "pathe";
-import { parseYAML } from "confbox";
+import { join, resolve } from "pathe";
+import { parseYAML, parseJSON, parseJSONC } from "confbox";
 import type { WorkspacePackage, WorkspacePackageNode } from "./types";
 import { readPackage } from "../packagejson/utils";
 
@@ -16,14 +16,11 @@ export function expandPatternsToPackageFiles(patterns: string[]): string[] {
   return out;
 }
 
-export async function readPNPMWorkspace(rootDir: string): Promise<
-  | {
-      packages: string[];
-      config: any;
-      configPath: string;
-    }
-  | undefined
-> {
+export async function readPNPMWorkspace(rootDir: string): Promise<{
+  packages: string[];
+  config: any;
+  configPath: string;
+} | undefined> {
   const configPath = join(rootDir, "pnpm-workspace.yaml");
   try {
     const src = await fsp.readFile(configPath, "utf8");
@@ -38,9 +35,85 @@ export async function readPNPMWorkspace(rootDir: string): Promise<
   }
 }
 
-export async function hasWorkspacesInPackageFile(
-  filePath: string,
-): Promise<boolean> {
+export async function readLernaWorkspace(rootDir: string): Promise<{
+  packages: string[];
+  config: any;
+  configPath: string;
+} | undefined> {
+  const configPath = join(rootDir, "lerna.json");
+  try {
+    const src = await fsp.readFile(configPath, "utf8");
+    const conf = JSON.parse(src) as any;
+    const packages =
+      Array.isArray(conf?.packages) && conf.packages.length > 0
+        ? conf.packages
+        : [];
+    if (packages.length > 0) {
+      return { packages, config: conf, configPath };
+    }
+  } catch {
+    // Ignore
+  }
+  return undefined;
+}
+
+export async function readRushWorkspace(rootDir: string): Promise<{
+  packages: string[];
+  config: any;
+  configPath: string;
+} | undefined> {
+  const configPath = join(rootDir, "rush.json");
+  try {
+    const src = await fsp.readFile(configPath, "utf8");
+    const conf = JSON.parse(src) as any;
+    const projects = Array.isArray(conf?.projects) ? conf.projects : [];
+    const packages =
+      projects.length > 0
+        ? projects
+            .map((p: any) => p?.projectFolder)
+            .filter((p: unknown): p is string => typeof p === "string")
+        : [];
+    if (packages.length > 0) {
+      return { packages, config: conf, configPath };
+    }
+  } catch {
+    // Ignore
+  }
+  return undefined;
+}
+
+export async function readDenoWorkspace(rootDir: string): Promise<{
+  packages: string[];
+  config: any;
+  configPath: string;
+} | undefined> {
+  for (const name of ["deno.json", "deno.jsonc"]) {
+    const configPath = join(rootDir, name);
+    try {
+      const src = await fsp.readFile(configPath, "utf8");
+      let conf: any;
+      try {
+        conf = parseJSON(src);
+      } catch {
+        conf = parseJSONC(src);
+      }
+      let packages: string[] = [];
+      if (Array.isArray(conf?.workspace)) {
+        packages = conf.workspace;
+      } else if (Array.isArray(conf?.workspace?.members)) {
+        packages = conf.workspace.members;
+      }
+      if (packages.length > 0) {
+        return { packages, config: conf, configPath };
+      }
+    } catch {
+      // Ignore
+    }
+  }
+  return undefined;
+}
+
+export async function hasWorkspacesInPackageFile(filePath: string): Promise<boolean> {
   try {
     const pkg = await readPackage(filePath);
     if (Array.isArray(pkg.workspaces)) {
@@ -69,9 +142,7 @@ export function resolveWorkspaceTarget(
     return undefined;
   }
   if (specifier.startsWith(".") || specifier.startsWith("/")) {
-    const dir = specifier.startsWith("/")
-      ? specifier
-      : resolvePath(fromDir, specifier);
+    const dir = specifier.startsWith("/") ? specifier : resolve(fromDir, specifier);
     return byPathName.get(dir);
   }
   const at = specifier.lastIndexOf("@");
@@ -93,10 +164,7 @@ export function resolveWorkspaceTarget(
   return specifier;
 }
 
-export function topoSort(
-  names: string[],
-  edges: Map<string, Set<string>>,
-): string[] {
+export function topoSort(names: string[], edges: Map<string, Set<string>>): string[] {
   const visited = new Set<string>();
   const visiting = new Set<string>();
   const out: string[] = [];
@@ -113,10 +181,7 @@ export function topoSort(
   return out;
 }
 
-export function collectAllDependencies(
-  name: string,
-  edges: Map<string, Set<string>>,
-): string[] {
+export function collectAllDependencies(name: string, edges: Map<string, Set<string>>): string[] {
   const collected = new Set<string>();
   const seen = new Set<string>();
   const stack = [...(edges.get(name) || [])];
@@ -136,10 +201,9 @@ export function collectAllDependencies(
   return [...collected];
 }
 
-export function buildWorkspaceGraph(packages: WorkspacePackage[]): {
-  nodes: Record<string, WorkspacePackageNode>;
-  sorted: string[];
-} {
+export function buildWorkspaceGraph(
+  packages: WorkspacePackage[],
+): { nodes: Record<string, WorkspacePackageNode>; sorted: string[] } {
   const packageNames = new Set(packages.map((p) => p.name));
   const byPathName = new Map(packages.map((p) => [p.path, p.name]));
   const nodes: Record<string, WorkspacePackageNode> = {};
@@ -148,7 +212,6 @@ export function buildWorkspaceGraph(packages: WorkspacePackage[]): {
     const dependenciesObject = p.packageJson.dependencies || {};
     const optionalDependenciesObject = p.packageJson.optionalDependencies || {};
     const devDependenciesObject = p.packageJson.devDependencies || {};
-
     const dependenciesSet = new Set<string>();
     for (const [name, value] of Object.entries(dependenciesObject)) {
       const spec = String(value);
@@ -161,7 +224,6 @@ export function buildWorkspaceGraph(packages: WorkspacePackage[]): {
         dependenciesSet.add(name);
       }
     }
-
     for (const [name, value] of Object.entries(optionalDependenciesObject)) {
       const spec = String(value);
       const t = resolveWorkspaceTarget(name, spec, p.path, byPathName);
@@ -173,7 +235,6 @@ export function buildWorkspaceGraph(packages: WorkspacePackage[]): {
         dependenciesSet.add(name);
       }
     }
-
     const devDependenciesSet = new Set<string>();
     for (const [name, value] of Object.entries(devDependenciesObject)) {
       const spec = String(value);
@@ -186,23 +247,16 @@ export function buildWorkspaceGraph(packages: WorkspacePackage[]): {
         devDependenciesSet.add(name);
       }
     }
-
     const workspaceDependencies = [...dependenciesSet];
     const workspaceDevDependencies = [...devDependenciesSet];
-
     nodes[p.name] = {
       ...p,
       workspaceDependencies,
       workspaceDevDependencies,
       allWorkspaceDependencies: [],
     };
-
-    edges.set(
-      p.name,
-      new Set([...workspaceDependencies, ...workspaceDevDependencies]),
-    );
+    edges.set(p.name, new Set([...workspaceDependencies, ...workspaceDevDependencies]));
   }
-
   const sorted = topoSort(Object.keys(nodes), edges);
   for (const n of Object.keys(nodes)) {
     nodes[n].allWorkspaceDependencies = collectAllDependencies(n, edges);
