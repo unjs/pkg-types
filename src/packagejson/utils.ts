@@ -216,7 +216,7 @@ const workspaceTests: Record<WorkspaceTestName, WorkspaceTestFn> = {
 } as const;
 
 /**
- * Detects the workspace directory based on common project markers .
+ * Detects the workspace directory based on common project markers.
  * Throws an error if the workspace root cannot be detected.
  *
  * @param id - The base path to search, defaults to the current working directory.
