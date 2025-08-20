@@ -6,7 +6,15 @@ const defaultFindOptions: Required<FindFileOptions> = {
   startingFrom: ".",
   rootPattern: /^node_modules$/,
   reverse: false,
-  test: existsFile,
+  test: (filePath: string) => {
+    try {
+      if (statSync(filePath).isFile()) {
+        return true;
+      }
+    } catch {
+      // Ignore
+    }
+  },
 };
 
 /**
@@ -93,14 +101,4 @@ export function findFarthestFile(
   options: FindFileOptions = {},
 ): Promise<string> {
   return findFile(filename, { ...options, reverse: true });
-}
-
-export function existsFile(filePath: string) {
-  try {
-    if (statSync(filePath).isFile()) {
-      return true;
-    }
-  } catch {
-    // Ignore
-  }
 }
