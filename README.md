@@ -48,7 +48,7 @@ Reads any package file format (package.json, package.json5, or package.yaml) wit
 import { readPackage } from "pkg-types";
 const localPackage = await readPackage();
 // or
-const package = await readPackage("/fully/resolved/path/to/folder");
+const pkg = await readPackage("/fully/resolved/path/to/folder");
 ```
 
 #### `writePackage`
