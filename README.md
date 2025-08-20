@@ -253,7 +253,7 @@ const gitConfigINI = stringifyGitConfig(gitConfigObj)
 
 ## Types
 
-In order to make types work, you need to install `typescript` as a devDependency.
+- **Note:** In order to make types work, you need to install `typescript` as a devDependency.
 
 You can directly use typed interfaces:
 
