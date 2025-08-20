@@ -6,11 +6,7 @@ import type {
 } from "./types";
 import { glob } from "tinyglobby";
 import { dirname, relative } from "pathe";
-import {
-  findWorkspaceDir,
-  findPackage,
-  readPackage,
-} from "../packagejson/utils";
+import { findPackage, readPackage } from "../packagejson/utils";
 import { findFile } from "../resolve/utils";
 import { _resolvePath } from "../resolve/internal";
 import {
@@ -28,7 +24,7 @@ export async function readWorkspaceConfig(
   id: string = process.cwd(),
   options: ResolveOptions & ReadOptions = {},
 ): Promise<WorkspaceConfig> {
-  const rootDir = await findWorkspaceDir(id, options);
+  const rootDir = _resolvePath(id, options);
 
   const pnpm = await readPNPMWorkspace(rootDir);
   if (pnpm && pnpm.packages.length > 0) {
@@ -78,9 +74,9 @@ export async function readWorkspaceConfig(
   const pkg = await readPackage(rootDir, options);
   const workspaces = Array.isArray(pkg.workspaces)
     ? pkg.workspaces
-    : Array.isArray(pkg.workspaces?.packages)
+    : (Array.isArray(pkg.workspaces?.packages)
       ? pkg.workspaces!.packages || []
-      : [];
+      : []);
 
   let type: WorkspaceConfig["type"] = "npm";
   if (typeof pkg.packageManager === "string") {
@@ -239,9 +235,9 @@ export async function resolveWorkspace(
     const pkg = await readPackage(rootDir, options);
     const workspaces = Array.isArray(pkg.workspaces)
       ? pkg.workspaces
-      : Array.isArray(pkg.workspaces?.packages)
+      : (Array.isArray(pkg.workspaces?.packages)
         ? pkg.workspaces!.packages || []
-        : [];
+        : []);
 
     let type: WorkspaceConfig["type"] = "npm";
     if (typeof pkg.packageManager === "string") {
@@ -320,6 +316,7 @@ export async function resolveWorkspaceGraph(
   const { nodes, sorted } = buildWorkspaceGraph(packages);
   return { packages: nodes, sorted, root };
 }
+
 // --- internal ---
 
 function isWorkspaceConfig(input: any): input is WorkspaceConfig {

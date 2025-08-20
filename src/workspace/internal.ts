@@ -9,8 +9,11 @@ export const packageFiles = ["package.json", "package.json5", "package.yaml"];
 export function expandPatternsToPackageFiles(patterns: string[]): string[] {
   const out: string[] = [];
   for (const p of patterns) {
+    const neg = p.startsWith("!");
+    const base = neg ? p.slice(1) : p;
     for (const f of packageFiles) {
-      out.push(join(p, f));
+      const pat = join(base, f);
+      out.push(neg ? `!${pat}` : pat);
     }
   }
   return out;
@@ -50,6 +53,9 @@ export async function readLernaWorkspace(rootDir: string): Promise<
   try {
     const src = await fsp.readFile(configPath, "utf8");
     const conf = JSON.parse(src) as any;
+    if (conf?.useWorkspaces === true) {
+      return undefined;
+    }
     const packages =
       Array.isArray(conf?.packages) && conf.packages.length > 0
         ? conf.packages
@@ -153,7 +159,7 @@ export function resolveWorkspaceTarget(
   }
   const specifier = spec.slice("workspace:".length).trim();
   if (specifier.length === 0) {
-    return undefined;
+    return depName;
   }
   if (specifier.startsWith(".") || specifier.startsWith("/")) {
     const dir = specifier.startsWith("/")
@@ -164,18 +170,6 @@ export function resolveWorkspaceTarget(
   const at = specifier.lastIndexOf("@");
   if (at > 0) {
     return specifier.slice(0, at);
-  }
-  const first = specifier[0];
-  if (
-    first === "^" ||
-    first === "~" ||
-    first === ">" ||
-    first === "<" ||
-    first === "=" ||
-    first === "v" ||
-    /\d/.test(first)
-  ) {
-    return depName;
   }
   return specifier;
 }
@@ -231,61 +225,70 @@ export function buildWorkspaceGraph(packages: WorkspacePackage[]): {
   const byPathName = new Map(packages.map((p) => [p.path, p.name]));
   const nodes: Record<string, WorkspacePackageNode> = {};
   const edges = new Map<string, Set<string>>();
+
   for (const p of packages) {
-    const dependenciesObject = p.packageJson.dependencies || {};
-    const optionalDependenciesObject = p.packageJson.optionalDependencies || {};
-    const devDependenciesObject = p.packageJson.devDependencies || {};
-    const dependenciesSet = new Set<string>();
-    for (const [name, value] of Object.entries(dependenciesObject)) {
-      const spec = String(value);
-      const t = resolveWorkspaceTarget(name, spec, p.path, byPathName);
-      if (t && packageNames.has(t)) {
-        dependenciesSet.add(t);
+    const depObj = p.packageJson.dependencies || {};
+    const optObj = p.packageJson.optionalDependencies || {};
+    const devObj = p.packageJson.devDependencies || {};
+
+    const depSet = new Set<string>();
+    for (const [name, spec] of Object.entries(depObj)) {
+      const s = String(spec);
+      const target = resolveWorkspaceTarget(name, s, p.path, byPathName);
+      if (target && packageNames.has(target)) {
+        depSet.add(target);
         continue;
       }
-      if (!spec.startsWith("npm:") && packageNames.has(name)) {
-        dependenciesSet.add(name);
+      if (!s.startsWith("npm:") && packageNames.has(name)) {
+        depSet.add(name);
       }
     }
-    for (const [name, value] of Object.entries(optionalDependenciesObject)) {
-      const spec = String(value);
-      const t = resolveWorkspaceTarget(name, spec, p.path, byPathName);
-      if (t && packageNames.has(t)) {
-        dependenciesSet.add(t);
+    for (const [name, spec] of Object.entries(optObj)) {
+      const s = String(spec);
+      const target = resolveWorkspaceTarget(name, s, p.path, byPathName);
+      if (target && packageNames.has(target)) {
+        depSet.add(target);
         continue;
       }
-      if (!spec.startsWith("npm:") && packageNames.has(name)) {
-        dependenciesSet.add(name);
+      if (!s.startsWith("npm:") && packageNames.has(name)) {
+        depSet.add(name);
       }
     }
-    const devDependenciesSet = new Set<string>();
-    for (const [name, value] of Object.entries(devDependenciesObject)) {
-      const spec = String(value);
-      const t = resolveWorkspaceTarget(name, spec, p.path, byPathName);
-      if (t && packageNames.has(t)) {
-        devDependenciesSet.add(t);
+
+    const devSet = new Set<string>();
+    for (const [name, spec] of Object.entries(devObj)) {
+      const s = String(spec);
+      const target = resolveWorkspaceTarget(name, s, p.path, byPathName);
+      if (target && packageNames.has(target)) {
+        devSet.add(target);
         continue;
       }
-      if (!spec.startsWith("npm:") && packageNames.has(name)) {
-        devDependenciesSet.add(name);
+      if (!s.startsWith("npm:") && packageNames.has(name)) {
+        devSet.add(name);
       }
     }
-    const workspaceDependencies = [...dependenciesSet];
-    const workspaceDevDependencies = [...devDependenciesSet];
+
+    const workspaceDependencies = [...depSet];
+    const workspaceDevDependencies = [...devSet];
+
     nodes[p.name] = {
       ...p,
       workspaceDependencies,
       workspaceDevDependencies,
       allWorkspaceDependencies: [],
     };
+
     edges.set(
       p.name,
       new Set([...workspaceDependencies, ...workspaceDevDependencies]),
     );
   }
+
   const sorted = topoSort(Object.keys(nodes), edges);
+
   for (const n of Object.keys(nodes)) {
     nodes[n].allWorkspaceDependencies = collectAllDependencies(n, edges);
   }
+
   return { nodes, sorted };
 }
