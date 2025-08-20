@@ -1,0 +1,5 @@
+{
+  "name": "edge-lerna",
+  "private": true,
+  "workspaces": ["modules/*"]
+}

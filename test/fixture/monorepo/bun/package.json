@@ -1,0 +1,8 @@
+{
+  "name": "monorepo-bun",
+  "private": true,
+  "packageManager": "bun@1.0.0",
+  "workspaces": [
+    "packages/*"
+  ]
+}
