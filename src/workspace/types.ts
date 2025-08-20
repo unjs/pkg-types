@@ -3,6 +3,7 @@ import type { PackageJson } from "../packagejson/types";
 export type WorkspaceType =
   | "npm"
   | "pnpm"
+  | "yarn"
   | "lerna"
   | "nx"
   | "rush"
