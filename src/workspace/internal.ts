@@ -16,11 +16,14 @@ export function expandPatternsToPackageFiles(patterns: string[]): string[] {
   return out;
 }
 
-export async function readPNPMWorkspace(rootDir: string): Promise<{
-  packages: string[];
-  config: any;
-  configPath: string;
-} | undefined> {
+export async function readPNPMWorkspace(rootDir: string): Promise<
+  | {
+      packages: string[];
+      config: any;
+      configPath: string;
+    }
+  | undefined
+> {
   const configPath = join(rootDir, "pnpm-workspace.yaml");
   try {
     const src = await fsp.readFile(configPath, "utf8");
@@ -35,11 +38,14 @@ export async function readPNPMWorkspace(rootDir: string): Promise<{
   }
 }
 
-export async function readLernaWorkspace(rootDir: string): Promise<{
-  packages: string[];
-  config: any;
-  configPath: string;
-} | undefined> {
+export async function readLernaWorkspace(rootDir: string): Promise<
+  | {
+      packages: string[];
+      config: any;
+      configPath: string;
+    }
+  | undefined
+> {
   const configPath = join(rootDir, "lerna.json");
   try {
     const src = await fsp.readFile(configPath, "utf8");
@@ -57,11 +63,14 @@ export async function readLernaWorkspace(rootDir: string): Promise<{
   return undefined;
 }
 
-export async function readRushWorkspace(rootDir: string): Promise<{
-  packages: string[];
-  config: any;
-  configPath: string;
-} | undefined> {
+export async function readRushWorkspace(rootDir: string): Promise<
+  | {
+      packages: string[];
+      config: any;
+      configPath: string;
+    }
+  | undefined
+> {
   const configPath = join(rootDir, "rush.json");
   try {
     const src = await fsp.readFile(configPath, "utf8");
@@ -82,11 +91,14 @@ export async function readRushWorkspace(rootDir: string): Promise<{
   return undefined;
 }
 
-export async function readDenoWorkspace(rootDir: string): Promise<{
-  packages: string[];
-  config: any;
-  configPath: string;
-} | undefined> {
+export async function readDenoWorkspace(rootDir: string): Promise<
+  | {
+      packages: string[];
+      config: any;
+      configPath: string;
+    }
+  | undefined
+> {
   for (const name of ["deno.json", "deno.jsonc"]) {
     const configPath = join(rootDir, name);
     try {
@@ -113,7 +125,9 @@ export async function readDenoWorkspace(rootDir: string): Promise<{
   return undefined;
 }
 
-export async function hasWorkspacesInPackageFile(filePath: string): Promise<boolean> {
+export async function hasWorkspacesInPackageFile(
+  filePath: string,
+): Promise<boolean> {
   try {
     const pkg = await readPackage(filePath);
     if (Array.isArray(pkg.workspaces)) {
@@ -142,7 +156,9 @@ export function resolveWorkspaceTarget(
     return undefined;
   }
   if (specifier.startsWith(".") || specifier.startsWith("/")) {
-    const dir = specifier.startsWith("/") ? specifier : resolve(fromDir, specifier);
+    const dir = specifier.startsWith("/")
+      ? specifier
+      : resolve(fromDir, specifier);
     return byPathName.get(dir);
   }
   const at = specifier.lastIndexOf("@");
@@ -164,7 +180,10 @@ export function resolveWorkspaceTarget(
   return specifier;
 }
 
-export function topoSort(names: string[], edges: Map<string, Set<string>>): string[] {
+export function topoSort(
+  names: string[],
+  edges: Map<string, Set<string>>,
+): string[] {
   const visited = new Set<string>();
   const visiting = new Set<string>();
   const out: string[] = [];
@@ -181,7 +200,10 @@ export function topoSort(names: string[], edges: Map<string, Set<string>>): stri
   return out;
 }
 
-export function collectAllDependencies(name: string, edges: Map<string, Set<string>>): string[] {
+export function collectAllDependencies(
+  name: string,
+  edges: Map<string, Set<string>>,
+): string[] {
   const collected = new Set<string>();
   const seen = new Set<string>();
   const stack = [...(edges.get(name) || [])];
@@ -201,9 +223,10 @@ export function collectAllDependencies(name: string, edges: Map<string, Set<stri
   return [...collected];
 }
 
-export function buildWorkspaceGraph(
-  packages: WorkspacePackage[],
-): { nodes: Record<string, WorkspacePackageNode>; sorted: string[] } {
+export function buildWorkspaceGraph(packages: WorkspacePackage[]): {
+  nodes: Record<string, WorkspacePackageNode>;
+  sorted: string[];
+} {
   const packageNames = new Set(packages.map((p) => p.name));
   const byPathName = new Map(packages.map((p) => [p.path, p.name]));
   const nodes: Record<string, WorkspacePackageNode> = {};
@@ -255,7 +278,10 @@ export function buildWorkspaceGraph(
       workspaceDevDependencies,
       allWorkspaceDependencies: [],
     };
-    edges.set(p.name, new Set([...workspaceDependencies, ...workspaceDevDependencies]));
+    edges.set(
+      p.name,
+      new Set([...workspaceDependencies, ...workspaceDevDependencies]),
+    );
   }
   const sorted = topoSort(Object.keys(nodes), edges);
   for (const n of Object.keys(nodes)) {

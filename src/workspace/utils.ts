@@ -6,7 +6,11 @@ import type {
 } from "./types";
 import { glob } from "tinyglobby";
 import { dirname, relative } from "pathe";
-import { findWorkspaceDir, findPackage, readPackage } from "../packagejson/utils";
+import {
+  findWorkspaceDir,
+  findPackage,
+  readPackage,
+} from "../packagejson/utils";
 import { findFile } from "../resolve/utils";
 import { _resolvePath } from "../resolve/internal";
 import {
@@ -74,9 +78,9 @@ export async function readWorkspaceConfig(
   const pkg = await readPackage(rootDir, options);
   const workspaces = Array.isArray(pkg.workspaces)
     ? pkg.workspaces
-    : (Array.isArray(pkg.workspaces?.packages)
+    : Array.isArray(pkg.workspaces?.packages)
       ? pkg.workspaces!.packages || []
-      : []);
+      : [];
 
   let type: WorkspaceConfig["type"] = "npm";
   if (typeof pkg.packageManager === "string") {
@@ -157,7 +161,9 @@ export async function resolveWorkspace(
 ): Promise<WorkspaceConfig> {
   const startingFrom = _resolvePath(id, options);
 
-  const pnpmPath = await findFile("pnpm-workspace.yaml", { startingFrom }).catch(() => undefined);
+  const pnpmPath = await findFile("pnpm-workspace.yaml", {
+    startingFrom,
+  }).catch(() => undefined);
   if (pnpmPath) {
     const rootDir = dirname(pnpmPath);
     const pnpm = await readPNPMWorkspace(rootDir);
@@ -172,7 +178,9 @@ export async function resolveWorkspace(
     }
   }
 
-  const rushPath = await findFile("rush.json", { startingFrom }).catch(() => undefined);
+  const rushPath = await findFile("rush.json", { startingFrom }).catch(
+    () => undefined,
+  );
   if (rushPath) {
     const rootDir = dirname(rushPath);
     const rush = await readRushWorkspace(rootDir);
@@ -187,7 +195,9 @@ export async function resolveWorkspace(
     }
   }
 
-  const lernaPath = await findFile("lerna.json", { startingFrom }).catch(() => undefined);
+  const lernaPath = await findFile("lerna.json", { startingFrom }).catch(
+    () => undefined,
+  );
   if (lernaPath) {
     const rootDir = dirname(lernaPath);
     const lerna = await readLernaWorkspace(rootDir);
@@ -202,7 +212,9 @@ export async function resolveWorkspace(
     }
   }
 
-  const denoPath = await findFile(["deno.json", "deno.jsonc"], { startingFrom }).catch(() => undefined);
+  const denoPath = await findFile(["deno.json", "deno.jsonc"], {
+    startingFrom,
+  }).catch(() => undefined);
   if (denoPath) {
     const rootDir = dirname(denoPath);
     const deno = await readDenoWorkspace(rootDir);
@@ -227,9 +239,9 @@ export async function resolveWorkspace(
     const pkg = await readPackage(rootDir, options);
     const workspaces = Array.isArray(pkg.workspaces)
       ? pkg.workspaces
-      : (Array.isArray(pkg.workspaces?.packages)
+      : Array.isArray(pkg.workspaces?.packages)
         ? pkg.workspaces!.packages || []
-        : []);
+        : [];
 
     let type: WorkspaceConfig["type"] = "npm";
     if (typeof pkg.packageManager === "string") {
