@@ -253,7 +253,7 @@ const gitConfigINI = stringifyGitConfig(gitConfigObj)
 
 ## Types
 
-**Note:** In order to make types working, you need to install `typescript` as a devDependency.
+In order to make types work, you need to install `typescript` as a devDependency.
 
 You can directly use typed interfaces:
 
@@ -261,7 +261,7 @@ You can directly use typed interfaces:
 import type { TSConfig, PackageJSON, GitConfig } from "pkg-types";
 ```
 
-You can also use define utils for type support for using in plain `.js` files and auto-complete in IDE.
+You can also use define utils for type support when using in plain `.js` files and auto-complete in IDE.
 
 ```js
 import type { definePackageJSON } from 'pkg-types'
