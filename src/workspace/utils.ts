@@ -50,9 +50,9 @@ export async function readWorkspaceConfig(
 
   const workspaces = Array.isArray(pkg.workspaces)
     ? pkg.workspaces
-    : (Array.isArray(pkg.workspaces?.packages)
+    : Array.isArray(pkg.workspaces?.packages)
       ? pkg.workspaces!.packages || []
-      : []);
+      : [];
 
   let type: WorkspaceConfig["type"] = "npm";
   if (
@@ -181,9 +181,9 @@ export async function resolveWorkspace(
 
     const workspaces = Array.isArray(pkg.workspaces)
       ? pkg.workspaces
-      : (Array.isArray(pkg.workspaces?.packages)
+      : Array.isArray(pkg.workspaces?.packages)
         ? pkg.workspaces!.packages || []
-        : []);
+        : [];
 
     let type: WorkspaceConfig["type"] = "npm";
     if (
