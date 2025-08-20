@@ -6,7 +6,7 @@ import type {
 } from "./types";
 import { glob as fsGlob } from "node:fs";
 import { promisify } from "node:util";
-import { dirname, relative, resolve, join } from "pathe";
+import { dirname, relative, join } from "pathe";
 import { readPackage } from "../packagejson/utils";
 import { findFile } from "../resolve/utils";
 import { _resolvePath } from "../resolve/internal";
@@ -23,7 +23,7 @@ import {
 
 type GlobFunction = (
   patterns: string[],
-  options?: { cwd?: string; absolute?: boolean },
+  options?: { cwd?: string },
 ) => Promise<string[]>;
 
 const nativeGlob = fsGlob
@@ -35,7 +35,7 @@ const nativeGlob = fsGlob
 
 async function defaultGlob(
   patterns: string[],
-  options: { cwd?: string; absolute?: boolean } = {},
+  options: { cwd?: string } = {},
 ): Promise<string[]> {
   if (!nativeGlob) {
     throw new Error(
@@ -49,12 +49,7 @@ async function defaultGlob(
   for (const pattern of patterns) {
     try {
       const files = await nativeGlob(pattern, { cwd });
-
-      if (options.absolute) {
-        results.push(...files.map((file) => join(cwd, file)));
-      } else {
-        results.push(...files);
-      }
+      results.push(...files);
     } catch {
       // Ignore
     }
@@ -197,12 +192,12 @@ export async function resolveWorkspacePackages(
   const patterns = expandPatternsToPackageFiles(root.packages);
   const files = await globFn(patterns, {
     cwd: root.rootDir,
-    absolute: true,
   });
 
   const seen = new Set<string>();
   const packages: WorkspacePackage[] = [];
-  for (const packageJsonPath of files) {
+  for (const relativePath of files) {
+    const packageJsonPath = join(root.rootDir, relativePath);
     const path = dirname(packageJsonPath);
     if (seen.has(path)) {
       continue;
@@ -213,7 +208,7 @@ export async function resolveWorkspacePackages(
     packages.push({
       name,
       path,
-      relativePath: relative(root.rootDir, path),
+      relativePath: dirname(relativePath),
       packageJsonPath,
       packageJson,
     });
