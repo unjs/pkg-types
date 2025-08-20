@@ -2,5 +2,7 @@
   "name": "root",
   "private": true,
   "packageManager": "yarn@4.1.0",
-  "workspaces": ["packages/*"]
+  "workspaces": [
+    "packages/*"
+  ]
 }

@@ -104,9 +104,9 @@ export async function resolveWorkspace(
     const pkg = await readPackage(rootDir, options);
     const workspaces = Array.isArray(pkg.workspaces)
       ? pkg.workspaces
-      : (Array.isArray(pkg.workspaces?.packages)
+      : Array.isArray(pkg.workspaces?.packages)
         ? pkg.workspaces!.packages || []
-        : []);
+        : [];
 
     let type: WorkspaceConfig["type"] = "npm";
     if (typeof pkg.packageManager === "string") {

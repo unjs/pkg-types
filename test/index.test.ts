@@ -634,7 +634,9 @@ describe("workspace", () => {
       const cfg = await resolveWorkspace(rFixture("monorepo/pnpm-fallback"));
       expect(cfg.type).toBe("npm");
       expect(cfg.packages).toEqual(["pkgs/*"]);
-      const pkgs = await resolveWorkspacePackages(rFixture("monorepo/pnpm-fallback"));
+      const pkgs = await resolveWorkspacePackages(
+        rFixture("monorepo/pnpm-fallback"),
+      );
       expect(pkgs.map((p) => p.name)).toEqual(["a"]);
     });
 
@@ -642,7 +644,9 @@ describe("workspace", () => {
       const cfg = await resolveWorkspace(rFixture("monorepo/lerna-fallback"));
       expect(cfg.type).toBe("npm");
       expect(cfg.packages).toEqual(["modules/*"]);
-      const pkgs = await resolveWorkspacePackages(rFixture("monorepo/lerna-fallback"));
+      const pkgs = await resolveWorkspacePackages(
+        rFixture("monorepo/lerna-fallback"),
+      );
       expect(pkgs.map((p) => p.name)).toEqual(["m"]);
     });
 
@@ -650,16 +654,26 @@ describe("workspace", () => {
       const cfg = await resolveWorkspace(rFixture("monorepo/rush-fallback"));
       expect(cfg.type).toBe("npm");
       expect(cfg.packages).toEqual(["projects/*"]);
-      const pkgs = await resolveWorkspacePackages(rFixture("monorepo/rush-fallback"));
+      const pkgs = await resolveWorkspacePackages(
+        rFixture("monorepo/rush-fallback"),
+      );
       expect(pkgs.map((p) => p.name)).toEqual(["p"]);
     });
   });
 
   describe("package discovery", () => {
     const cases: Array<{ name: string; root: string; expected: string[] }> = [
-      { name: "pnpm", root: rFixture("monorepo/pnpm"), expected: ["bar", "foo"] },
+      {
+        name: "pnpm",
+        root: rFixture("monorepo/pnpm"),
+        expected: ["bar", "foo"],
+      },
       { name: "npm", root: rFixture("monorepo/npm"), expected: ["bar", "foo"] },
-      { name: "lerna", root: rFixture("monorepo/lerna"), expected: ["bar", "foo"] },
+      {
+        name: "lerna",
+        root: rFixture("monorepo/lerna"),
+        expected: ["bar", "foo"],
+      },
       { name: "bun", root: rFixture("monorepo/bun"), expected: ["bar", "foo"] },
       {
         name: "rush",

@@ -1,5 +1,9 @@
 {
   "name": "root",
   "private": true,
-  "workspaces": { "packages": ["pkgs/*"] }
+  "workspaces": {
+    "packages": [
+      "pkgs/*"
+    ]
+  }
 }

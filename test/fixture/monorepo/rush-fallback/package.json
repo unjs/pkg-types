@@ -1,5 +1,7 @@
 {
   "name": "edge-rush",
   "private": true,
-  "workspaces": ["projects/*"]
+  "workspaces": [
+    "projects/*"
+  ]
 }
