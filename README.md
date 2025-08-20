@@ -258,7 +258,7 @@ In order to make types work, you need to install `typescript` as a devDependency
 You can directly use typed interfaces:
 
 ```ts
-import type { TSConfig, PackageJSON, GitConfig } from "pkg-types";
+import type { TSConfig, PackageJson, GitConfig } from "pkg-types";
 ```
 
 You can also use define utils for type support when using in plain `.js` files and auto-complete in IDE.
