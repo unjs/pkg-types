@@ -4,8 +4,9 @@ import type {
   WorkspaceGraph,
   WorkspacePackage,
 } from "./types";
-import { glob } from "tinyglobby";
-import { dirname, relative } from "pathe";
+import { glob as fsGlob } from "node:fs";
+import { promisify } from "node:util";
+import { dirname, relative, resolve, join } from "pathe";
 import { readPackage } from "../packagejson/utils";
 import { findFile } from "../resolve/utils";
 import { _resolvePath } from "../resolve/internal";
@@ -19,6 +20,47 @@ import {
   hasWorkspacesInPackageFile,
   buildWorkspaceGraph,
 } from "./internal";
+
+type GlobFunction = (
+  patterns: string[],
+  options?: { cwd?: string; absolute?: boolean },
+) => Promise<string[]>;
+
+const nativeGlob = fsGlob
+  ? (promisify(fsGlob) as (
+      pattern: string,
+      options?: { cwd?: string },
+    ) => Promise<string[]>)
+  : undefined;
+
+async function defaultGlob(
+  patterns: string[],
+  options: { cwd?: string; absolute?: boolean } = {},
+): Promise<string[]> {
+  if (!nativeGlob) {
+    throw new Error(
+      "pkg-types requires a glob implementation. Please provide options.glob or upgrade to Node.js 22+ for native fs.glob support.",
+    );
+  }
+
+  const cwd = options.cwd || process.cwd();
+  const results: string[] = [];
+
+  for (const pattern of patterns) {
+    try {
+      const files = await nativeGlob(pattern, { cwd });
+
+      if (options.absolute) {
+        results.push(...files.map((file) => join(cwd, file)));
+      } else {
+        results.push(...files);
+      }
+    } catch {
+      // Ignore
+    }
+  }
+  return results;
+}
 
 export async function resolveWorkspace(
   id: string = process.cwd(),
@@ -130,20 +172,30 @@ export async function resolveWorkspace(
 /**
  * Resolves a workspace configuration and reads all workspace packages.
  * @param id - A base path or a pre-resolved workspace configuration.
- * @param options - Options to modify the search and reading behaviour. See {@link ResolveOptions}.
+ * @param options - Options to modify the search and reading behaviour. Can include custom glob function.
  * @returns a promise resolving to a sorted list of workspace packages.
  */
 export async function resolveWorkspacePackages(
   id?: string | WorkspaceConfig,
-  options: ResolveOptions & ReadOptions = {},
+  options: ResolveOptions &
+    ReadOptions & {
+      /**
+       * Custom glob implementation. If not provided, will use Node.js 22+ native fs.glob.
+       * Example: `{ glob: (patterns, opts) => import('tinyglobby').then(m => m.glob(patterns, opts)) }`
+       */
+      glob?: GlobFunction;
+    } = {},
 ): Promise<WorkspacePackage[]> {
-  const root = isWorkspaceConfig(id) ? id : await resolveWorkspace(id, options);
+  const root = isWorkspaceConfig(id)
+    ? id
+    : await resolveWorkspace(id ?? process.cwd(), options);
   if (!root.packages || root.packages.length === 0) {
     return [];
   }
 
+  const globFn = options.glob || defaultGlob;
   const patterns = expandPatternsToPackageFiles(root.packages);
-  const files = await glob(patterns, {
+  const files = await globFn(patterns, {
     cwd: root.rootDir,
     absolute: true,
   });
@@ -173,14 +225,16 @@ export async function resolveWorkspacePackages(
 /**
  * Resolves a workspace configuration and builds a dependency graph.
  * @param id - A base path or a pre-resolved workspace configuration.
- * @param options - Options to modify the search and reading behaviour. See {@link ResolveOptions}.
+ * @param options - Options to modify the search and reading behaviour.
  * @returns a promise resolving to a workspace graph.
  */
 export async function resolveWorkspaceGraph(
   id?: string | WorkspaceConfig,
-  options: ResolveOptions & ReadOptions = {},
+  options: ResolveOptions & ReadOptions & { glob?: GlobFunction } = {},
 ): Promise<WorkspaceGraph> {
-  const root = isWorkspaceConfig(id) ? id : await resolveWorkspace(id, options);
+  const root = isWorkspaceConfig(id)
+    ? id
+    : await resolveWorkspace(id ?? process.cwd(), options);
   const packages = await resolveWorkspacePackages(root, options);
   const { nodes, sorted } = buildWorkspaceGraph(packages);
   return { packages: nodes, sorted, root };
