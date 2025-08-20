@@ -253,6 +253,14 @@ export async function findWorkspaceDir(
   throw new Error(`Cannot detect workspace root from ${id}`);
 }
 
+/**
+ * Reads a package file, allows a callback to mutate it, and writes back the result while preserving the original file format.
+ *
+ * @param id - The path identifier or directory to locate the package file (defaults to `process.cwd()`).
+ * @param callback - A function that receives the package object (proxied) and may mutate it in-place or return a new object.
+ * @param options - Options for resolving and reading the file. See {@link ResolveOptions} and {@link ReadOptions}.
+ * @returns A promise that resolves once the package file has been written.
+ */
 export async function updatePackage(
   id: string,
   callback: (
@@ -278,6 +286,15 @@ export async function updatePackage(
   await writePackage(resolvedPath, updated);
 }
 
+/**
+ * Returns a new `PackageJson` with known top-level fields reordered and certain nested maps alphabetically sorted.
+ *
+ * Known keys are reordered according to project conventions; unknown keys retain their original relative order.
+ * Nested maps such as dependency maps and `scripts` are sorted alphabetically by key.
+ *
+ * @param pkg - The `package.json` object to sort.
+ * @returns A new `PackageJson` object with fields and nested maps sorted.
+ */
 export function sortPackage(pkg: PackageJson): PackageJson {
   const sorted: PackageJson = {};
 
@@ -311,6 +328,15 @@ export function sortPackage(pkg: PackageJson): PackageJson {
   return sorted;
 }
 
+/**
+ * Normalizes a `PackageJson` for stable output by sorting fields and removing invalid dependency declarations.
+ *
+ * Sorts top-level fields and dependency objects alphabetically, and removes dependency fields
+ * (`dependencies`, `devDependencies`, etc.) that are not plain objects.
+ *
+ * @param pkg - The `package.json` object to normalize.
+ * @returns A new normalized `PackageJson` object.
+ */
 export function normalizePackage(pkg: PackageJson): PackageJson {
   // Sort the package.json fields
   const normalized: PackageJson = sortPackage(pkg);
