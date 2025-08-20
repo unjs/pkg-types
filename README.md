@@ -174,7 +174,7 @@ const filename = await findFile("README.md", {
 });
 ```
 
-#### `resolveLockFile`
+#### `resolveLockfile`
 
 Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`, `bun.lockb`, `bun.lock`, `deno.lock`) or throws an error.
 
