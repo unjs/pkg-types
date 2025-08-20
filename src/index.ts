@@ -72,9 +72,6 @@ export type {
 } from "./workspace/types";
 
 export {
-  readWorkspaceConfig,
-  readWorkspacePackages,
-  readWorkspaceGraph,
   resolveWorkspace,
   resolveWorkspacePackages,
   resolveWorkspaceGraph,
