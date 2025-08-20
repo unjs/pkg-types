@@ -62,7 +62,7 @@ export interface PackageJson {
   /**
    * The `scripts` field is a dictionary containing script commands that are run at various times in the lifecycle of your package.
    */
-  scripts?: Record<string, string>;
+  scripts?: PackageJsonScripts;
 
   /**
    * If you set `"private": true` in your package.json, then npm will refuse to publish it.
@@ -78,6 +78,13 @@ export interface PackageJson {
    * “contributors” is an array of people.
    */
   contributors?: PackageJsonPerson[];
+
+  /**
+   * An object containing a URL that provides up-to-date information
+   * about ways to help fund development of your package,
+   * a string URL, or an array of objects and string URLs
+   */
+  funding?: PackageJsonFunding | PackageJsonFunding[];
 
   /**
    * The optional `files` field is an array of file patterns that describes the entries to be included when your package is installed as a dependency. File patterns follow a similar syntax to `.gitignore`, but reversed: including a file, directory, or glob pattern (`*`, `**\/*`, and such) will make it so that file is included in the tarball when it’s packed. Omitting the field will make it default to `["*"]`, which means it will include all files.
@@ -183,10 +190,26 @@ export interface PackageJson {
    * This field is an array of glob patterns or an object with specific configurations for managing
    * multiple packages in a single repository.
    */
-  workspaces?: string[];
+  workspaces?:
+    | string[]
+    | {
+        /**
+         * Workspace package paths. Glob patterns are supported.
+         */
+        packages?: string[];
+
+        /**
+         * Packages to block from hoisting to the workspace root.
+         * Uses glob patterns to match module paths in the dependency tree.
+         *
+         * Docs:
+         * - https://classic.yarnpkg.com/blog/2018/02/15/nohoist/
+         */
+        nohoist?: string[];
+      };
 
   /**
-   * The field is is used to specify different TypeScript declaration files for
+   * The field is used to specify different TypeScript declaration files for
    * different versions of TypeScript, allowing for version-specific type definitions.
    */
   typesVersions?: Record<string, Record<string, string[]>>;
@@ -301,6 +324,58 @@ export interface PackageJson {
 }
 
 /**
+ * See: https://docs.npmjs.com/cli/v11/using-npm/scripts#pre--post-scripts
+ */
+type PackageJsonScriptWithPreAndPost<S extends string> =
+  | S
+  | `${"pre" | "post"}${S}`;
+
+/**
+ * See: https://docs.npmjs.com/cli/v11/using-npm/scripts#life-cycle-operation-order
+ */
+type PackageJsonNpmLifeCycleScripts =
+  | "dependencies"
+  | "prepublishOnly"
+  | PackageJsonScriptWithPreAndPost<
+      | "install"
+      | "pack"
+      | "prepare"
+      | "publish"
+      | "restart"
+      | "start"
+      | "stop"
+      | "test"
+      | "version"
+    >;
+
+/**
+ * See: https://pnpm.io/scripts#lifecycle-scripts
+ */
+type PackageJsonPnpmLifeCycleScripts = "pnpm:devPreinstall";
+
+type PackageJsonCommonScripts =
+  | "build"
+  | "coverage"
+  | "deploy"
+  | "dev"
+  | "format"
+  | "lint"
+  | "preview"
+  | "release"
+  | "typecheck"
+  | "watch";
+
+type PackageJsonScriptName =
+  | PackageJsonCommonScripts
+  | PackageJsonNpmLifeCycleScripts
+  | PackageJsonPnpmLifeCycleScripts
+  | (string & {});
+
+export type PackageJsonScripts = {
+  [P in PackageJsonScriptName]?: string;
+};
+
+/**
  * A “person” is an object with a “name” field and optionally “url” and “email”. Or you can shorten that all into a single string, and npm will parse it for you.
  */
 export type PackageJsonPerson =
@@ -310,6 +385,8 @@ export type PackageJsonPerson =
       email?: string;
       url?: string;
     };
+
+export type PackageJsonFunding = string | { url: string; type?: string };
 
 type PackageJsonExportKey =
   | "."

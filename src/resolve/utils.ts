@@ -1,34 +1,6 @@
+import type { FindFileOptions } from "./types";
 import { statSync } from "node:fs";
 import { join, resolve } from "pathe";
-
-export interface FindFileOptions {
-  /**
-   * The starting directory for the search.
-   * @default . (same as `process.cwd()`)
-   */
-  startingFrom?: string;
-  /**
-   * A pattern to match a path segment above which you don't want to ascend
-   * @default /^node_modules$/
-   */
-  rootPattern?: RegExp;
-  /**
-   * If true, search starts from root level descending into subdirectories
-   */
-  reverse?: boolean;
-  /**
-   * A matcher that can evaluate whether the given path is a valid file (for example,
-   * by testing whether the file path exists.
-   *
-   * @default fs.statSync(path).isFile()
-   */
-  test?: (
-    filePath: string,
-  ) => boolean | undefined | Promise<boolean | undefined>;
-}
-
-/** @deprecated */
-export type FindNearestFileOptions = FindFileOptions;
 
 const defaultFindOptions: Required<FindFileOptions> = {
   startingFrom: ".",
@@ -53,6 +25,11 @@ export async function findFile(
   const basePath = resolve(options.startingFrom);
   const leadingSlash = basePath[0] === "/";
   const segments = basePath.split("/").filter(Boolean);
+
+  // Test input itself first
+  if (filenames.includes(segments.at(-1)!) && (await options.test(basePath))) {
+    return basePath;
+  }
 
   // Restore leading slash
   if (leadingSlash) {
@@ -94,28 +71,28 @@ export async function findFile(
  * Asynchronously finds the next file with the given name, starting in the given directory and moving up.
  * Alias for findFile without reversing the search.
  * @param filename - The name of the file to find.
- * @param _options - Options to customise the search behaviour.
+ * @param options - Options to customise the search behaviour.
  * @returns A promise that resolves to the path of the next file found.
  */
 export function findNearestFile(
   filename: string | string[],
-  _options: FindFileOptions = {},
+  options: FindFileOptions = {},
 ): Promise<string> {
-  return findFile(filename, _options);
+  return findFile(filename, options);
 }
 
 /**
  * Asynchronously finds the furthest file with the given name, starting from the root directory and moving downwards.
  * This is essentially the reverse of `findNearestFile'.
  * @param filename - The name of the file to find.
- * @param _options - Options to customise the search behaviour, with reverse set to true.
+ * @param options - Options to customise the search behaviour, with reverse set to true.
  * @returns A promise that resolves to the path of the farthest file found.
  */
 export function findFarthestFile(
-  filename: string,
-  _options: FindFileOptions = {},
+  filename: string | string[],
+  options: FindFileOptions = {},
 ): Promise<string> {
-  return findFile(filename, { ..._options, reverse: true });
+  return findFile(filename, { ...options, reverse: true });
 }
 
 export function existsFile(filePath: string) {
