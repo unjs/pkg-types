@@ -179,8 +179,8 @@ const filename = await findFile("README.md", {
 Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`, `bun.lockb`, `bun.lock`, `deno.lock`) or throws an error.
 
 ```js
-import { resolveLockFile } from "pkg-types";
-const lockfile = await resolveLockFile(".");
+import { resolveLockfile } from "pkg-types";
+const lockfile = await resolveLockfile(".");
 ```
 
 #### `findWorkspaceDir`
