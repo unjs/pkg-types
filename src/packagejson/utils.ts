@@ -256,7 +256,7 @@ export async function findWorkspaceDir(
 /**
  * Reads a package file, allows a callback to mutate it, and writes back the result while preserving the original file format.
  *
- * @param id - The path to package.json or directory to locate the package file. 
+ * @param id - The path to package.json or directory to locate the package file.
  * @param callback - A function that receives the package object (proxied) and may mutate it in-place or return a new object.
  * @param options - Options for resolving and reading the file. See {@link ResolveOptions} and {@link ReadOptions}.
  * @returns A promise that resolves once the package file has been written.
