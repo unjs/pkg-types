@@ -35,6 +35,10 @@ import {
   readPackage,
   writePackage,
   sortPackage,
+  // workspace utils
+  resolveWorkspaceGraph,
+  resolveWorkspacePackages,
+  resolveWorkspace,
 } from "../src";
 import { tmpdir } from "node:os";
 
@@ -533,5 +537,205 @@ describe("sortPackage", () => {
       "customField1",
       "dependencies",
     ]);
+  });
+});
+
+describe("workspace", () => {
+  describe("config detection", () => {
+    const cases: Array<{
+      name: string;
+      root: string;
+      type: string;
+      packages: string[];
+    }> = [
+      {
+        name: "pnpm: pnpm-workspace.yaml",
+        root: rFixture("monorepo/pnpm"),
+        type: "pnpm",
+        packages: ["packages/*"],
+      },
+      {
+        name: "npm: package.json workspaces",
+        root: rFixture("monorepo/npm"),
+        type: "npm",
+        packages: ["packages/*"],
+      },
+      {
+        name: "lerna: lerna.json packages",
+        root: rFixture("monorepo/lerna"),
+        type: "lerna",
+        packages: ["packages/*"],
+      },
+      {
+        name: "deno: deno.json workspace",
+        root: rFixture("deno"),
+        type: "deno",
+        packages: ["./packages/*"],
+      },
+      {
+        name: "bun: packageManager",
+        root: rFixture("monorepo/bun"),
+        type: "bun",
+        packages: ["packages/*"],
+      },
+      {
+        name: "npm (json5 root)",
+        root: rFixture("monorepo/npm/json5-root"),
+        type: "npm",
+        packages: ["packages/*"],
+      },
+      {
+        name: "npm (yaml root)",
+        root: rFixture("monorepo/npm/yaml-root"),
+        type: "npm",
+        packages: ["packages/*"],
+      },
+      {
+        name: "rush: rush.json",
+        root: rFixture("monorepo/rush"),
+        type: "rush",
+        packages: ["apps/app-one", "packages/lib-one"],
+      },
+      {
+        name: "yarn: packageManager",
+        root: rFixture("monorepo/yarn"),
+        type: "yarn",
+        packages: ["packages/*"],
+      },
+      {
+        name: "workspaces object form",
+        root: rFixture("monorepo/workspaces-object"),
+        type: "npm",
+        packages: ["pkgs/*"],
+      },
+      {
+        name: "deno workspace.members",
+        root: rFixture("monorepo/deno-members"),
+        type: "deno",
+        packages: ["./libs/*"],
+      },
+    ];
+
+    for (const { name, root, type, packages } of cases) {
+      it(name, async () => {
+        const cfg = await resolveWorkspace(root);
+        expect(cfg.type).toBe(type);
+        expect([...cfg.packages].sort()).toEqual([...packages].sort());
+      });
+    }
+
+    it("resolves to root when called from a nested package dir", async () => {
+      const nested = rFixture("monorepo/npm/packages/foo");
+      const cfg = await resolveWorkspace(nested);
+      expect(cfg.packages).toEqual(["packages/*"]);
+    });
+
+    it("pnpm-workspace.yaml with no packages falls back to package.json workspaces", async () => {
+      const cfg = await resolveWorkspace(rFixture("monorepo/pnpm-fallback"));
+      expect(cfg.type).toBe("npm");
+      expect(cfg.packages).toEqual(["pkgs/*"]);
+      const pkgs = await resolveWorkspacePackages(
+        rFixture("monorepo/pnpm-fallback"),
+      );
+      expect(pkgs.map((p) => p.name)).toEqual(["a"]);
+    });
+
+    it("lerna.json with empty packages falls back to package.json workspaces", async () => {
+      const cfg = await resolveWorkspace(rFixture("monorepo/lerna-fallback"));
+      expect(cfg.type).toBe("npm");
+      expect(cfg.packages).toEqual(["modules/*"]);
+      const pkgs = await resolveWorkspacePackages(
+        rFixture("monorepo/lerna-fallback"),
+      );
+      expect(pkgs.map((p) => p.name)).toEqual(["m"]);
+    });
+
+    it("rush.json with empty projects falls back to package.json workspaces", async () => {
+      const cfg = await resolveWorkspace(rFixture("monorepo/rush-fallback"));
+      expect(cfg.type).toBe("npm");
+      expect(cfg.packages).toEqual(["projects/*"]);
+      const pkgs = await resolveWorkspacePackages(
+        rFixture("monorepo/rush-fallback"),
+      );
+      expect(pkgs.map((p) => p.name)).toEqual(["p"]);
+    });
+  });
+
+  describe("package discovery", () => {
+    const cases: Array<{ name: string; root: string; expected: string[] }> = [
+      {
+        name: "pnpm",
+        root: rFixture("monorepo/pnpm"),
+        expected: ["bar", "foo"],
+      },
+      { name: "npm", root: rFixture("monorepo/npm"), expected: ["bar", "foo"] },
+      {
+        name: "lerna",
+        root: rFixture("monorepo/lerna"),
+        expected: ["bar", "foo"],
+      },
+      { name: "bun", root: rFixture("monorepo/bun"), expected: ["bar", "foo"] },
+      {
+        name: "rush",
+        root: rFixture("monorepo/rush"),
+        expected: ["@acme/app-one", "@acme/lib-one"],
+      },
+    ];
+
+    for (const { name, root, expected } of cases) {
+      it(`expands patterns and reads manifests (${name})`, async () => {
+        const pkgs = await resolveWorkspacePackages(root);
+        expect(pkgs.map((p) => p.name).sort()).toEqual(expected);
+      });
+    }
+
+    it("returns empty when members have no package manifests (deno)", async () => {
+      const root = rFixture("deno");
+      const pkgs = await resolveWorkspacePackages(root);
+      expect(pkgs.length).toBe(0);
+    });
+
+    it("respects negation patterns (npm negation fixture)", async () => {
+      const root = rFixture("monorepo/npm/negation");
+      const pkgs = await resolveWorkspacePackages(root);
+      expect(pkgs.length).toBe(0);
+    });
+  });
+
+  describe("graph", () => {
+    it("builds dependency graph and order (npm)", async () => {
+      const root = rFixture("monorepo/npm");
+      const g = await resolveWorkspaceGraph(root);
+      expect(Object.keys(g.packages).sort()).toEqual(["bar", "foo"]);
+      expect(g.packages["bar"].workspaceDependencies).toEqual(["foo"]);
+      expect(g.sorted.indexOf("foo")).toBeLessThan(g.sorted.indexOf("bar"));
+    });
+
+    it("builds dependency graph and order (rush)", async () => {
+      const root = rFixture("monorepo/rush");
+      const g = await resolveWorkspaceGraph(root);
+      expect(Object.keys(g.packages).sort()).toEqual([
+        "@acme/app-one",
+        "@acme/lib-one",
+      ]);
+      expect(g.packages["@acme/app-one"].workspaceDependencies).toEqual([
+        "@acme/lib-one",
+      ]);
+      expect(g.sorted.indexOf("@acme/lib-one")).toBeLessThan(
+        g.sorted.indexOf("@acme/app-one"),
+      );
+    });
+  });
+
+  describe("resolve", () => {
+    it("resolves from nested dir and ascends to root (pnpm)", async () => {
+      const nested = rFixture("monorepo/pnpm/packages/foo");
+      const cfg = await resolveWorkspace(nested);
+      expect(cfg.type).toBe("pnpm");
+      const pkgs = await resolveWorkspacePackages(cfg);
+      expect(pkgs.map((p) => p.name).sort()).toEqual(["bar", "foo"]);
+      const g = await resolveWorkspaceGraph(cfg);
+      expect(Object.keys(g.packages).length).toBe(pkgs.length);
+    });
   });
 });

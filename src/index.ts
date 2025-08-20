@@ -60,3 +60,19 @@ export {
   parseGitConfig,
   stringifyGitConfig,
 } from "./gitconfig/utils";
+
+// --- workspace ---
+
+export type {
+  WorkspaceType,
+  WorkspaceConfig,
+  WorkspacePackage,
+  WorkspacePackageNode,
+  WorkspaceGraph,
+} from "./workspace/types";
+
+export {
+  resolveWorkspace,
+  resolveWorkspacePackages,
+  resolveWorkspaceGraph,
+} from "./workspace/utils";
