@@ -176,16 +176,12 @@ const filename = await findFile("README.md", {
 
 #### `findNearestFile`
 
-Asynchronously finds the next file with the given name, starting in the given directory and moving up.
-
 ```js
 import { findNearestFile } from "pkg-types";
 const filename = await findNearestFile("package.json");
 ```
 
 #### `findFarthestFile`
-
-Asynchronously finds the furthest file with the given name, starting from the root directory and moving downwards.
 
 ```js
 import { findFarthestFile } from "pkg-types";
