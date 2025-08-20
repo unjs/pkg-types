@@ -91,7 +91,7 @@ export function findNearestFile(
 
 /**
  * Asynchronously finds the furthest file with the given name, starting from the root directory and moving downwards.
- * This is essentially the reverse of `findNearestFile'.
+ * This is essentially the reverse of `findNearestFile`.
  * @param filename - The name of the file to find.
  * @param options - Options to customise the search behaviour, with reverse set to true.
  * @returns A promise that resolves to the path of the farthest file found.
