@@ -100,6 +100,39 @@ const filename = await resolvePackageJSON();
 const packageJson = await resolvePackageJSON("/fully/resolved/path/to/folder");
 ```
 
+#### `updatePackage`
+
+Reads a package file and passes a proxied PackageJson to a callback (the callback may mutate it in-place or return a new object). The updated package is then written back using the same file format (`.json`/`.json5`/`.yaml`). The proxy auto-creates common map fields (e.g. `scripts`, `dependencies`) when accessed.
+
+```js
+import { updatePackage } from "pkg-types";
+
+await updatePackage("path/to/package", (pkg) => {
+  pkg.version = "1.0.1";
+  pkg.dependencies.lodash = "^4.17.21";
+});
+```
+
+#### `sortPackage`
+
+Returns a new PackageJson that reorders known top-level fields according to the convention and alphabetically sorts certain nested maps (like `dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies` and `scripts`). Unknown top-level keys retain their original relative order. The input object is not mutated.
+
+```js
+import { sortPackage } from "pkg-types";
+
+const sorted = sortPackage(pkg);
+```
+
+#### `normalizePackage`
+
+Normalizes a `PackageJson` for stable output: sorts top-level fields and dependency maps, and removes dependency fields (`dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies`) if they are not plain objects. Returns a new normalized object.
+
+```js
+import { normalizePackage } from "pkg-types";
+
+const normalized = normalizePackage(pkg);
+```
+
 ### TypeScript Configuration
 
 #### `readTSConfig`
