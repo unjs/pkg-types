@@ -48,7 +48,7 @@ Reads any package file format (package.json, package.json5, or package.yaml) wit
 import { readPackage } from "pkg-types";
 const localPackage = await readPackage();
 // or
-const package = await readPackage("/fully/resolved/path/to/folder");
+const pkg = await readPackage("/fully/resolved/path/to/folder");
 ```
 
 #### `writePackage`
@@ -100,6 +100,39 @@ const filename = await resolvePackageJSON();
 const packageJson = await resolvePackageJSON("/fully/resolved/path/to/folder");
 ```
 
+#### `updatePackage`
+
+Reads a package file and passes a proxied PackageJson to a callback (the callback may mutate it in-place or return a new object). The updated package is then written back using the same file format (`.json`/`.json5`/`.yaml`). The proxy auto-creates common map fields (e.g. `scripts`, `dependencies`) when accessed.
+
+```js
+import { updatePackage } from "pkg-types";
+
+await updatePackage("path/to/package", (pkg) => {
+  pkg.version = "1.0.1";
+  pkg.dependencies.lodash = "^4.17.21";
+});
+```
+
+#### `sortPackage`
+
+Returns a new PackageJson that reorders known top-level fields according to the convention and alphabetically sorts certain nested maps (like `dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies` and `scripts`). Unknown top-level keys retain their original relative order. The input object is not mutated.
+
+```js
+import { sortPackage } from "pkg-types";
+
+const sorted = sortPackage(pkg);
+```
+
+#### `normalizePackage`
+
+Normalizes a `PackageJson` for stable output: sorts top-level fields and dependency maps, and removes dependency fields (`dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies`) if they are not plain objects. Returns a new normalized object.
+
+```js
+import { normalizePackage } from "pkg-types";
+
+const normalized = normalizePackage(pkg);
+```
+
 ### TypeScript Configuration
 
 #### `readTSConfig`
@@ -130,24 +163,38 @@ const tsconfig = await resolveTSConfig("/fully/resolved/path/to/folder");
 
 ### File Resolution
 
-#### `resolveFile`
+#### `findFile`
 
 ```js
-import { resolveFile } from "pkg-types";
-const filename = await resolveFile("README.md", {
+import { findFile } from "pkg-types";
+const filename = await findFile("README.md", {
   startingFrom: id,
   rootPattern: /^node_modules$/,
-  matcher: (filename) => filename.endsWith(".md"),
+  test: (filename) => filename.endsWith(".md"),
 });
 ```
 
-#### `resolveLockFile`
+#### `findNearestFile`
+
+```js
+import { findNearestFile } from "pkg-types";
+const filename = await findNearestFile("package.json");
+```
+
+#### `findFarthestFile`
+
+```js
+import { findFarthestFile } from "pkg-types";
+const filename = await findFarthestFile("package.json");
+```
+
+#### `resolveLockfile`
 
 Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`, `bun.lockb`, `bun.lock`, `deno.lock`) or throws an error.
 
 ```js
-import { resolveLockFile } from "pkg-types";
-const lockfile = await resolveLockFile(".");
+import { resolveLockfile } from "pkg-types";
+const lockfile = await resolveLockfile(".");
 ```
 
 #### `findWorkspaceDir`
@@ -220,32 +267,61 @@ const gitConfigINI = stringifyGitConfig(gitConfigObj)
 
 ## Types
 
-**Note:** In order to make types working, you need to install `typescript` as a devDependency.
+- **Note:** In order to make types work, you need to install `typescript` as a devDependency.
 
 You can directly use typed interfaces:
 
 ```ts
-import type { TSConfig, PackageJSON, GitConfig } from "pkg-types";
+import type { TSConfig, PackageJson, GitConfig } from "pkg-types";
 ```
 
-You can also use define utils for type support for using in plain `.js` files and auto-complete in IDE.
+### Define Utilities
+
+You can use define utilities for type support and auto-completion when working in plain `.js` files. These functions simply return the input object but provide TypeScript type hints.
+
+#### `definePackageJSON`
+
+Provides type safety and auto-completion for package.json objects.
 
 ```js
-import type { definePackageJSON } from 'pkg-types'
+import { definePackageJSON } from 'pkg-types'
 
-const pkg = definePackageJSON({})
+const pkg = definePackageJSON({
+  name: "my-package",
+  version: "1.0.0",
+  // TypeScript will provide auto-completion here
+})
 ```
 
-```js
-import type { defineTSConfig } from 'pkg-types'
+#### `defineTSConfig`
 
-const pkg = defineTSConfig({})
+Provides type safety and auto-completion for tsconfig.json objects.
+
+```js
+import { defineTSConfig } from 'pkg-types'
+
+const tsconfig = defineTSConfig({
+  compilerOptions: {
+    target: "ES2020",
+    // TypeScript will provide auto-completion here
+  }
+})
 ```
 
-```js
-import type { defineGitConfig } from 'pkg-types'
+#### `defineGitConfig`
 
-const gitConfig = defineGitConfig({})
+Provides type safety and auto-completion for git config objects.
+
+```js
+import { defineGitConfig } from 'pkg-types'
+
+const gitConfig = defineGitConfig({
+  user: {
+    name: "John Doe",
+    email: "john@example.com"
+  }
+  // TypeScript will provide auto-completion here
+})
 ```
 
 ## Alternatives

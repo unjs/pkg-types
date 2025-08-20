@@ -40,7 +40,7 @@ export interface FindFileOptions {
   reverse?: boolean;
   /**
    * A matcher that can evaluate whether the given path is a valid file (for example,
-   * by testing whether the file path exists.
+   * by testing whether the file path exists).
    *
    * @default fs.statSync(path).isFile()
    */
