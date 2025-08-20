@@ -7,7 +7,11 @@ import type {
 } from "./types";
 import { dirname, join, relative } from "pathe";
 import { glob } from "tinyglobby";
-import { findWorkspaceDir, findPackage, readPackage } from "../packagejson/utils";
+import {
+  findWorkspaceDir,
+  findPackage,
+  readPackage,
+} from "../packagejson/utils";
 
 const packageFiles = ["package.json", "package.json5", "package.yaml"];
 
@@ -20,9 +24,9 @@ export async function readWorkspaceConfig(
   const pkg = await readPackage(rootDir, options);
   const workspaces = Array.isArray(pkg.workspaces)
     ? pkg.workspaces
-    : (Array.isArray(pkg.workspaces?.packages)
+    : Array.isArray(pkg.workspaces?.packages)
       ? pkg.workspaces!.packages || []
-      : []);
+      : [];
   return {
     type: "npm",
     rootDir,
