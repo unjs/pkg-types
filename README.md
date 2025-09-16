@@ -25,13 +25,13 @@ npm install pkg-types
 yarn add pkg-types
 
 # pnpm
-pnpm install pkg-types
+pnpm add pkg-types
 
 # bun
 bun install pkg-types
 
 # deno
-deno install pkg-types
+deno install npm:pkg-types
 ```
 
 <!-- /automd -->
