@@ -11,8 +11,12 @@
   },
   "types": "./dist/index.d.mts",
   "files": [
-    "dist"
+    "dist",
+    "typescript.d.mts"
   ],
+  "imports": {
+    "#typescript": "./typescript.d.mts"
+  },
   "scripts": {
     "build": "unbuild",
     "dev": "vitest --typecheck",

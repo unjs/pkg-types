@@ -3,7 +3,7 @@ import { rm } from "node:fs/promises";
 
 export default defineBuildConfig({
    externals: [
-    "typescript"
+    "#typescript"
    ],
   hooks: {
     async "build:done"() {
