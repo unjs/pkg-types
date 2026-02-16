@@ -1,0 +1,8 @@
+{
+  "name": "monorepo-npm-negation",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "!packages/excluded/*"
+  ]
+}

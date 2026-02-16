@@ -1,0 +1,7 @@
+{
+  "name": "@acme/app-one",
+  "version": "0.1.0",
+  "dependencies": {
+    "@acme/lib-one": "^0.1.0"
+  }
+}
