@@ -77,8 +77,7 @@ export async function readPackage<O extends ResolveOptions & ReadOptions>(
   if (!resolvedPath) {
     return undefined as MaybeTry<PackageJson, O>;
   }
-
- const cache = options?.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
+  const cache = options?.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
   if (options?.cache && cache.has(resolvedPath)) {
     return cache.get(resolvedPath)!;
   }
