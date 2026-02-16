@@ -1,17 +1,23 @@
 import type { CompilerOptions, TypeAcquisition } from "typescript";
 
+type ExcludeEnum<T> = T extends boolean
+  ? T
+  : T extends string
+    ? T
+    : T extends Array<any>
+      ? T
+      : T extends object
+        ? T
+        : T extends undefined
+          ? undefined
+          : any;
+
 export type StripEnums<T extends Record<string, any>> = {
-  [K in keyof T]: T[K] extends boolean
-    ? T[K]
-    : T[K] extends string
-      ? T[K]
-      : T[K] extends object
-        ? T[K]
-        : T[K] extends Array<any>
-          ? T[K]
-          : T[K] extends undefined
-            ? undefined
-            : any;
+  [K in keyof T]: T[K] extends undefined
+    ? Omit<T, K> extends T // Is K key-optional?
+      ? ExcludeEnum<T[K]>
+      : undefined
+    : ExcludeEnum<T[K]>;
 };
 
 export interface TSConfig {
