@@ -1,15 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { cp, mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
 import { dirname, join, resolve } from "pathe";
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { expectTypeOf } from "expect-type";
 import {
   type TSConfig,
@@ -51,17 +43,12 @@ const createTempFixtureDir = async (): Promise<string> => {
 };
 
 async function expectToReject(p: Promise<any>) {
-  return expect(
-    await p.then(() => {}).catch((error: Error) => error.toString()),
-  );
+  return expect(await p.then(() => {}).catch((error: Error) => error.toString()));
 }
 
 function testResolve(
   filename: string,
-  resolveFunction: (
-    id?: string,
-    options?: ResolveOptions,
-  ) => Promise<string | null>,
+  resolveFunction: (id?: string, options?: ResolveOptions) => Promise<string | null>,
 ) {
   it("finds a package.json in root directory", async () => {
     const packagePath = await resolveFunction(rFixture("."));
@@ -72,21 +59,17 @@ function testResolve(
     expect(packagePath).to.equal(rFixture("../..", filename)); // Top level in pkg-types repo
   });
   it("handles non-existent paths", async () => {
-    const packagePath = await resolveFunction(
-      rFixture("further", "dir", "file.json"),
-    );
+    const packagePath = await resolveFunction(rFixture("further", "dir", "file.json"));
     expect(packagePath).to.equal(rFixture(filename));
   });
   it("works all the way up the tree", async () => {
-    (
-      await expectToReject(resolveFunction("/a/full/nonexistent/path"))
-    ).to.contain("Cannot find matching");
+    (await expectToReject(resolveFunction("/a/full/nonexistent/path"))).to.contain(
+      "Cannot find matching",
+    );
   });
   it("stops at `node_modules`", async () => {
     (
-      await expectToReject(
-        resolveFunction(rFixture("further", "node_modules", "file.json")),
-      )
+      await expectToReject(resolveFunction(rFixture("further", "node_modules", "file.json")))
     ).to.contain("Cannot find matching");
   });
   it("finds the working directory", async () => {
@@ -120,15 +103,11 @@ describe("package.json", () => {
 
   it("write package.json", async () => {
     await writePackageJSON(join(tempDir, "package.json"), { version: "1.0.0" });
-    expect(
-      (await readPackageJSON(join(tempDir, "package.json"))).version,
-    ).to.equal("1.0.0");
+    expect((await readPackageJSON(join(tempDir, "package.json"))).version).to.equal("1.0.0");
   });
 
   it("correctly reads a version from absolute path", async () => {
-    expect(
-      await readPackageJSON(rFixture(".")).then((p) => p?.version),
-    ).to.equal("1.0.0");
+    expect(await readPackageJSON(rFixture(".")).then((p) => p?.version)).to.equal("1.0.0");
   });
 
   it("correctly reads a version from package", async () => {
@@ -138,18 +117,16 @@ describe("package.json", () => {
   });
 
   it("styles are preserved", async () => {
-    const originalContent = await readFile(
-      rFixture("package.json"),
-      "utf8",
-    ).then(normalizeWinLines);
+    const originalContent = await readFile(rFixture("package.json"), "utf8").then(
+      normalizeWinLines,
+    );
     await writePackageJSON(
       rFixture("package.json") + ".tmp",
       await readPackageJSON(rFixture("package.json")),
     );
-    const newContent = await readFile(
-      rFixture("package.json") + ".tmp",
-      "utf8",
-    ).then(normalizeWinLines);
+    const newContent = await readFile(rFixture("package.json") + ".tmp", "utf8").then(
+      normalizeWinLines,
+    );
     expect(newContent).toBe(originalContent);
   });
 });
@@ -184,9 +161,7 @@ describe("package.{json,jsonc,json5}", () => {
 
   it("writes package.json", async () => {
     await writePackage(rFixture("package.json.tmp"), { version: "1.0.0" });
-    expect((await readPackage(rFixture("package.json.tmp"))).version).to.equal(
-      "1.0.0",
-    );
+    expect((await readPackage(rFixture("package.json.tmp"))).version).to.equal("1.0.0");
   });
 
   it("writes package.json5", async () => {
@@ -194,9 +169,7 @@ describe("package.{json,jsonc,json5}", () => {
       name: "foo",
       version: "1.0.0",
     });
-    expect((await readPackage(rFixture("package.json5.tmp"))).name).to.equal(
-      "foo",
-    );
+    expect((await readPackage(rFixture("package.json5.tmp"))).name).to.equal("foo");
   });
 
   it("writes package.yaml", async () => {
@@ -204,9 +177,7 @@ describe("package.{json,jsonc,json5}", () => {
       name: "foo",
       version: "1.0.0",
     });
-    expect((await readPackage(rFixture("package.yaml.tmp"))).name).to.equal(
-      "foo",
-    );
+    expect((await readPackage(rFixture("package.yaml.tmp"))).name).to.equal("foo");
   });
 });
 
@@ -219,9 +190,7 @@ describe("tsconfig.json", () => {
   });
   it("write tsconfig.json", async () => {
     await writeTSConfig(rFixture("tsconfig.json.tmp"), { include: ["src"] });
-    expect(
-      (await readTSConfig(rFixture("tsconfig.json.tmp"))).include,
-    ).to.deep.equal(["src"]);
+    expect((await readTSConfig(rFixture("tsconfig.json.tmp"))).include).to.deep.equal(["src"]);
   });
 
   it("strips enums", () => {
@@ -232,52 +201,40 @@ describe("tsconfig.json", () => {
   });
 
   it("styles are preserved", async () => {
-    const originalContent = await readFile(
-      rFixture("tsconfig.json"),
-      "utf8",
-    ).then(normalizeWinLines);
+    const originalContent = await readFile(rFixture("tsconfig.json"), "utf8").then(
+      normalizeWinLines,
+    );
     await writeTSConfig(
       rFixture("tsconfig.json") + ".tmp",
       await readTSConfig(rFixture("tsconfig.json")),
     );
-    const newContent = await readFile(
-      rFixture("tsconfig.json") + ".tmp",
-      "utf8",
-    ).then(normalizeWinLines);
+    const newContent = await readFile(rFixture("tsconfig.json") + ".tmp", "utf8").then(
+      normalizeWinLines,
+    );
     expect(newContent).toBe(originalContent.replace(/\s*\/\/\s*.+/g, ""));
   });
 });
 
 describe("resolveLockfile", () => {
   it("works for subdir", async () => {
-    expect(await resolveLockfile(rFixture("./sub"))).to.equal(
-      rFixture("./sub/yarn.lock"),
-    );
+    expect(await resolveLockfile(rFixture("./sub"))).to.equal(rFixture("./sub/yarn.lock"));
   });
   it("works for root dir", async () => {
-    expect(await resolveLockfile(rFixture("."))).to.equal(
-      rFixture("../..", "pnpm-lock.yaml"),
-    );
+    expect(await resolveLockfile(rFixture("."))).to.equal(rFixture("../..", "pnpm-lock.yaml"));
   });
 });
 
 describe("findWorkspaceDir", () => {
   it("works", async () => {
-    expect(await findWorkspaceDir(rFixture("./sub"))).to.equal(
-      rFixture("../.."),
-    );
+    expect(await findWorkspaceDir(rFixture("./sub"))).to.equal(rFixture("../.."));
     expect(await findWorkspaceDir(rFixture("."))).to.equal(rFixture("../.."));
     expect(await findWorkspaceDir(rFixture(".."))).to.equal(rFixture("../.."));
-    expect(await findWorkspaceDir(rFixture("../.."))).to.equal(
-      rFixture("../.."),
-    );
+    expect(await findWorkspaceDir(rFixture("../.."))).to.equal(rFixture("../.."));
   });
 
   it("detects Deno workspace", async () => {
     expect(await findWorkspaceDir(rFixture("deno"))).to.equal(rFixture("deno"));
-    expect(await findWorkspaceDir(rFixture("deno/packages/foo"))).to.equal(
-      rFixture("deno"),
-    );
+    expect(await findWorkspaceDir(rFixture("deno/packages/foo"))).to.equal(rFixture("deno"));
   });
 });
 
@@ -294,9 +251,7 @@ describe(".git/config", () => {
   });
 
   it("resolveGitConfig", async () => {
-    expect(await resolveGitConfig(rFixture("."))).to.equal(
-      rFixture(".git/config"),
-    );
+    expect(await resolveGitConfig(rFixture("."))).to.equal(rFixture(".git/config"));
   });
 
   it("readGitConfig", async () => {
@@ -331,10 +286,7 @@ describe(".git/config", () => {
   it("writeGitConfig", async () => {
     const fixtureConfigINI = await readFile(rFixture(".git/config"), "utf8");
 
-    await writeGitConfig(
-      rFixture(".git/config.tmp"),
-      parseGitConfig(fixtureConfigINI),
-    );
+    await writeGitConfig(rFixture(".git/config.tmp"), parseGitConfig(fixtureConfigINI));
 
     const newConfigINI = await readFile(rFixture(".git/config.tmp"), "utf8");
 

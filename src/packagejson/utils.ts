@@ -10,11 +10,7 @@ import {
   stringifyYAML,
 } from "confbox";
 
-import type {
-  ResolveOptions,
-  ReadOptions,
-  FindFileOptions,
-} from "../resolve/types";
+import type { ResolveOptions, ReadOptions, FindFileOptions } from "../resolve/types";
 import type { PackageJson } from "./types";
 import { findNearestFile, findFile } from "../resolve/utils";
 import { _resolvePath } from "../resolve/internal";
@@ -78,10 +74,7 @@ export async function readPackage(
   options: ResolveOptions & ReadOptions = {},
 ): Promise<PackageJson> {
   const resolvedPath = await findPackage(id, options);
-  const cache =
-    options.cache && typeof options.cache !== "boolean"
-      ? options.cache
-      : FileCache;
+  const cache = options.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
     return cache.get(resolvedPath)!;
   }
@@ -109,10 +102,7 @@ export async function readPackage(
  * @param path - The path to the file where the package data is written.
  * @param pkg - The package object to write. See {@link PackageJson}.
  */
-export async function writePackage(
-  path: string,
-  pkg: PackageJson,
-): Promise<void> {
+export async function writePackage(path: string, pkg: PackageJson): Promise<void> {
   let content: string;
 
   if (path.endsWith(".json5")) {
@@ -137,10 +127,7 @@ export async function readPackageJSON(
   options: ResolveOptions & ReadOptions = {},
 ): Promise<PackageJson> {
   const resolvedPath = await resolvePackageJSON(id, options);
-  const cache =
-    options.cache && typeof options.cache !== "boolean"
-      ? options.cache
-      : FileCache;
+  const cache = options.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
     return cache.get(resolvedPath)!;
   }
@@ -160,10 +147,7 @@ export async function readPackageJSON(
  * @param path - The path to the file where the `package.json` is written.
  * @param pkg - The `package.json` object to write. See {@link PackageJson}.
  */
-export async function writePackageJSON(
-  path: string,
-  pkg: PackageJson,
-): Promise<void> {
+export async function writePackageJSON(path: string, pkg: PackageJson): Promise<void> {
   await fsp.writeFile(path, stringifyJSON(pkg));
 }
 
@@ -199,18 +183,12 @@ export async function resolveLockfile(
   });
 }
 
-type WorkspaceTestName =
-  | "workspaceFile"
-  | "gitConfig"
-  | "lockFile"
-  | "packageJson";
+type WorkspaceTestName = "workspaceFile" | "gitConfig" | "lockFile" | "packageJson";
 type WorkspaceTestFn = (opts: FindFileOptions) => Promise<string>;
 
 const workspaceTests: Record<WorkspaceTestName, WorkspaceTestFn> = {
-  workspaceFile: (opts) =>
-    findFile(workspaceFiles, opts).then((r) => dirname(r)),
-  gitConfig: (opts) =>
-    findFile(".git/config", opts).then((r) => resolve(r, "../..")),
+  workspaceFile: (opts) => findFile(workspaceFiles, opts).then((r) => dirname(r)),
+  gitConfig: (opts) => findFile(".git/config", opts).then((r) => resolve(r, "../..")),
   lockFile: (opts) => findFile(lockFiles, opts).then((r) => dirname(r)),
   packageJson: (opts) => findFile(packageFiles, opts).then((r) => dirname(r)),
 } as const;
@@ -238,8 +216,7 @@ export async function findWorkspaceDir(
     if (options[testName] === false || !test) {
       continue;
     }
-    const direction =
-      options[testName] || (testName === "gitConfig" ? "closest" : "furthest");
+    const direction = options[testName] || (testName === "gitConfig" ? "closest" : "furthest");
     const detected = await test({
       ...options,
       startingFrom,
@@ -263,20 +240,14 @@ export async function findWorkspaceDir(
  */
 export async function updatePackage(
   id: string,
-  callback: (
-    pkg: PackageJson,
-  ) => PackageJson | void | Promise<PackageJson | void>,
+  callback: (pkg: PackageJson) => PackageJson | void | Promise<PackageJson | void>,
   options: ResolveOptions & ReadOptions = {},
 ): Promise<void> {
   const resolvedPath = await findPackage(id, options);
   const pkg = await readPackage(id, options);
   const proxy = new Proxy(pkg, {
     get(target, prop) {
-      if (
-        typeof prop === "string" &&
-        objectKeys.has(prop) &&
-        !Object.hasOwn(target, prop)
-      ) {
+      if (typeof prop === "string" && objectKeys.has(prop) && !Object.hasOwn(target, prop)) {
         target[prop] = {};
       }
       return Reflect.get(target, prop);
@@ -300,9 +271,7 @@ export function sortPackage(pkg: PackageJson): PackageJson {
 
   // Sort known keys and retain order of unknown keys
   const originalKeys = Object.keys(pkg);
-  const knownKeysPresent = defaultFieldOrder.filter((key) =>
-    Object.hasOwn(pkg, key),
-  );
+  const knownKeysPresent = defaultFieldOrder.filter((key) => Object.hasOwn(pkg, key));
   for (const key of originalKeys) {
     const currentIndex = knownKeysPresent.indexOf(key);
     if (currentIndex === -1) {
@@ -360,9 +329,7 @@ function isObject(value: unknown): value is Record<string, unknown> {
 }
 
 function sortObject(obj: Record<string, unknown>): Record<string, unknown> {
-  return Object.fromEntries(
-    Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)),
-  );
+  return Object.fromEntries(Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)));
 }
 
 const dependencyKeys = [

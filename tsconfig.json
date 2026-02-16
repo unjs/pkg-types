@@ -17,11 +17,6 @@
     "noEmit": true,
     "allowImportingTsExtensions": true
   },
-  "include": [
-    "src",
-    "test"
-  ],
-  "exclude": [
-    "tsconfig.vitest-temp.json"
-  ]
+  "include": ["src", "test"],
+  "exclude": ["tsconfig.vitest-temp.json"]
 }

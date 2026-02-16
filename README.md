@@ -25,13 +25,13 @@ npm install pkg-types
 yarn add pkg-types
 
 # pnpm
-pnpm install pkg-types
+pnpm add pkg-types
 
 # bun
 bun install pkg-types
 
 # deno
-deno install pkg-types
+deno install npm:pkg-types
 ```
 
 <!-- /automd -->
@@ -222,7 +222,7 @@ Finds closest `.git/config` file.
 ```js
 import { resolveGitConfig } from "pkg-types";
 
-const gitConfig = await resolveGitConfig(".")
+const gitConfig = await resolveGitConfig(".");
 ```
 
 #### `readGitConfig`
@@ -232,7 +232,7 @@ Finds and reads closest `.git/config` file into a JS object.
 ```js
 import { readGitConfig } from "pkg-types";
 
-const gitConfigObj = await readGitConfig(".")
+const gitConfigObj = await readGitConfig(".");
 ```
 
 #### `writeGitConfig`
@@ -242,7 +242,7 @@ Stringifies git config object into INI text format and writes it to a file.
 ```js
 import { writeGitConfig } from "pkg-types";
 
-await writeGitConfig(".git/config", gitConfigObj)
+await writeGitConfig(".git/config", gitConfigObj);
 ```
 
 #### `parseGitConfig`
@@ -252,7 +252,7 @@ Parses a git config file in INI text format into a JavaScript object.
 ```js
 import { parseGitConfig } from "pkg-types";
 
-const gitConfigObj = parseGitConfig(gitConfigINI)
+const gitConfigObj = parseGitConfig(gitConfigINI);
 ```
 
 #### `stringifyGitConfig`
@@ -262,7 +262,7 @@ Stringifies a git config object into a git config file INI text format.
 ```js
 import { stringifyGitConfig } from "pkg-types";
 
-const gitConfigINI = stringifyGitConfig(gitConfigObj)
+const gitConfigINI = stringifyGitConfig(gitConfigObj);
 ```
 
 ## Types
@@ -284,13 +284,13 @@ You can use define utilities for type support and auto-completion when working i
 Provides type safety and auto-completion for package.json objects.
 
 ```js
-import { definePackageJSON } from 'pkg-types'
+import { definePackageJSON } from "pkg-types";
 
 const pkg = definePackageJSON({
   name: "my-package",
   version: "1.0.0",
   // TypeScript will provide auto-completion here
-})
+});
 ```
 
 #### `defineTSConfig`
@@ -298,14 +298,14 @@ const pkg = definePackageJSON({
 Provides type safety and auto-completion for tsconfig.json objects.
 
 ```js
-import { defineTSConfig } from 'pkg-types'
+import { defineTSConfig } from "pkg-types";
 
 const tsconfig = defineTSConfig({
   compilerOptions: {
     target: "ES2020",
     // TypeScript will provide auto-completion here
-  }
-})
+  },
+});
 ```
 
 #### `defineGitConfig`
@@ -313,15 +313,15 @@ const tsconfig = defineTSConfig({
 Provides type safety and auto-completion for git config objects.
 
 ```js
-import { defineGitConfig } from 'pkg-types'
+import { defineGitConfig } from "pkg-types";
 
 const gitConfig = defineGitConfig({
   user: {
     name: "John Doe",
-    email: "john@example.com"
-  }
+    email: "john@example.com",
+  },
   // TypeScript will provide auto-completion here
-})
+});
 ```
 
 ## Alternatives

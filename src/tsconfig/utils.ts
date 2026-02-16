@@ -29,10 +29,7 @@ export async function readTSConfig(
   options: ResolveOptions & ReadOptions = {},
 ): Promise<TSConfig> {
   const resolvedPath = await resolveTSConfig(id, options);
-  const cache =
-    options.cache && typeof options.cache !== "boolean"
-      ? options.cache
-      : FileCache;
+  const cache = options.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
     return cache.get(resolvedPath)!;
   }
@@ -47,10 +44,7 @@ export async function readTSConfig(
  * @param path - The path to the file where the `tsconfig.json` is written.
  * @param tsconfig - The `tsconfig.json` object to write. See {@link TSConfig}.
  */
-export async function writeTSConfig(
-  path: string,
-  tsconfig: TSConfig,
-): Promise<void> {
+export async function writeTSConfig(path: string, tsconfig: TSConfig): Promise<void> {
   await fsp.writeFile(path, stringifyJSONC(tsconfig));
 }
 

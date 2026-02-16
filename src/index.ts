@@ -1,10 +1,6 @@
 // --- resolve ---
 
-export type {
-  FindFileOptions,
-  ReadOptions,
-  ResolveOptions,
-} from "./resolve/types";
+export type { FindFileOptions, ReadOptions, ResolveOptions } from "./resolve/types";
 
 export { findFile, findFarthestFile, findNearestFile } from "./resolve/utils";
 
@@ -12,20 +8,11 @@ export { findFile, findFarthestFile, findNearestFile } from "./resolve/utils";
 
 export type { TSConfig } from "./tsconfig/types";
 
-export {
-  defineTSConfig,
-  readTSConfig,
-  writeTSConfig,
-  resolveTSConfig,
-} from "./tsconfig/utils";
+export { defineTSConfig, readTSConfig, writeTSConfig, resolveTSConfig } from "./tsconfig/utils";
 
 // --- package.json ---
 
-export type {
-  PackageJson,
-  PackageJsonExports,
-  PackageJsonPerson,
-} from "./packagejson/types";
+export type { PackageJson, PackageJsonExports, PackageJsonPerson } from "./packagejson/types";
 
 export {
   definePackageJSON,
