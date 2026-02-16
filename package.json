@@ -16,11 +16,12 @@
   "scripts": {
     "build": "obuild",
     "dev": "vitest --typecheck",
-    "lint": "oxlint && oxfmt -c",
+    "lint": "oxlint && oxfmt --check .",
     "fmt": "automd && oxlint --fix . && oxfmt",
     "prepack": "pnpm build",
     "release": "pnpm test && pnpm build && changelogen --release && npm publish && git push --follow-tags",
-    "test": "vitest run --typecheck --coverage"
+    "test": "pnpm lint && pnpm typecheck",
+    "typecheck": "tsgo --noEmit --skipLibCheck"
   },
   "dependencies": {
     "confbox": "^0.2.4",
