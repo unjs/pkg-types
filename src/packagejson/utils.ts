@@ -10,7 +10,7 @@ import {
   stringifyYAML,
 } from "confbox";
 
-import type { ResolveOptions, ReadOptions, FindFileOptions } from "../resolve/types";
+import type { ResolveOptions, ReadOptions, FindFileOptions, MaybeTry } from "../resolve/types";
 import type { PackageJson } from "./types";
 import { findNearestFile, findFile } from "../resolve/utils";
 import { _resolvePath } from "../resolve/internal";
@@ -53,10 +53,10 @@ export function definePackageJSON(pkg: PackageJson): PackageJson {
  * @param options - Options to modify the search behaviour. See {@link ResolveOptions}.
  * @returns A promise resolving to the path of the nearest package file.
  */
-export async function findPackage(
+export async function findPackage<O extends ResolveOptions>(
   id: string = process.cwd(),
-  options: ResolveOptions = {},
-): Promise<string> {
+  options?: O,
+): Promise<MaybeTry<string, O>> {
   return findNearestFile(packageFiles, {
     ...options,
     startingFrom: _resolvePath(id, options),
@@ -69,13 +69,16 @@ export async function findPackage(
  * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
  * @returns a promise resolving to the parsed `package.json` object.
  */
-export async function readPackage(
+export async function readPackage<O extends ResolveOptions & ReadOptions>(
   id?: string,
-  options: ResolveOptions & ReadOptions = {},
-): Promise<PackageJson> {
+  options?: O,
+): Promise<MaybeTry<PackageJson, O>> {
   const resolvedPath = await findPackage(id, options);
-  const cache = options.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
-  if (options.cache && cache.has(resolvedPath)) {
+  if (!resolvedPath) {
+    return undefined as MaybeTry<PackageJson, O>;
+  }
+  const cache = options?.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
+  if (options?.cache && cache.has(resolvedPath)) {
     return cache.get(resolvedPath)!;
   }
   const blob = await fsp.readFile(resolvedPath, "utf8");
@@ -238,13 +241,16 @@ export async function findWorkspaceDir(
  * @param options - Options for resolving and reading the file. See {@link ResolveOptions} and {@link ReadOptions}.
  * @returns A promise that resolves once the package file has been written.
  */
-export async function updatePackage(
+export async function updatePackage<O extends ResolveOptions & ReadOptions>(
   id: string,
   callback: (pkg: PackageJson) => PackageJson | void | Promise<PackageJson | void>,
-  options: ResolveOptions & ReadOptions = {},
+  options?: O,
 ): Promise<void> {
   const resolvedPath = await findPackage(id, options);
-  const pkg = await readPackage(id, options);
+  if (!resolvedPath) {
+    return undefined;
+  }
+  const pkg = (await readPackage(id, options))!;
   const proxy = new Proxy(pkg, {
     get(target, prop) {
       if (typeof prop === "string" && objectKeys.has(prop) && !Object.hasOwn(target, prop)) {
