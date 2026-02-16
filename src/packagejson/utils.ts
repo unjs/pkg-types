@@ -78,9 +78,8 @@ export async function readPackage<O extends ResolveOptions & ReadOptions>(
     return undefined as MaybeTry<PackageJson, O>;
   }
 
-  const _cache = options?.cache;
-  const cache = _cache && typeof _cache !== "boolean" ? _cache : FileCache;
-  if (_cache && cache.has(resolvedPath)) {
+ const cache = options?.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
+  if (options?.cache && cache.has(resolvedPath)) {
     return cache.get(resolvedPath)!;
   }
   const blob = await fsp.readFile(resolvedPath, "utf8");
