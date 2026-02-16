@@ -1,11 +1,5 @@
-import { defineBuildConfig } from "unbuild";
-import { rm } from "node:fs/promises";
+import { defineBuildConfig } from "obuild/config";
 
 export default defineBuildConfig({
-  externals: ["typescript"],
-  hooks: {
-    async "build:done"() {
-      await rm("dist/index.d.ts");
-    },
-  },
+  entries: ["src/index.ts"],
 });
