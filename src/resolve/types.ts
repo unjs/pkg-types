@@ -44,9 +44,7 @@ export interface FindFileOptions {
    *
    * @default fs.statSync(path).isFile()
    */
-  test?: (
-    filePath: string,
-  ) => boolean | undefined | Promise<boolean | undefined>;
+  test?: (filePath: string) => boolean | undefined | Promise<boolean | undefined>;
 }
 
 /** @deprecated */
