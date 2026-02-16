@@ -50,10 +50,10 @@ export interface FindFileOptions {
   /**
    * If set to `true` and the file is not found,
    * `undefined` is returned instead of an error thrown.
-   * 
+   *
    * @default false
    */
-  try?: boolean
+  try?: boolean;
 }
 
 /** @deprecated */

@@ -72,7 +72,7 @@ export async function findFile<O extends FindFileOptions>(
   }
 
   if (options.try) {
-    return undefined as MaybeTry<string, O>
+    return undefined as MaybeTry<string, O>;
   }
 
   throw new Error(

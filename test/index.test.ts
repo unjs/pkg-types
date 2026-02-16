@@ -210,9 +210,9 @@ describe("package.{json,jsonc,json5}", () => {
   });
 
   it("returns `undefined` if package is not found with `try: true`", async () => {
-    const _package = await readPackage('/not-found', { try: true });
-    expect(_package).toBeUndefined()
-  })
+    const _package = await readPackage("/not-found", { try: true });
+    expect(_package).toBeUndefined();
+  });
 });
 
 describe("tsconfig.json", () => {
