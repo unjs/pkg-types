@@ -202,9 +202,7 @@ describe("tsconfig.json", () => {
 
   it("preserves key-optional types", () => {
     const options: TSConfig["compilerOptions"] = {};
-    expectTypeOf(options.allowImportingTsExtensions).toEqualTypeOf<
-      boolean | undefined
-    >();
+    expectTypeOf(options.allowImportingTsExtensions).toEqualTypeOf<boolean | undefined>();
   });
 
   it("styles are preserved", async () => {
