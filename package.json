@@ -17,7 +17,7 @@
     "build": "obuild",
     "dev": "vitest --typecheck",
     "lint": "oxlint && oxfmt -c",
-    "lint:fix": "automd && oxlint --fix . && oxfmt",
+    "fmt": "automd && oxlint --fix . && oxfmt",
     "prepack": "pnpm build",
     "release": "pnpm test && pnpm build && changelogen --release && npm publish && git push --follow-tags",
     "test": "vitest run --typecheck --coverage"
