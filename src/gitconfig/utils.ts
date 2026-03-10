@@ -14,10 +14,7 @@ export function defineGitConfig(config: GitConfig): GitConfig {
 /**
  * Finds closest `.git/config` file.
  */
-export async function resolveGitConfig(
-  dir: string,
-  opts?: ResolveOptions,
-): Promise<string> {
+export async function resolveGitConfig(dir: string, opts?: ResolveOptions): Promise<string> {
   return findNearestFile(".git/config", { ...opts, startingFrom: dir });
 }
 

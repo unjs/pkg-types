@@ -1,8 +1,7 @@
-name: autofix.ci
+name: checks
 on: { push: {}, pull_request: {} }
-permissions: { contents: read }
 jobs:
-  autofix:
+  checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -10,6 +9,5 @@ jobs:
       - uses: actions/setup-node@v6
         with: { node-version: lts/*, cache: "pnpm" }
       - run: pnpm install
-      - run: pnpm fmt
-      - uses: autofix-ci/action@7a166d7532b277f34e16238930461bf77f9d7ed8
-        with: { commit-message: "chore: apply automated updates" }
+      - run: pnpm typecheck
+      - run: pnpm run lint

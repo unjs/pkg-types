@@ -326,9 +326,7 @@ export interface PackageJson {
 /**
  * See: https://docs.npmjs.com/cli/v11/using-npm/scripts#pre--post-scripts
  */
-type PackageJsonScriptWithPreAndPost<S extends string> =
-  | S
-  | `${"pre" | "post"}${S}`;
+type PackageJsonScriptWithPreAndPost<S extends string> = S | `${"pre" | "post"}${S}`;
 
 /**
  * See: https://docs.npmjs.com/cli/v11/using-npm/scripts#life-cycle-operation-order
@@ -337,15 +335,7 @@ type PackageJsonNpmLifeCycleScripts =
   | "dependencies"
   | "prepublishOnly"
   | PackageJsonScriptWithPreAndPost<
-      | "install"
-      | "pack"
-      | "prepare"
-      | "publish"
-      | "restart"
-      | "start"
-      | "stop"
-      | "test"
-      | "version"
+      "install" | "pack" | "prepare" | "publish" | "restart" | "start" | "stop" | "test" | "version"
     >;
 
 /**
