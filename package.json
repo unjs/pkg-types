@@ -5,15 +5,11 @@
   "license": "MIT",
   "repository": "unjs/pkg-types",
   "files": [
-    "dist",
-    "typescript.d.mts"
+    "dist"
   ],
   "sideEffects": false,
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
-  "imports": {
-    "#typescript": "./typescript.d.mts"
-  },
   "exports": {
     ".": "./dist/index.mjs"
   },
