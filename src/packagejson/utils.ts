@@ -69,32 +69,39 @@ export async function findPackage(
  * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
  * @returns a promise resolving to the parsed `package.json` object.
  */
-export async function readPackage(
+export async function readPackage<Opts extends ResolveOptions & ReadOptions>(
   id?: string,
-  options: ResolveOptions & ReadOptions = {},
-): Promise<PackageJson> {
-  const resolvedPath = await findPackage(id, options);
-  const cache = options.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
-  if (options.cache && cache.has(resolvedPath)) {
-    return cache.get(resolvedPath)!;
-  }
-  const blob = await fsp.readFile(resolvedPath, "utf8");
-  let parsed: PackageJson;
-
-  if (resolvedPath.endsWith(".json5")) {
-    parsed = parseJSON5(blob) as PackageJson;
-  } else if (resolvedPath.endsWith(".yaml")) {
-    parsed = parseYAML(blob) as PackageJson;
-  } else {
-    try {
-      parsed = parseJSON(blob) as PackageJson;
-    } catch {
-      parsed = parseJSONC(blob) as PackageJson;
+  options: Opts = {} as Opts,
+): Promise<Opts["try"] extends true ? PackageJson | undefined : PackageJson> {
+  try {
+    const resolvedPath = await findPackage(id, options);
+    const cache = options.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
+    if (options.cache && cache.has(resolvedPath)) {
+      return cache.get(resolvedPath) as any;
     }
-  }
+    const blob = await fsp.readFile(resolvedPath, "utf8");
+    let parsed: PackageJson;
 
-  cache.set(resolvedPath, parsed);
-  return parsed;
+    if (resolvedPath.endsWith(".json5")) {
+      parsed = parseJSON5(blob) as PackageJson;
+    } else if (resolvedPath.endsWith(".yaml")) {
+      parsed = parseYAML(blob) as PackageJson;
+    } else {
+      try {
+        parsed = parseJSON(blob) as PackageJson;
+      } catch {
+        parsed = parseJSONC(blob) as PackageJson;
+      }
+    }
+
+    cache.set(resolvedPath, parsed);
+    return parsed as any;
+  } catch (error) {
+    if (options.try) {
+      return undefined as any;
+    }
+    throw error;
+  }
 }
 
 /**
