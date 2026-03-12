@@ -72,36 +72,48 @@ export async function findPackage(
 export async function readPackage<Opts extends ResolveOptions & ReadOptions>(
   id?: string,
   options: Opts = {} as Opts,
-): Promise<Opts["try"] extends true ? PackageJson | undefined : PackageJson> {
+): Promise<true extends Opts["try"] ? PackageJson | undefined : PackageJson> {
+  let resolvedPath: string;
+  const cache = options.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
+
   try {
-    const resolvedPath = await findPackage(id, options);
-    const cache = options.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
+    resolvedPath = await findPackage(id, options);
     if (options.cache && cache.has(resolvedPath)) {
       return cache.get(resolvedPath) as any;
     }
-    const blob = await fsp.readFile(resolvedPath, "utf8");
-    let parsed: PackageJson;
-
-    if (resolvedPath.endsWith(".json5")) {
-      parsed = parseJSON5(blob) as PackageJson;
-    } else if (resolvedPath.endsWith(".yaml")) {
-      parsed = parseYAML(blob) as PackageJson;
-    } else {
-      try {
-        parsed = parseJSON(blob) as PackageJson;
-      } catch {
-        parsed = parseJSONC(blob) as PackageJson;
-      }
-    }
-
-    cache.set(resolvedPath, parsed);
-    return parsed as any;
   } catch (error) {
     if (options.try) {
       return undefined as any;
     }
     throw error;
   }
+
+  let blob: string;
+  try {
+    blob = await fsp.readFile(resolvedPath, "utf8");
+  } catch (error) {
+    if (options.try) {
+      return undefined as any;
+    }
+    throw error;
+  }
+
+  let parsed: PackageJson;
+
+  if (resolvedPath.endsWith(".json5")) {
+    parsed = parseJSON5(blob) as PackageJson;
+  } else if (resolvedPath.endsWith(".yaml")) {
+    parsed = parseYAML(blob) as PackageJson;
+  } else {
+    try {
+      parsed = parseJSON(blob) as PackageJson;
+    } catch {
+      parsed = parseJSONC(blob) as PackageJson;
+    }
+  }
+
+  cache.set(resolvedPath, parsed);
+  return parsed as any;
 }
 
 /**
@@ -252,16 +264,19 @@ export async function updatePackage(
 ): Promise<void> {
   const resolvedPath = await findPackage(id, options);
   const pkg = await readPackage(id, options);
+  if (!pkg) {
+    throw new Error(`Package file not found or could not be parsed: ${resolvedPath}`);
+  }
   const proxy = new Proxy(pkg, {
     get(target, prop) {
       if (typeof prop === "string" && objectKeys.has(prop) && !Object.hasOwn(target, prop)) {
-        target[prop] = {};
+        (target as any)[prop] = {};
       }
       return Reflect.get(target, prop);
     },
   });
   const updated = (await callback(proxy)) || pkg;
-  await writePackage(resolvedPath, updated);
+  await writePackage(resolvedPath, updated as PackageJson);
 }
 
 /**
