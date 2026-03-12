@@ -63,16 +63,29 @@ export async function findPackage(
   });
 }
 
+export type ReadPackageOptions = ResolveOptions &
+  ReadOptions & {
+    try?: boolean;
+  };
+
 /**
  * Reads any package file format (package.json, package.json5, or package.yaml).
  * @param id - The path identifier for the package file, defaults to the current working directory.
  * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
  * @returns a promise resolving to the parsed `package.json` object.
  */
-export async function readPackage<Opts extends ResolveOptions & ReadOptions>(
+export async function readPackage(
   id?: string,
-  options: Opts = {} as Opts,
-): Promise<true extends Opts["try"] ? PackageJson | undefined : PackageJson> {
+  options?: ReadPackageOptions & { try: true },
+): Promise<PackageJson | undefined>;
+export async function readPackage(
+  id?: string,
+  options?: ReadPackageOptions & { try?: false | undefined },
+): Promise<PackageJson>;
+export async function readPackage(
+  id?: string,
+  options: ReadPackageOptions = {},
+): Promise<PackageJson | undefined> {
   let resolvedPath: string;
   const cache = options.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
 
@@ -263,7 +276,7 @@ export async function updatePackage(
   options: ResolveOptions & ReadOptions = {},
 ): Promise<void> {
   const resolvedPath = await findPackage(id, options);
-  const pkg = await readPackage(id, options);
+  const pkg = await readPackage(id, options as ReadPackageOptions & { try?: false });
   if (!pkg) {
     throw new Error(`Package file not found or could not be parsed: ${resolvedPath}`);
   }
