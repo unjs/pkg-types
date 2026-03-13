@@ -63,22 +63,58 @@ export async function findPackage(
   });
 }
 
+export type ReadPackageOptions = ResolveOptions &
+  ReadOptions & {
+    try?: boolean;
+  };
+
 /**
  * Reads any package file format (package.json, package.json5, or package.yaml).
  * @param id - The path identifier for the package file, defaults to the current working directory.
- * @param options - The options for resolving and reading the file. See {@link ResolveOptions}.
- * @returns a promise resolving to the parsed `package.json` object.
+ * @param options - The options for resolving and reading the file. See {@link ReadPackageOptions}.
+ * @returns a promise resolving to the parsed `package.json` object, or undefined if `options.try` is true and an error occurs.
  */
 export async function readPackage(
+  id: string | undefined,
+  options: ReadPackageOptions & { try: true },
+): Promise<PackageJson | undefined>;
+export async function readPackage(
   id?: string,
-  options: ResolveOptions & ReadOptions = {},
-): Promise<PackageJson> {
-  const resolvedPath = await findPackage(id, options);
+  options?: ReadPackageOptions & { try?: false | undefined },
+): Promise<PackageJson>;
+export async function readPackage(
+  id?: string,
+  options?: ReadPackageOptions,
+): Promise<PackageJson | undefined>;
+export async function readPackage(
+  id?: string,
+  options: ReadPackageOptions = {},
+): Promise<PackageJson | undefined> {
+  let resolvedPath: string;
   const cache = options.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
-  if (options.cache && cache.has(resolvedPath)) {
-    return cache.get(resolvedPath)!;
+
+  try {
+    resolvedPath = await findPackage(id, options);
+    if (options.cache && cache.has(resolvedPath)) {
+      return cache.get(resolvedPath) as any;
+    }
+  } catch (error) {
+    if (options.try) {
+      return undefined as any;
+    }
+    throw error;
   }
-  const blob = await fsp.readFile(resolvedPath, "utf8");
+
+  let blob: string;
+  try {
+    blob = await fsp.readFile(resolvedPath, "utf8");
+  } catch (error) {
+    if (options.try) {
+      return undefined as any;
+    }
+    throw error;
+  }
+
   let parsed: PackageJson;
 
   if (resolvedPath.endsWith(".json5")) {
@@ -94,7 +130,7 @@ export async function readPackage(
   }
 
   cache.set(resolvedPath, parsed);
-  return parsed;
+  return parsed as any;
 }
 
 /**
@@ -244,17 +280,17 @@ export async function updatePackage(
   options: ResolveOptions & ReadOptions = {},
 ): Promise<void> {
   const resolvedPath = await findPackage(id, options);
-  const pkg = await readPackage(id, options);
+  const pkg = await readPackage(id, { ...options, try: false });
   const proxy = new Proxy(pkg, {
     get(target, prop) {
       if (typeof prop === "string" && objectKeys.has(prop) && !Object.hasOwn(target, prop)) {
-        target[prop] = {};
+        (target as any)[prop] = {};
       }
       return Reflect.get(target, prop);
     },
   });
   const updated = (await callback(proxy)) || pkg;
-  await writePackage(resolvedPath, updated);
+  await writePackage(resolvedPath, updated as PackageJson);
 }
 
 /**
