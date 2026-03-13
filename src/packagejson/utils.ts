@@ -84,7 +84,7 @@ export async function readPackage(
 ): Promise<PackageJson>;
 export async function readPackage(
   id?: string,
-  options?: ReadPackageOptions & { try?: boolean },
+  options?: ReadPackageOptions,
 ): Promise<PackageJson | undefined>;
 export async function readPackage(
   id?: string,
@@ -280,10 +280,7 @@ export async function updatePackage(
   options: ResolveOptions & ReadOptions = {},
 ): Promise<void> {
   const resolvedPath = await findPackage(id, options);
-  const pkg = await readPackage(id, options as ReadPackageOptions & { try?: false });
-  if (!pkg) {
-    throw new Error(`Package file not found or could not be parsed: ${resolvedPath}`);
-  }
+  const pkg = await readPackage(id, { ...options, try: false });
   const proxy = new Proxy(pkg, {
     get(target, prop) {
       if (typeof prop === "string" && objectKeys.has(prop) && !Object.hasOwn(target, prop)) {
