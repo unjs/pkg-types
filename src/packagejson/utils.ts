@@ -75,13 +75,17 @@ export type ReadPackageOptions = ResolveOptions &
  * @returns a promise resolving to the parsed `package.json` object.
  */
 export async function readPackage(
-  id?: string,
-  options?: ReadPackageOptions & { try: true },
+  id: string | undefined,
+  options: ReadPackageOptions & { try: true },
 ): Promise<PackageJson | undefined>;
 export async function readPackage(
   id?: string,
   options?: ReadPackageOptions & { try?: false | undefined },
 ): Promise<PackageJson>;
+export async function readPackage(
+  id?: string,
+  options?: ReadPackageOptions & { try?: boolean },
+): Promise<PackageJson | undefined>;
 export async function readPackage(
   id?: string,
   options: ReadPackageOptions = {},
