@@ -73,12 +73,13 @@ export async function readPackage(
   id?: string,
   options: ResolveOptions & ReadOptions = {},
 ): Promise<PackageJson | undefined> {
-  const resolvedPath = await findPackage(id, options).catch(() => {
+  const resolvedPath = await findPackage(id, options).catch((err: unknown) => {
     if (options.try) {
       return undefined;
     }
     throw new Error(
-      `Cannot find matching ${packageFiles} in ${id || process.cwd()} or parent directories`,
+      `Cannot find matching ${packageFiles.join(", ")} in ${id || process.cwd()} or parent directories`,
+      { cause: err },
     );
   });
   if (!resolvedPath) {
