@@ -21,6 +21,11 @@ export type ReadOptions = {
    * Can be a boolean or a map to hold the cached data.
    */
   cache?: boolean | Map<string, Record<string, any>>;
+
+  /**
+   * When `true`, suppresses file-not-found errors and returns `undefined` instead.
+   */
+  try?: boolean;
 };
 
 export interface FindFileOptions {

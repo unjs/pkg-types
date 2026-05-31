@@ -72,8 +72,18 @@ export async function findPackage(
 export async function readPackage(
   id?: string,
   options: ResolveOptions & ReadOptions = {},
-): Promise<PackageJson> {
-  const resolvedPath = await findPackage(id, options);
+): Promise<PackageJson | undefined> {
+  const resolvedPath = await findPackage(id, options).catch(() => {
+    if (options.try) {
+      return undefined;
+    }
+    throw new Error(
+      `Cannot find matching ${packageFiles} in ${id || process.cwd()} or parent directories`,
+    );
+  });
+  if (!resolvedPath) {
+    return undefined;
+  }
   const cache = options.cache && typeof options.cache !== "boolean" ? options.cache : FileCache;
   if (options.cache && cache.has(resolvedPath)) {
     return cache.get(resolvedPath)!;
