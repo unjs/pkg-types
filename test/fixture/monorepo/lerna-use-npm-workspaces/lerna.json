@@ -1,0 +1,4 @@
+{
+  "useWorkspaces": true,
+  "packages": ["failed-packages/*"]
+}
