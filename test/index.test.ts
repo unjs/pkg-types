@@ -1,4 +1,4 @@
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { cp, mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
 import { dirname, join, resolve } from "pathe";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -252,6 +252,12 @@ describe(".git/config", () => {
 
   it("resolveGitConfig", async () => {
     expect(await resolveGitConfig(rFixture("."))).to.equal(rFixture(".git/config"));
+  });
+
+  it("resolveGitConfig (file:// url)", async () => {
+    expect(await resolveGitConfig(pathToFileURL(rFixture(".")).href)).to.equal(
+      rFixture(".git/config"),
+    );
   });
 
   it("readGitConfig", async () => {
