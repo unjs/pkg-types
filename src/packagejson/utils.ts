@@ -1,14 +1,7 @@
 import { promises as fsp } from "node:fs";
 import { dirname, resolve } from "pathe";
-import {
-  parseJSONC,
-  parseJSON,
-  stringifyJSON,
-  parseJSON5,
-  stringifyJSON5,
-  parseYAML,
-  stringifyYAML,
-} from "confbox";
+import { parseJSON, stringifyJSON } from "confbox/json";
+import { parseJSONC } from "confbox/jsonc";
 
 import type { ResolveOptions, ReadOptions, FindFileOptions } from "../resolve/types";
 import type { PackageJson } from "./types";
@@ -82,8 +75,10 @@ export async function readPackage(
   let parsed: PackageJson;
 
   if (resolvedPath.endsWith(".json5")) {
+    const { parseJSON5 } = await import("confbox/json5");
     parsed = parseJSON5(blob) as PackageJson;
   } else if (resolvedPath.endsWith(".yaml")) {
+    const { parseYAML } = await import("confbox/yaml");
     parsed = parseYAML(blob) as PackageJson;
   } else {
     try {
@@ -106,8 +101,10 @@ export async function writePackage(path: string, pkg: PackageJson): Promise<void
   let content: string;
 
   if (path.endsWith(".json5")) {
+    const { stringifyJSON5 } = await import("confbox/json5");
     content = stringifyJSON5(pkg);
   } else if (path.endsWith(".yaml")) {
+    const { stringifyYAML } = await import("confbox/yaml");
     content = stringifyYAML(pkg);
   } else {
     content = stringifyJSON(pkg);
