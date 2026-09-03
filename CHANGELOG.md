@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.3.2
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v2.3.1...v2.3.2)
+
+### 🔥 Performance
+
+- Load each format's parser only when a file needs it ([#280](https://github.com/unjs/pkg-types/pull/280))
+
+### 🩹 Fixes
+
+- Inline tsconfig compiler option types ([#281](https://github.com/unjs/pkg-types/pull/281))
+- **gitconfig:** Resolve file URLs in resolveGitConfig ([#273](https://github.com/unjs/pkg-types/pull/273))
+
+### 🏡 Chore
+
+- Update deps ([4166604](https://github.com/unjs/pkg-types/commit/4166604))
+
+### ✅ Tests
+
+- **tsconfig:** Ensure key-optional compiler options preserve their types ([#253](https://github.com/unjs/pkg-types/pull/253))
+
+### ❤️ Contributors
+
+- Ezra Ashenafi ([@Eazash](https://github.com/Eazash))
+- Lubos ([@mrlubos](https://github.com/mrlubos))
+- Mahiro Hirakawa ([@mahirhir](https://github.com/mahirhir))
+- Pi0x <x@pi0.io>
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+
 ## v2.3.1
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v2.3.0...v2.3.1)
