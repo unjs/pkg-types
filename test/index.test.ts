@@ -200,6 +200,11 @@ describe("tsconfig.json", () => {
     // expectTypeOf(options.maxNodeModuleJsDepth).toEqualTypeOf<number | undefined>()
   });
 
+  it("preserves key-optional types", () => {
+    const options: TSConfig["compilerOptions"] = {};
+    expectTypeOf(options.allowImportingTsExtensions).toEqualTypeOf<boolean | undefined>();
+  });
+
   it("styles are preserved", async () => {
     const originalContent = await readFile(rFixture("tsconfig.json"), "utf8").then(
       normalizeWinLines,
