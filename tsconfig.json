@@ -4,7 +4,6 @@
     "module": "Preserve",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "allowJs": true,
@@ -15,7 +14,8 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
     "noEmit": true,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "types": ["node"]
   },
   "include": ["src", "test"],
   "exclude": ["tsconfig.vitest-temp.json"]
