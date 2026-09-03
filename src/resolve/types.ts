@@ -45,7 +45,16 @@ export interface FindFileOptions {
    * @default fs.statSync(path).isFile()
    */
   test?: (filePath: string) => boolean | undefined | Promise<boolean | undefined>;
+  /**
+   * If set to `true` and the file is not found,
+   * `undefined` is returned instead of an error thrown.
+   *
+   * @default false
+   */
+  try?: boolean;
 }
 
 /** @deprecated */
 export type FindNearestFileOptions = FindFileOptions;
+
+export type MaybeTry<T, O extends { try?: boolean }> = O["try"] extends true ? T | undefined : T;

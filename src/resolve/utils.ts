@@ -1,4 +1,4 @@
-import type { FindFileOptions } from "./types";
+import type { FindFileOptions, MaybeTry } from "./types";
 import { statSync } from "node:fs";
 import { join, resolve } from "pathe";
 
@@ -15,6 +15,7 @@ const defaultFindOptions: Required<FindFileOptions> = {
       // Ignore
     }
   },
+  try: false,
 };
 
 /**
@@ -24,10 +25,10 @@ const defaultFindOptions: Required<FindFileOptions> = {
  * @returns a promise that resolves to the path of the file found.
  * @throws Will throw an error if the file cannot be found.
  */
-export async function findFile(
+export async function findFile<O extends FindFileOptions>(
   filename: string | string[],
-  _options: FindFileOptions = {},
-): Promise<string> {
+  _options?: O,
+): Promise<MaybeTry<string, O>> {
   const filenames = Array.isArray(filename) ? filename : [filename];
   const options = { ...defaultFindOptions, ..._options };
   const basePath = resolve(options.startingFrom);
@@ -70,6 +71,10 @@ export async function findFile(
     }
   }
 
+  if (options.try) {
+    return undefined as MaybeTry<string, O>;
+  }
+
   throw new Error(
     `Cannot find matching ${filename} in ${options.startingFrom} or parent directories`,
   );
@@ -82,10 +87,10 @@ export async function findFile(
  * @param options - Options to customise the search behaviour.
  * @returns A promise that resolves to the path of the next file found.
  */
-export function findNearestFile(
+export function findNearestFile<O extends FindFileOptions>(
   filename: string | string[],
-  options: FindFileOptions = {},
-): Promise<string> {
+  options?: O,
+): Promise<MaybeTry<string, O>> {
   return findFile(filename, options);
 }
 
@@ -96,9 +101,9 @@ export function findNearestFile(
  * @param options - Options to customise the search behaviour, with reverse set to true.
  * @returns A promise that resolves to the path of the farthest file found.
  */
-export function findFarthestFile(
+export function findFarthestFile<O extends FindFileOptions>(
   filename: string | string[],
-  options: FindFileOptions = {},
-): Promise<string> {
+  options?: O,
+): Promise<MaybeTry<string, O>> {
   return findFile(filename, { ...options, reverse: true });
 }
