@@ -1,5 +1,5 @@
 import { promises as fsp } from "node:fs";
-import { parseJSONC, stringifyJSONC } from "confbox";
+import { parseJSONC, stringifyJSONC } from "confbox/jsonc";
 
 import type { ResolveOptions, ReadOptions } from "../resolve/types";
 import type { TSConfig } from "./types";
