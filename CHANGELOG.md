@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.3.1
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v2.3.0...v2.3.1)
+
+### 🩹 Fixes
+
+- Use untransformed typescript type exports ([#261](https://github.com/unjs/pkg-types/pull/261))
+
+### 📖 Documentation
+
+- Improve documentation and fix typos across the project ([#246](https://github.com/unjs/pkg-types/pull/246))
+- Fix incorrect imports and add missing function docs ([#248](https://github.com/unjs/pkg-types/pull/248))
+
+### 📦 Build
+
+- Migrate to obuild ([29e54be](https://github.com/unjs/pkg-types/commit/29e54be))
+
+### 🏡 Chore
+
+- Migrate to oxlint and oxfmt ([67fedc4](https://github.com/unjs/pkg-types/commit/67fedc4))
+- Update deps ([78e9de1](https://github.com/unjs/pkg-types/commit/78e9de1))
+- Update ci ([e21a456](https://github.com/unjs/pkg-types/commit/e21a456))
+- Update test scripts ([d8d7e68](https://github.com/unjs/pkg-types/commit/d8d7e68))
+- Add missing tsgo dep ([d05a063](https://github.com/unjs/pkg-types/commit/d05a063))
+
+### ❤️ Contributors
+
+- Daniel Roe ([@danielroe](https://github.com/danielroe))
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+- Eugene ([@outslept](https://github.com/outslept))
+
 ## v2.3.0
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v2.2.0...v2.3.0)

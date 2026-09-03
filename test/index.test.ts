@@ -1,4 +1,4 @@
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { cp, mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
 import { dirname, join, resolve } from "pathe";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -205,6 +205,11 @@ describe("tsconfig.json", () => {
     // expectTypeOf(options.maxNodeModuleJsDepth).toEqualTypeOf<number | undefined>()
   });
 
+  it("preserves key-optional types", () => {
+    const options: TSConfig["compilerOptions"] = {};
+    expectTypeOf(options.allowImportingTsExtensions).toEqualTypeOf<boolean | undefined>();
+  });
+
   it("styles are preserved", async () => {
     const originalContent = await readFile(rFixture("tsconfig.json"), "utf8").then(
       normalizeWinLines,
@@ -257,6 +262,12 @@ describe(".git/config", () => {
 
   it("resolveGitConfig", async () => {
     expect(await resolveGitConfig(rFixture("."))).to.equal(rFixture(".git/config"));
+  });
+
+  it("resolveGitConfig (file:// url)", async () => {
+    expect(await resolveGitConfig(pathToFileURL(rFixture(".")).href)).to.equal(
+      rFixture(".git/config"),
+    );
   });
 
   it("readGitConfig", async () => {

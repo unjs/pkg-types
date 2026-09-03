@@ -1,6 +1,7 @@
 import type { GitConfig } from "./types";
 import { readFile, writeFile } from "node:fs/promises";
 import { findNearestFile } from "../resolve/utils";
+import { _resolvePath } from "../resolve/internal";
 import { parseINI, stringifyINI } from "confbox/ini";
 import type { ResolveOptions } from "../resolve/types";
 
@@ -15,7 +16,10 @@ export function defineGitConfig(config: GitConfig): GitConfig {
  * Finds closest `.git/config` file.
  */
 export async function resolveGitConfig(dir: string, opts?: ResolveOptions): Promise<string> {
-  return findNearestFile(".git/config", { ...opts, startingFrom: dir });
+  return findNearestFile(".git/config", {
+    ...opts,
+    startingFrom: _resolvePath(dir, opts),
+  });
 }
 
 /**
