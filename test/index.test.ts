@@ -139,29 +139,29 @@ describe("package.{json,jsonc,json5}", () => {
 
   it("reads package.json", async () => {
     const package_ = await readPackage(rFixture("package.json"));
-    expect(package_.name).to.equal("foo");
+    expect(package_?.name).to.equal("foo");
   });
 
   it("reads package.json with comments (JSONC)", async () => {
     const package_ = await readPackage(rFixture("jsonc/package.json"));
-    expect(package_.name).to.equal("foo");
+    expect(package_?.name).to.equal("foo");
   });
 
   it("reads package.json5", async () => {
     const package_ = await readPackage(rFixture("package.json5"));
-    expect(package_.name).to.equal("foo");
-    expect(package_.version).to.equal("1.0.0");
+    expect(package_?.name).to.equal("foo");
+    expect(package_?.version).to.equal("1.0.0");
   });
 
   it("reads package.yaml", async () => {
     const package_ = await readPackage(rFixture("package.yaml"));
-    expect(package_.name).to.equal("foo");
-    expect(package_.version).to.equal("1.0.0");
+    expect(package_?.name).to.equal("foo");
+    expect(package_?.version).to.equal("1.0.0");
   });
 
   it("writes package.json", async () => {
     await writePackage(rFixture("package.json.tmp"), { version: "1.0.0" });
-    expect((await readPackage(rFixture("package.json.tmp"))).version).to.equal("1.0.0");
+    expect((await readPackage(rFixture("package.json.tmp")))?.version).to.equal("1.0.0");
   });
 
   it("writes package.json5", async () => {
@@ -169,7 +169,7 @@ describe("package.{json,jsonc,json5}", () => {
       name: "foo",
       version: "1.0.0",
     });
-    expect((await readPackage(rFixture("package.json5.tmp"))).name).to.equal("foo");
+    expect((await readPackage(rFixture("package.json5.tmp")))?.name).to.equal("foo");
   });
 
   it("writes package.yaml", async () => {
@@ -177,7 +177,7 @@ describe("package.{json,jsonc,json5}", () => {
       name: "foo",
       version: "1.0.0",
     });
-    expect((await readPackage(rFixture("package.yaml.tmp"))).name).to.equal("foo");
+    expect((await readPackage(rFixture("package.yaml.tmp")))?.name).to.equal("foo");
   });
 });
 
