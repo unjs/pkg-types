@@ -22,6 +22,7 @@ import {
   readGitConfig,
   writeGitConfig,
   parseGitConfig,
+  stringifyGitConfig,
   // unified package functions
   findPackage,
   readPackage,
@@ -302,6 +303,32 @@ describe(".git/config", () => {
     const newConfigINI = await readFile(rFixture(".git/config.tmp"), "utf8");
 
     expect(newConfigINI.trim()).toBe(fixtureConfigINI.trim());
+  });
+
+  it("stringifyGitConfig keeps subsection names that are not bare words", () => {
+    const config = parseGitConfig(
+      [
+        '[branch "feature/login"]',
+        "merge = refs/heads/feature/login",
+        '[submodule "vendor/lib"]',
+        "path = vendor/lib",
+        '[remote "my.remote"]',
+        "url = https://github.com/username/repo.git",
+        '[url "git@github.com:"]',
+        "insteadOf = https://github.com/",
+      ].join("\n"),
+    );
+
+    const sections = stringifyGitConfig(config)
+      .split("\n")
+      .filter((line) => line.startsWith("["));
+
+    expect(sections).toEqual([
+      '[branch "feature/login"]',
+      '[submodule "vendor/lib"]',
+      '[remote "my.remote"]',
+      '[url "git@github.com:"]',
+    ]);
   });
 });
 

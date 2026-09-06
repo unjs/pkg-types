@@ -49,5 +49,5 @@ export function parseGitConfig(ini: string): GitConfig {
  * Stringifies a git config object into a git config file INI text format.
  */
 export function stringifyGitConfig(config: GitConfig): string {
-  return stringifyINI(config).replaceAll(/^\[(\w+)\.(\w+)\]$/gm, '[$1 "$2"]');
+  return stringifyINI(config).replaceAll(/^\[(\w+)\.(.+)\]$/gm, '[$1 "$2"]');
 }
