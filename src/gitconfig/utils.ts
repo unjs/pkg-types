@@ -38,16 +38,35 @@ export async function writeGitConfig(path: string, config: GitConfig) {
   await writeFile(path, stringifyGitConfig(config));
 }
 
+// Inside a quoted git subsection name, only `\"` and `\\` are escape sequences.
+const _unescapeGitSubsection = (name: string) => name.replaceAll(/\\(["\\])/g, "$1");
+const _escapeGitSubsection = (name: string) => name.replaceAll(/(["\\])/g, "\\$1");
+
+// `confbox/ini` splits a section header on unescaped `.` and joins on `\.`,
+// so a literal dot has to survive the trip through the INI layer escaped.
+const _escapeINISection = (name: string) => name.replaceAll(".", String.raw`\.`);
+const _unescapeINISection = (name: string) => name.replaceAll(String.raw`\.`, ".");
+
 /**
  * Parses a git config file in INI text format into a JavaScript object.
  */
 export function parseGitConfig(ini: string): GitConfig {
-  return parseINI(ini.replaceAll(/^\[(\w+) "(.+)"\]$/gm, "[$1.$2]"));
+  return parseINI(
+    ini.replaceAll(
+      /^\[(\w+) "(.+)"\]$/gm,
+      (_, section, subsection) =>
+        `[${section}.${_escapeINISection(_unescapeGitSubsection(subsection))}]`,
+    ),
+  );
 }
 
 /**
  * Stringifies a git config object into a git config file INI text format.
  */
 export function stringifyGitConfig(config: GitConfig): string {
-  return stringifyINI(config).replaceAll(/^\[(\w+)\.(.+)\]$/gm, '[$1 "$2"]');
+  return stringifyINI(config).replaceAll(
+    /^\[(\w+)\.(.+)\]$/gm,
+    (_, section, subsection) =>
+      `[${section} "${_escapeGitSubsection(_unescapeINISection(subsection))}"]`,
+  );
 }

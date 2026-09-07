@@ -330,6 +330,29 @@ describe(".git/config", () => {
       '[url "git@github.com:"]',
     ]);
   });
+
+  it("keeps a dotted subsection name in a single key", () => {
+    expect(parseGitConfig('[remote "my.remote"]\nurl = https://example.com/repo.git\n')).toEqual({
+      remote: { "my.remote": { url: "https://example.com/repo.git" } },
+    });
+  });
+
+  it("roundtrips subsection names containing quotes and backslashes", () => {
+    const ini = String.raw`[branch "feat\"quoted"]
+merge = refs/heads/a
+
+[submodule "vendor\\lib"]
+path = vendor\lib
+`;
+
+    const config = parseGitConfig(ini);
+
+    expect(config).toEqual({
+      branch: { 'feat"quoted': { merge: "refs/heads/a" } },
+      submodule: { "vendor\\lib": { path: "vendor\\lib" } },
+    });
+    expect(stringifyGitConfig(config)).toBe(ini);
+  });
 });
 
 describe("updatePackage", () => {
