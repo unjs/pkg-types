@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^26",
-    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/coverage-v8": "^5.0.0",
     "automd": "^0.4.3",
     "changelogen": "^0.6.2",
     "eslint-config-unjs": "^0.6.2",
@@ -40,7 +40,7 @@
     "oxlint": "^1.81.0",
     "prettier": "^3.9.6",
     "typescript": "^7",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.0"
   },
   "packageManager": "pnpm@11.22.0"
 }
