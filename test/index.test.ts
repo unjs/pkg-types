@@ -353,6 +353,33 @@ path = vendor\lib
     });
     expect(stringifyGitConfig(config)).toBe(ini);
   });
+
+  it("drops the backslash before any other escaped character", () => {
+    expect(parseGitConfig(String.raw`[remote "foo\q"]` + "\nurl = u\n")).toEqual({
+      remote: { fooq: { url: "u" } },
+    });
+  });
+
+  it("keeps a backslash that precedes a dot distinct from a bare dot", () => {
+    const withBackslash = String.raw`[remote "a\\.b"]` + "\nurl = u\n";
+    const withoutBackslash = '[remote "a.b"]\nurl = u\n';
+
+    expect(parseGitConfig(withBackslash)).toEqual({
+      remote: { "a\\.b": { url: "u" } },
+    });
+    expect(parseGitConfig(withoutBackslash)).toEqual({
+      remote: { "a.b": { url: "u" } },
+    });
+    expect(stringifyGitConfig(parseGitConfig(withBackslash))).toBe(withBackslash);
+    expect(stringifyGitConfig(parseGitConfig(withoutBackslash))).toBe(withoutBackslash);
+  });
+
+  it("roundtrips an empty subsection name", () => {
+    const ini = '[remote ""]\nurl = u\n';
+
+    expect(parseGitConfig(ini)).toEqual({ remote: { "": { url: "u" } } });
+    expect(stringifyGitConfig(parseGitConfig(ini))).toBe(ini);
+  });
 });
 
 describe("updatePackage", () => {
