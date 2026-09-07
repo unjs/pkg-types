@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.3.3
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v2.3.2...v2.3.3)
+
+### 🩹 Fixes
+
+- **tsconfig:** Mark deprecated compiler options ([80b6b77](https://github.com/unjs/pkg-types/commit/80b6b77))
+
+### 🏡 Chore
+
+- Update release script ([4113755](https://github.com/unjs/pkg-types/commit/4113755))
+- Update deps ([a6c3ffc](https://github.com/unjs/pkg-types/commit/a6c3ffc))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](https://github.com/pi0))
+
 ## v2.3.2
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v2.3.1...v2.3.2)
