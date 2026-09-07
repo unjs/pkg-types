@@ -22,6 +22,7 @@ import {
   readGitConfig,
   writeGitConfig,
   parseGitConfig,
+  stringifyGitConfig,
   // unified package functions
   findPackage,
   readPackage,
@@ -302,6 +303,82 @@ describe(".git/config", () => {
     const newConfigINI = await readFile(rFixture(".git/config.tmp"), "utf8");
 
     expect(newConfigINI.trim()).toBe(fixtureConfigINI.trim());
+  });
+
+  it("stringifyGitConfig keeps subsection names that are not bare words", () => {
+    const config = parseGitConfig(
+      [
+        '[branch "feature/login"]',
+        "merge = refs/heads/feature/login",
+        '[submodule "vendor/lib"]',
+        "path = vendor/lib",
+        '[remote "my.remote"]',
+        "url = https://github.com/username/repo.git",
+        '[url "git@github.com:"]',
+        "insteadOf = https://github.com/",
+      ].join("\n"),
+    );
+
+    const sections = stringifyGitConfig(config)
+      .split("\n")
+      .filter((line) => line.startsWith("["));
+
+    expect(sections).toEqual([
+      '[branch "feature/login"]',
+      '[submodule "vendor/lib"]',
+      '[remote "my.remote"]',
+      '[url "git@github.com:"]',
+    ]);
+  });
+
+  it("keeps a dotted subsection name in a single key", () => {
+    expect(parseGitConfig('[remote "my.remote"]\nurl = https://example.com/repo.git\n')).toEqual({
+      remote: { "my.remote": { url: "https://example.com/repo.git" } },
+    });
+  });
+
+  it("roundtrips subsection names containing quotes and backslashes", () => {
+    const ini = String.raw`[branch "feat\"quoted"]
+merge = refs/heads/a
+
+[submodule "vendor\\lib"]
+path = vendor\lib
+`;
+
+    const config = parseGitConfig(ini);
+
+    expect(config).toEqual({
+      branch: { 'feat"quoted': { merge: "refs/heads/a" } },
+      submodule: { "vendor\\lib": { path: "vendor\\lib" } },
+    });
+    expect(stringifyGitConfig(config)).toBe(ini);
+  });
+
+  it("drops the backslash before any other escaped character", () => {
+    expect(parseGitConfig(String.raw`[remote "foo\q"]` + "\nurl = u\n")).toEqual({
+      remote: { fooq: { url: "u" } },
+    });
+  });
+
+  it("keeps a backslash that precedes a dot distinct from a bare dot", () => {
+    const withBackslash = String.raw`[remote "a\\.b"]` + "\nurl = u\n";
+    const withoutBackslash = '[remote "a.b"]\nurl = u\n';
+
+    expect(parseGitConfig(withBackslash)).toEqual({
+      remote: { "a\\.b": { url: "u" } },
+    });
+    expect(parseGitConfig(withoutBackslash)).toEqual({
+      remote: { "a.b": { url: "u" } },
+    });
+    expect(stringifyGitConfig(parseGitConfig(withBackslash))).toBe(withBackslash);
+    expect(stringifyGitConfig(parseGitConfig(withoutBackslash))).toBe(withoutBackslash);
+  });
+
+  it("roundtrips an empty subsection name", () => {
+    const ini = '[remote ""]\nurl = u\n';
+
+    expect(parseGitConfig(ini)).toEqual({ remote: { "": { url: "u" } } });
+    expect(stringifyGitConfig(parseGitConfig(ini))).toBe(ini);
   });
 });
 
