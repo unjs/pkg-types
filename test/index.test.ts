@@ -179,6 +179,11 @@ describe("package.{json,jsonc,json5}", () => {
     });
     expect((await readPackage(rFixture("package.yaml.tmp"))).name).to.equal("foo");
   });
+
+  it("returns `undefined` if package is not found with `try: true`", async () => {
+    const _package = await readPackage("/not-found", { try: true });
+    expect(_package).toBeUndefined();
+  });
 });
 
 describe("tsconfig.json", () => {
