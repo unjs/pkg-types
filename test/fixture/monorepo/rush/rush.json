@@ -1,0 +1,7 @@
+{
+  "rushVersion": "1.2.3",
+  "projects": [
+    { "packageName": "@acme/app-one", "projectFolder": "apps/app-one" },
+    { "packageName": "@acme/lib-one", "projectFolder": "packages/lib-one" }
+  ]
+}
