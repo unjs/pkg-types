@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.4.0
+
+[compare changes](https://github.com/unjs/pkg-types/compare/v2.3.3...v2.4.0)
+
+### 🚀 Enhancements
+
+- Detect `upm.lock` lockfile ([#290](https://github.com/unjs/pkg-types/pull/290))
+
+### 🩹 Fixes
+
+- **gitconfig:** Preserve subsection names with special characters ([#284](https://github.com/unjs/pkg-types/pull/284))
+
+### ❤️ Contributors
+
+- Mochammad Fadhlan Al-Ghiffari ([@MFA-G](https://github.com/MFA-G))
+- Pi0x <x@pi0.io>
+
 ## v2.3.3
 
 [compare changes](https://github.com/unjs/pkg-types/compare/v2.3.2...v2.3.3)
