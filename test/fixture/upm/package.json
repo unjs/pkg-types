@@ -1,0 +1,5 @@
+{
+  "name": "fixture-upm",
+  "private": true,
+  "packageManager": "upm@1.3.1"
+}

@@ -16,6 +16,7 @@ const lockFiles = [
   "bun.lockb",
   "bun.lock",
   "deno.lock",
+  "upm.lock",
 ];
 
 const packageFiles = ["package.json", "package.json5", "package.yaml"];
