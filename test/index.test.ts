@@ -227,6 +227,9 @@ describe("resolveLockfile", () => {
   it("works for root dir", async () => {
     expect(await resolveLockfile(rFixture("."))).to.equal(rFixture("../..", "pnpm-lock.yaml"));
   });
+  it("detects upm lockfile", async () => {
+    expect(await resolveLockfile(rFixture("./upm"))).to.equal(rFixture("./upm/upm.lock"));
+  });
 });
 
 describe("findWorkspaceDir", () => {

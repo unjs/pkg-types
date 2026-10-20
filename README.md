@@ -190,7 +190,7 @@ const filename = await findFarthestFile("package.json");
 
 #### `resolveLockfile`
 
-Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`, `bun.lockb`, `bun.lock`, `deno.lock`) or throws an error.
+Find path to the lock file (`yarn.lock`, `package-lock.json`, `pnpm-lock.yaml`, `npm-shrinkwrap.json`, `bun.lockb`, `bun.lock`, `deno.lock`, `upm.lock`) or throws an error.
 
 ```js
 import { resolveLockfile } from "pkg-types";
