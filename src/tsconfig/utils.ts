@@ -35,7 +35,9 @@ export async function readTSConfig(
   }
   const text = await fsp.readFile(resolvedPath, "utf8");
   const parsed = parseJSONC(text) as TSConfig;
-  cache.set(resolvedPath, parsed);
+  if (options.cache) {
+    cache.set(resolvedPath, parsed);
+  }
   return parsed;
 }
 

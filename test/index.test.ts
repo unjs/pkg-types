@@ -1,5 +1,5 @@
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { cp, mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "pathe";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { expectTypeOf } from "expect-type";
@@ -218,6 +218,38 @@ describe("tsconfig.json", () => {
       normalizeWinLines,
     );
     expect(newContent).toBe(originalContent.replace(/\s*\/\/\s*.+/g, ""));
+  });
+});
+
+describe("read caching", () => {
+  let tempDir: string;
+
+  beforeEach(async () => {
+    tempDir = await createTempFixtureDir();
+  });
+
+  afterEach(async () => {
+    await rm(tempDir, { force: true, recursive: true });
+  });
+
+  it.each([
+    ["readPackage", "package.json", readPackage],
+    ["readPackageJSON", "package.json", readPackageJSON],
+    ["readTSConfig", "tsconfig.json", readTSConfig],
+  ])("does not populate the cache for %s unless enabled", async (name, filename, read) => {
+    const directory = join(tempDir, name);
+    const path = join(directory, filename);
+    await mkdir(directory);
+    await writeFile(path, JSON.stringify({ marker: "initial" }));
+    await read(path);
+    await writeFile(path, JSON.stringify({ marker: "updated" }));
+    await expect(read(path, { cache: false })).resolves.toMatchObject({ marker: "updated" });
+    await writeFile(path, JSON.stringify({ marker: "newer" }));
+
+    await expect(read(path, { cache: true })).resolves.toMatchObject({ marker: "newer" });
+
+    await writeFile(path, JSON.stringify({ marker: "latest" }));
+    await expect(read(path, { cache: true })).resolves.toMatchObject({ marker: "newer" });
   });
 });
 

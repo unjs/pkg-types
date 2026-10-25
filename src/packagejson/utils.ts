@@ -89,7 +89,9 @@ export async function readPackage(
     }
   }
 
-  cache.set(resolvedPath, parsed);
+  if (options.cache) {
+    cache.set(resolvedPath, parsed);
+  }
   return parsed;
 }
 
@@ -136,7 +138,9 @@ export async function readPackageJSON(
   } catch {
     parsed = parseJSONC(blob) as PackageJson;
   }
-  cache.set(resolvedPath, parsed);
+  if (options.cache) {
+    cache.set(resolvedPath, parsed);
+  }
   return parsed;
 }
 
