@@ -34,7 +34,7 @@ export async function readTSConfig(
     return cache.get(resolvedPath)!;
   }
   const text = await fsp.readFile(resolvedPath, "utf8");
-  const parsed = parseJSONC(text) as TSConfig;
+  const parsed = parseJSONC(text, { allowTrailingComma: true }) as TSConfig;
   cache.set(resolvedPath, parsed);
   return parsed;
 }

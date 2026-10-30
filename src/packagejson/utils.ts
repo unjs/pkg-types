@@ -85,7 +85,7 @@ export async function readPackage(
     try {
       parsed = parseJSON(blob) as PackageJson;
     } catch {
-      parsed = parseJSONC(blob) as PackageJson;
+      parsed = parseJSONC(blob, { allowTrailingComma: true }) as PackageJson;
     }
   }
 
@@ -134,7 +134,7 @@ export async function readPackageJSON(
   try {
     parsed = parseJSON(blob) as PackageJson;
   } catch {
-    parsed = parseJSONC(blob) as PackageJson;
+    parsed = parseJSONC(blob, { allowTrailingComma: true }) as PackageJson;
   }
   cache.set(resolvedPath, parsed);
   return parsed;
