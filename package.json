@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "confbox": "^0.3.1",
-    "exsolve": "^1.1.3",
+    "exsolve": "^1.2.0",
     "pathe": "^2.0.3"
   },
   "devDependencies": {
@@ -36,11 +36,11 @@
     "eslint-config-unjs": "^0.6.2",
     "expect-type": "^1.4.0",
     "obuild": "^0.4.45",
-    "oxfmt": ">=0.73.0",
-    "oxlint": "^1.88.0",
+    "oxfmt": ">=0.75.0",
+    "oxlint": "^1.90.0",
     "prettier": "^3.9.10",
     "typescript": "^7",
     "vitest": "^5.0.5"
   },
-  "packageManager": "pnpm@12.14.0"
+  "packageManager": "pnpm@12.16.1"
 }
